@@ -253,7 +253,12 @@ end
 
 function helpers.set_resistances(prototype, resistances)
   if prototype then
-    prototype.resistances = util.table.deepcopy(resistances)
+    prototype.resistances = {}
+    for _, resistance in pairs(resistances or {}) do
+      if data.raw["damage-type"] and data.raw["damage-type"][resistance.type] then
+        table.insert(prototype.resistances, util.table.deepcopy(resistance))
+      end
+    end
   end
 end
 
