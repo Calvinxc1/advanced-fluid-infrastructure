@@ -10,6 +10,21 @@ steel_pipe_recipe.results = {
 }
 data:extend({ steel_pipe_recipe })
 
+local steel_pipe_casting_recipe = util.table.deepcopy(data.raw.recipe["casting-pipe"])
+steel_pipe_casting_recipe.name = "afi_casting-steel-pipe"
+steel_pipe_casting_recipe.enabled = false
+steel_pipe_casting_recipe.order = "b[casting]-f-a[casting-steel-pipe]"
+steel_pipe_casting_recipe.icon = data.raw.item["afi_steel-pipe"].icon
+steel_pipe_casting_recipe.icon_size = data.raw.item["afi_steel-pipe"].icon_size
+steel_pipe_casting_recipe.icons = util.table.deepcopy(data.raw.item["afi_steel-pipe"].icons)
+steel_pipe_casting_recipe.ingredients = {
+  { type = "fluid", name = "molten-iron", amount = 60, fluidbox_multiplier = 10 },
+}
+steel_pipe_casting_recipe.results = {
+  { type = "item", name = "afi_steel-pipe", amount = 1 },
+}
+data:extend({ steel_pipe_casting_recipe })
+
 local steel_pipe_to_ground_recipe = util.table.deepcopy(data.raw.recipe["pipe-to-ground"])
 steel_pipe_to_ground_recipe.name = "afi_steel-pipe-to-ground"
 steel_pipe_to_ground_recipe.enabled = false

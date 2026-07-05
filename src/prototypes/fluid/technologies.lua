@@ -6,7 +6,6 @@ local function make_steel_fluid_technology(name, icon, effects, order)
   technology.icon = icon
   technology.icon_size = 256
   technology.prerequisites = {
-    "steel-processing",
     "fluid-handling",
   }
   technology.effects = effects
@@ -91,8 +90,6 @@ data:extend({
     "afi_low-pressure-steel-pipe-infrastructure",
     "__advanced-fluid-infrastructure__/graphics/technology/low-pressure-steel-fluid-pipes.png",
     {
-      "afi_steel-pipe-infrastructure",
-      "low-density-structure",
       "space-science-pack",
     },
     {
@@ -106,7 +103,6 @@ data:extend({
     "__advanced-fluid-infrastructure__/graphics/technology/low-pressure-steel-fluid-pumps.png",
     {
       "afi_steel-pump-infrastructure",
-      "low-density-structure",
       "space-science-pack",
     },
     {
@@ -118,10 +114,7 @@ data:extend({
     "afi_rubber-lined-pipe-infrastructure",
     "__advanced-fluid-infrastructure__/graphics/technology/rubber-lined-fluid-pipes.png",
     {
-      "afi_steel-pipe-infrastructure",
-      "plastics",
       "lubricant",
-      "chemical-science-pack",
     },
     {
       { type = "unlock-recipe", recipe = "afi_rubber-lined-pipe" },
@@ -134,9 +127,7 @@ data:extend({
     "__advanced-fluid-infrastructure__/graphics/technology/rubber-lined-fluid-pumps.png",
     {
       "afi_steel-pump-infrastructure",
-      "plastics",
       "lubricant",
-      "chemical-science-pack",
     },
     {
       { type = "unlock-recipe", recipe = "afi_rubber-lined-offshore-pump" },
@@ -146,12 +137,35 @@ data:extend({
   ),
   {
     type = "technology",
+    name = "afi_steel-pipe-casting",
+    icon = "__advanced-fluid-infrastructure__/graphics/technology/steel-fluid-pipes.png",
+    icon_size = 256,
+    prerequisites = {
+      "metallurgic-science-pack",
+    },
+    effects = {
+      { type = "unlock-recipe", recipe = "afi_casting-steel-pipe" },
+    },
+    unit = {
+      count = 250,
+      ingredients = {
+        { "automation-science-pack", 1 },
+        { "logistic-science-pack", 1 },
+        { "chemical-science-pack", 1 },
+        { "space-science-pack", 1 },
+        { "metallurgic-science-pack", 1 },
+      },
+      time = 45,
+    },
+    order = "d-a-f-a",
+  },
+  {
+    type = "technology",
     name = "afi_tungsten-pipe-infrastructure",
     icon = "__advanced-fluid-infrastructure__/graphics/technology/tungsten-fluid-pipes.png",
     icon_size = 256,
     prerequisites = {
       "metallurgic-science-pack",
-      "afi_steel-pipe-infrastructure",
     },
     effects = {
       { type = "unlock-recipe", recipe = "afi_tungsten-pipe" },
@@ -295,8 +309,6 @@ data:extend({
       "afi_reinforced-pump-infrastructure",
       "afi_low-pressure-steel-pump-infrastructure",
       "foundation",
-      "electromagnetic-plant",
-      "lithium-processing",
     },
     effects = {
       { type = "unlock-recipe", recipe = "afi_foundation-offshore-pump" },
@@ -326,7 +338,6 @@ data:extend({
     prerequisites = {
       "afi_foundation-pump-infrastructure",
       "promethium-science-pack",
-      "quantum-processor",
     },
     effects = {
       { type = "unlock-recipe", recipe = "afi_high-pressure-foundation-offshore-pump" },
