@@ -1,0 +1,12 @@
+type: local_identity_attestation
+canonical_agent_name: Advanced Fluid Infrastructure Factorio Modding Agent
+previous_canonical_agent_name: Coding Agent
+agent_kind: coding_agent
+workspace: /home/jcherry/Documents/git/factorio-mods/advanced-fluid-infrastructure
+mod: advanced-fluid-infrastructure
+human_instruction_source: Jason in local session
+updated_at: 2026-07-05T06:51:40-07:00
+result: local_self_stamp_updated
+reconciliation:
+  - central registry row still uses the generic canonical name Coding Agent; workspace-local identity now uses Advanced Fluid Infrastructure Factorio Modding Agent
+  - spelling corrected from Factoriao to Factorio by Jason's follow-up instruction

@@ -1,0 +1,19 @@
+type: agent_registry_attestation
+canonical_agent_name: Coding Agent
+agent_kind: coding_agent
+active_governance_branch: coding-agent
+source_repository: gitea.infra.newedenhomestead.net:ai-projects/ai-governance.git
+source_commit: e7312d8d33db228f89ce62af66f32b8e9b8ec7f5
+previous_active_canon_version: coding-agent/1.0.0
+current_active_canon_version: coding-agent/1.0.0
+previous_generalized_canon_version: trunk/1.0.0
+current_generalized_canon_version: trunk/2.7.0
+self_stamp_path: .governance/local/version-stamp.yaml
+self_stamp_updated: true
+registry_loop_transport: local_durable_record
+registry_loop_result: pending_manual_registry_reconciliation
+updated_at: 2026-07-05T06:50:40-07:00
+result: local_governance_updated
+reconciliation:
+  - central registry row still records Coding Agent current_generalized_canon_version as trunk/1.0.0; update to trunk/2.7.0 is pending registry reconciliation
+  - central registry row self_stamp_path is null; local workspace stamp now exists at .governance/local/version-stamp.yaml
