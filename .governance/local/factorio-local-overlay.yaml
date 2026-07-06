@@ -1,0 +1,36 @@
+schema: factorio_local_overlay
+schema_version: 1
+mod_name: advanced-fluid-infrastructure
+canonical_agent_name: Advanced Fluid Infrastructure Factorio Modding Agent
+workspace_path: /home/jcherry/Documents/git/factorio-mods/advanced-fluid-infrastructure
+metadata_path: src/info.json
+namespace_prefixes:
+  - afi_
+  - __advanced-fluid-infrastructure__/
+dependency_stack:
+  - base >= 2.0.0
+  - space-age >= 2.0.0
+optional_dependencies:
+  - RampantArsenalFork
+upstream_or_fork_source: Fluid infrastructure progression split out from Advanced Electric Remade.
+scope_boundaries:
+  - Owns fluid infrastructure prototypes, progression, technologies, recipes, items, entities, and compatibility cleanup.
+  - Advanced Electric Remade should depend on this mod for fluid infrastructure prototypes.
+  - Advanced Electric Remade retains ownership of power generation entities and power-specific fluidbox tuning.
+release_target: Factorio 2.0 and Space Age mod version 0.0.1.
+changelog_format: null
+validation_available:
+  json: true
+  lua_syntax: true
+  lint: false
+  format: false
+  factorio_load: true
+workspace_specific_rules:
+  - Run ./scripts/validate.sh for full local validation when luac, Python, and Factorio validation prerequisites are available.
+  - Factorio load validation requires FACTORIO_BIN or a discoverable Factorio binary and a mods-directory symlink from the mod name to src.
+  - Keep prototype and locale names under the afi_ prefix unless Jason explicitly approves a namespace migration.
+migration_notes:
+  - Previous local governance branch was coding-agent with canon coding-agent/1.0.0 and generalized canon trunk/2.7.0.
+  - Legacy .governance/local/version-stamp.yaml was preserved as requested.
+  - Source branch templates were used only as templates; no top-level lab-governance directory was created.
+notes: Local facts are based on src/info.json, README.md, scripts/validate.sh, scripts/factorio-validate.sh, and existing governance migration evidence.

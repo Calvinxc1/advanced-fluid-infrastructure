@@ -1,0 +1,6 @@
+local_governance:
+  load:
+    - .governance/local/status.yaml
+    - .governance/local/factorio-local-overlay.yaml
+  notes:
+    - Legacy .governance/local/version-stamp.yaml is preserved as migration evidence and is not the active status file.
