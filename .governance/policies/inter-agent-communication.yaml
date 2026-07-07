@@ -3,10 +3,10 @@ status: ratified
 scope: all_agents
 summary: Index for split agent communication policies and portable brief formatting.
 rules:
-  - Load `.governance/policies/agent-identity.yaml` for canonical identity rules.
-  - Load `.governance/policies/durable-communication-boundaries.yaml` for durable record and governance-canon boundaries.
-  - Load `.governance/policies/live-room-coordination.yaml` for active live-room coordination.
-  - Load `.governance/policies/live-room-closeout.yaml` for live-room closeout, dismissal, stale-presence, and completion rules.
+  - Load `lab-governance/policies/agent-identity.yaml` for canonical identity rules.
+  - Load `lab-governance/policies/durable-communication-boundaries.yaml` for durable record and governance-canon boundaries.
+  - Load `lab-governance/policies/live-room-coordination.yaml` for active live-room coordination.
+  - Load `lab-governance/policies/live-room-closeout.yaml` for live-room closeout, dismissal, stale-presence, and completion rules.
   - When Jason asks an agent to write a brief, handoff, prompt, or other copy/paste-ready communication for another agent, provide the portable text inline in the response as a single fenced Markdown code block.
   - 'For direct agent-to-agent relay messages, use a compact header inside the fenced code block: `FROM: <sending agent>`, `TO: <receiving agent>`, and `RE: <short subject>` when a subject would help routing.'
   - 'For briefs or prompts without a specific receiving agent, the first content line inside the code block may instead be a Markdown header naming the sending agent, using the agent''s Jason-settled canonical name when known, for example `# From: <Canonical Agent Name>`.'

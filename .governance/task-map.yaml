@@ -1,7 +1,7 @@
 id: task_map
 default_load:
   - AGENTS.md
-  - .governance/policies/universal.yaml
+  - lab-governance/policies/universal.yaml
 route_resolution:
   - Load default_load first.
   - Select every route that matches the task shape.
@@ -9,33 +9,33 @@ route_resolution:
   - Do not infer policy loading from folder names; route_groups and routes are the explicit loading contract.
 route_groups:
   execution.baseline:
-    - .governance/policies/execution-control.yaml
-    - .governance/policies/epistemic-acceptance.yaml
+    - lab-governance/policies/execution-control.yaml
+    - lab-governance/policies/epistemic-acceptance.yaml
   communication.durable_boundaries:
-    - .governance/policies/durable-communication-boundaries.yaml
+    - lab-governance/policies/durable-communication-boundaries.yaml
   communication.live_room:
-    - .governance/policies/agent-identity.yaml
-    - .governance/policies/durable-communication-boundaries.yaml
-    - .governance/policies/live-room-coordination.yaml
-    - .governance/policies/live-room-closeout.yaml
+    - lab-governance/policies/agent-identity.yaml
+    - lab-governance/policies/durable-communication-boundaries.yaml
+    - lab-governance/policies/live-room-coordination.yaml
+    - lab-governance/policies/live-room-closeout.yaml
   connector.boundaries:
-    - .governance/policies/boundaries.yaml
-    - .governance/policies/safety-transparency.yaml
-    - .governance/policies/durable-communication-boundaries.yaml
+    - lab-governance/policies/boundaries.yaml
+    - lab-governance/policies/safety-transparency.yaml
+    - lab-governance/policies/durable-communication-boundaries.yaml
   safety.validation:
-    - .governance/policies/risk-validation.yaml
-    - .governance/policies/safety-transparency.yaml
+    - lab-governance/policies/risk-validation.yaml
+    - lab-governance/policies/safety-transparency.yaml
   workflow.auditability:
-    - .governance/policies/workflow-auditability.yaml
+    - lab-governance/policies/workflow-auditability.yaml
   governance.update:
-    - .governance/policies/execution-control.yaml
-    - .governance/policies/epistemic-acceptance.yaml
-    - .governance/policies/safety-transparency.yaml
-    - .governance/processes/agent-governance-update.yaml
+    - lab-governance/policies/execution-control.yaml
+    - lab-governance/policies/epistemic-acceptance.yaml
+    - lab-governance/policies/safety-transparency.yaml
+    - lab-governance/processes/agent-governance-update.yaml
   governance.override:
-    - .governance/processes/override-governance.yaml
-    - .governance/overrides/policy-overrides-spec.yaml
-    - .governance/overrides/policy-overrides.yaml
+    - lab-governance/processes/override-governance.yaml
+    - lab-governance/overrides/policy-overrides-spec.yaml
+    - lab-governance/overrides/policy-overrides.yaml
 routes:
   discussion_or_planning:
     groups:
@@ -59,24 +59,24 @@ routes:
   inter_agent_communication_index:
     groups: []
     files:
-      - .governance/policies/inter-agent-communication.yaml
+      - lab-governance/policies/inter-agent-communication.yaml
   knowledge_capture:
     groups:
       - workflow.auditability
     files:
-      - .governance/policies/knowledge-model.yaml
+      - lab-governance/policies/knowledge-model.yaml
   style_sensitive_output:
     groups: []
     files:
-      - .governance/policies/style.yaml
+      - lab-governance/policies/style.yaml
   wellbeing_or_pushback:
     groups: []
     files:
-      - .governance/policies/engagement-posture.yaml
+      - lab-governance/policies/engagement-posture.yaml
   policy_edit:
     groups: []
     files:
-      - .governance/processes/policy-maintenance.yaml
+      - lab-governance/processes/policy-maintenance.yaml
   agent_governance_update:
     groups:
       - governance.update
