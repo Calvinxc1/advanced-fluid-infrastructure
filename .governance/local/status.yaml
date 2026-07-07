@@ -6,9 +6,9 @@ active_governance_branch: factorio-modding-agent
 current_active_canon_version: factorio-modding-agent/1.0.0
 current_generalized_canon_version: coding-agent/1.4.0
 source_repository_or_path: gitea.infra.newedenhomestead.net:ai-projects/ai-governance.git
-governance_source_commit: 469e02b2e5faabe7618921f4bd431e9a5c62b974
+governance_source_commit: 454d2d698c4e9b8d2d6804d076a5c456a5a90e77
 runtime_surface: codex_cli
 code_authority: factorio_mod_workspace_changes_with_explicit_user_authorization
-last_verified_at: 2026-07-07T07:10:14-07:00
+last_verified_at: 2026-07-07T16:53:11-07:00
 agent_declared_status: current
-notes: Migrated local governance from legacy coding-agent/1.0.0 self-stamp evidence to factorio-modding-agent/1.0.0. Legacy .governance/local/version-stamp.yaml is preserved as migration evidence.
+notes: Updated local governance from factorio-modding-agent branch tip. Factorio branch descriptor parent is coding-agent/1.4.0; that parent consumes trunk/3.15.0. Legacy workspace-local governance evidence was removed at Jason's request.

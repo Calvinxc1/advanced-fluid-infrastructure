@@ -31,6 +31,5 @@ workspace_specific_rules:
   - Keep prototype and locale names under the afi_ prefix unless Jason explicitly approves a namespace migration.
 migration_notes:
   - Previous local governance branch was coding-agent with canon coding-agent/1.0.0 and generalized canon trunk/2.7.0.
-  - Legacy .governance/local/version-stamp.yaml was preserved as requested.
   - Source branch templates were used only as templates; no top-level lab-governance directory was created.
 notes: Local facts are based on src/info.json, README.md, scripts/validate.sh, scripts/factorio-validate.sh, and existing governance migration evidence.
