@@ -5,7 +5,7 @@ agent_kind: factorio_modding_agent
 active_governance_branch: factorio-modding-agent
 current_active_canon_version: factorio-modding-agent/1.0.0
 current_generalized_canon_version: coding-agent/1.4.0
-source_repository_or_path: gitea.infra.newedenhomestead.net:ai-projects/ai-governance.git
+source_repository_or_path: private ai-governance source repository
 governance_source_commit: 454d2d698c4e9b8d2d6804d076a5c456a5a90e77
 runtime_surface: codex_cli
 code_authority: factorio_mod_workspace_changes_with_explicit_user_authorization

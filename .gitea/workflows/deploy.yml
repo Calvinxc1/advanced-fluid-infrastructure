@@ -14,8 +14,8 @@ jobs:
     runs-on: factorio-headless
     env:
       FACTORIO_BIN: /opt/factorio/bin/x64/factorio
-      CHECKOUT_REPOSITORY: factorio-modding/advanced-fluid-infrastructure
-      GITEA_SERVER_URL: https://gitea.infra.newedenhomestead.net
+      CHECKOUT_REPOSITORY: ${{ github.repository }}
+      GITEA_SERVER_URL: ${{ github.server_url }}
 
     steps:
       - name: Check out repository

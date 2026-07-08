@@ -5,7 +5,7 @@
   "title": "Advanced Fluid Infrastructure",
   "author": "Jason M. Cherry",
   "contact": "",
-  "description": "Adds advanced pipe, pipe-to-ground, pump, offshore pump, pipeline extent, and fluid infrastructure technology progression for Factorio 2.0 and Space Age.",
+  "description": "Adds staged pipe, pipe-to-ground, pump, offshore pump, pipeline extent, and fluid infrastructure technology progression for Factorio 2.0 and Space Age.",
   "dependencies": [
     "base >= 2.0.0",
     "space-age >= 2.0.0",

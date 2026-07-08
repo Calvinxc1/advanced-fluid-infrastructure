@@ -40,5 +40,9 @@ with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as archive
         relative = path.relative_to(src_dir)
         archive.write(path, Path(package_name) / relative)
 
+    license_path = src_dir.parent / "LICENSE"
+    if license_path.exists():
+        archive.write(license_path, Path(package_name) / "LICENSE")
+
 print(zip_path)
 PY

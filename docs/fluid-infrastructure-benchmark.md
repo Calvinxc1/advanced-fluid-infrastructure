@@ -1,6 +1,8 @@
 # Fluid Infrastructure Benchmark
 
-This benchmark summarizes the fluid infrastructure tiers that define pipeline layout, transport scale, and environment specialization.
+This benchmark summarizes the fluid infrastructure tiers that define layout pressure, transport scale, and environment specialization.
+
+The design goal is to make fluid routing develop over time. Early pipes should be useful but spatially constrained, mid-tier infrastructure should support ordinary factory blocks, and late-tier infrastructure should represent a real investment into long-distance or high-throughput backbones.
 
 Assumptions:
 
@@ -8,12 +10,12 @@ Assumptions:
 - Underground distance is the configured maximum underground pipe connection distance.
 - Pump speed is prototype `pumping_speed`, expressed as fluid per tick and approximate fluid per second.
 - Pump speed is listed before quality modifiers.
-- Regular surface tiers are for non-space, non-Vulcanus surfaces.
+- Regular surface tiers are for Nauvis and other non-space, non-Vulcanus surfaces.
 - Low-pressure steel is the space-platform steel-equivalent branch.
 - Heat-resistant and tungsten are the Vulcanus branch.
 - Foundation is the final convergence tier and is available in all environments.
 - High-pressure foundation pumping is a pump-only post-foundation compression tier; it does not add new pipes or increase pipeline extent.
-- Production-machine and power-building fluidboxes are patched separately; this table describes the pipe and pump infrastructure tiers.
+- Production-machine fluidboxes are patched separately; this table describes the pipe and pump infrastructure tiers.
 
 | Fluid Support | Branch | Environment | Pipeline Extent | Underground Distance | Pump Speed | Relative Pump Speed | Primary Role |
 |---|---|---|---:|---:|---:|---:|---|
@@ -45,3 +47,9 @@ Assumptions:
 - `512` extent makes foundation clearly beyond vanilla `320` while preserving a finite segment-size constraint.
 - High-pressure foundation pumps keep the `512` foundation extent and only increase pump throughput.
 - Pumps split fluid segments, so each side is checked independently against its lowest connected fluidbox extent.
+
+## Compatibility Notes
+
+- Space Age is required.
+- Rampant Arsenal is optional. When present, this mod removes Rampant Arsenal's reinforced pipe prototypes and related unlocks so the fluid infrastructure progression has one owner.
+- The mod keeps fluid infrastructure progression self-contained so other mods can depend on it without owning pipe, pump, or pipeline extent prototypes themselves.
