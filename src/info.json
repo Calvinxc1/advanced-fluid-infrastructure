@@ -9,6 +9,7 @@
   "dependencies": [
     "base >= 2.0.0",
     "space-age >= 2.0.0",
+    "! underground-pipe-pack",
     "? RampantArsenalFork"
   ]
 }
