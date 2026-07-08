@@ -17,8 +17,8 @@ scope_boundaries:
   - Owns fluid infrastructure prototypes, progression, technologies, recipes, items, entities, and compatibility cleanup.
   - Advanced Electric Remade should depend on this mod for fluid infrastructure prototypes.
   - Advanced Electric Remade retains ownership of power generation entities and power-specific fluidbox tuning.
-release_target: Factorio 2.0 and Space Age mod version 0.0.1.
-changelog_format: null
+release_target: Factorio 2.0 and Space Age mod version 0.1.0.
+changelog_format: Factorio mod portal changelog in src/changelog.txt.
 validation_available:
   json: true
   lua_syntax: true
@@ -28,6 +28,7 @@ validation_available:
 workspace_specific_rules:
   - Run ./scripts/validate.sh for full local validation when luac, Python, and Factorio validation prerequisites are available.
   - Factorio load validation requires FACTORIO_BIN or a discoverable Factorio binary and a mods-directory symlink from the mod name to src.
+  - Use src/info.json as the release version source of truth; Gitea creates a release with the packaged mod zip when that version changes on main.
   - Keep prototype and locale names under the afi_ prefix unless Jason explicitly approves a namespace migration.
 migration_notes:
   - Previous local governance branch was coding-agent with canon coding-agent/1.0.0 and generalized canon trunk/2.7.0.

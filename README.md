@@ -7,3 +7,5 @@ It provides upgraded pipes, pipe-to-ground, pumps, offshore pumps, pipeline exte
 Advanced Electric Remade should depend on this mod for fluid infrastructure prototypes while retaining ownership of power generation entities and their power-specific fluidbox tuning.
 
 Current tier behavior is documented in [docs/fluid-infrastructure-benchmark.md](docs/fluid-infrastructure-benchmark.md).
+
+Release packaging and automated deployment are documented in [docs/release-process.md](docs/release-process.md).
