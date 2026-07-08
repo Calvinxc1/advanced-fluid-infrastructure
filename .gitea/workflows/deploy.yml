@@ -1,0 +1,116 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  releases: write
+
+jobs:
+  deploy:
+    name: Release Factorio mod
+    runs-on: factorio-headless
+    env:
+      FACTORIO_BIN: /opt/factorio/bin/x64/factorio
+      CHECKOUT_REPOSITORY: factorio-modding/advanced-fluid-infrastructure
+      GITEA_SERVER_URL: https://gitea.infra.newedenhomestead.net
+
+    steps:
+      - name: Check out repository
+        env:
+          CHECKOUT_REF: ${{ github.sha }}
+        run: |
+          set -euxo pipefail
+          git --version
+          git init .
+          git remote add origin "$GITEA_SERVER_URL/$CHECKOUT_REPOSITORY.git"
+          git fetch --no-tags --depth=2 origin "$CHECKOUT_REF"
+          git checkout --force FETCH_HEAD
+          git rev-parse HEAD
+
+      - name: Verify deployment environment
+        run: |
+          set -eux
+          git --version
+          bash --version
+          python3 --version
+          python3 -c "import yaml; print('pyyaml available')"
+          luac -v
+          rg --version
+          file "$FACTORIO_BIN"
+          "$FACTORIO_BIN" --version
+
+      - name: Prepare temporary Factorio mods directory
+        run: |
+          mods_dir="${RUNNER_TEMP:-/tmp}/factorio-mods"
+          mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
+          rm -f "$mods_dir/$mod_name"
+          mkdir -p "$mods_dir"
+          ln -s "$PWD/src" "$mods_dir/$mod_name"
+          echo "FACTORIO_MODS_DIR=$mods_dir" >> "$GITHUB_ENV"
+
+      - name: Validate mod
+        env:
+          AFI_REQUIRE_FACTORIO: "1"
+        run: ./scripts/validate.sh
+
+      - name: Detect version bump
+        run: |
+          set -euo pipefail
+          current_version="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["version"])')"
+          previous_version="$(
+            git show HEAD^:src/info.json 2>/dev/null \
+              | python3 -c 'import json, sys; print(json.load(sys.stdin)["version"])' \
+              || true
+          )"
+
+          echo "Current version:  $current_version"
+          echo "Previous version: ${previous_version:-<none>}"
+
+          if [[ -n "$previous_version" && "$current_version" == "$previous_version" ]]; then
+            echo "Version did not change; skipping release."
+            echo "DEPLOY_MOD=0" >> "$GITHUB_ENV"
+          else
+            echo "Version changed; release enabled."
+            echo "DEPLOY_MOD=1" >> "$GITHUB_ENV"
+          fi
+
+          echo "MOD_NAME=$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')" >> "$GITHUB_ENV"
+          echo "MOD_VERSION=$current_version" >> "$GITHUB_ENV"
+
+      - name: Package mod
+        run: |
+          set -euo pipefail
+          if [[ "${DEPLOY_MOD:-0}" != "1" ]]; then
+            exit 0
+          fi
+
+          package_path="$(./scripts/package.sh)"
+          echo "PACKAGE_PATH=$package_path" >> "$GITHUB_ENV"
+          test -f "$package_path"
+          echo "Packaged $package_path"
+
+      - name: Create Gitea release
+        env:
+          GITEA_RELEASE_TOKEN: ${{ secrets.GITEA_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ "${DEPLOY_MOD:-0}" != "1" ]]; then
+            exit 0
+          fi
+
+          if [[ -z "${GITEA_RELEASE_TOKEN:-}" ]]; then
+            echo "GITEA_RELEASE_TOKEN secret is required for release creation." >&2
+            exit 1
+          fi
+
+          ./scripts/create-gitea-release.py \
+            --server-url "$GITEA_SERVER_URL" \
+            --repo "$CHECKOUT_REPOSITORY" \
+            --tag "v$MOD_VERSION" \
+            --target "$(git rev-parse HEAD)" \
+            --title "$MOD_NAME $MOD_VERSION" \
+            --body-file src/changelog.txt \
+            --asset "$PACKAGE_PATH"

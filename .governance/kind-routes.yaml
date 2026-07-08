@@ -2,7 +2,7 @@ id: kind_routes
 status: active
 kind: factorio_modding_agent
 default_load:
-  - lab-governance/branch-descriptor.yaml
+  - .governance/branch-descriptor.yaml
 route_resolution:
   - Load default_load after the base task map default_load.
   - Select every kind route that matches the task shape.
@@ -10,18 +10,18 @@ route_resolution:
   - Do not infer kind policy loading from folder names; route_groups and routes are the explicit kind loading contract.
 route_groups:
   coding.planning:
-    - lab-governance/policies/plan-mode.yaml
+    - .governance/policies/plan-mode.yaml
   coding.substantive:
-    - lab-governance/policies/code-skepticism.yaml
-    - lab-governance/policies/documentation-drift.yaml
+    - .governance/policies/code-skepticism.yaml
+    - .governance/policies/documentation-drift.yaml
   coding.git:
-    - lab-governance/policies/gitflow.yaml
-    - lab-governance/policies/commit-push-discipline.yaml
+    - .governance/policies/gitflow.yaml
+    - .governance/policies/commit-push-discipline.yaml
   coding.review:
-    - lab-governance/policies/code-review.yaml
+    - .governance/policies/code-review.yaml
   factorio.mod_work:
-    - lab-governance/policies/factorio-modding.yaml
-    - lab-governance/policies/factorio-release.yaml
+    - .governance/policies/factorio-modding.yaml
+    - .governance/policies/factorio-release.yaml
 routes:
   discussion_or_planning:
     groups:

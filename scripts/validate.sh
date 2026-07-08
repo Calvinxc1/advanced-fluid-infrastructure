@@ -19,8 +19,8 @@ else:
         yaml.safe_load(path.read_text(encoding="utf-8"))
 PY
 
-for file in $(rg --files -g '*.lua' src); do
+while IFS= read -r file; do
   luac -p "$file"
-done
+done < <(rg --files -g '*.lua' src)
 
 ./scripts/factorio-validate.sh

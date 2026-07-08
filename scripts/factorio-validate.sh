@@ -13,6 +13,21 @@ PY
 )"
 mods_dir="${FACTORIO_MODS_DIR:-$HOME/.factorio/mods}"
 factorio_bin="${FACTORIO_BIN:-}"
+require_factorio="${AFI_REQUIRE_FACTORIO:-0}"
+
+skip_or_fail() {
+  local status="$1"
+  shift
+
+  if [[ "$require_factorio" == "1" ]]; then
+    printf '%s\n' "$@" >&2
+    exit "$status"
+  fi
+
+  printf 'Skipping Factorio validation: %s\n' "$*" >&2
+  printf 'Set AFI_REQUIRE_FACTORIO=1 to make this a hard failure.\n' >&2
+  exit 0
+}
 
 if [[ -z "$factorio_bin" ]]; then
   if command -v factorio >/dev/null 2>&1; then
@@ -20,13 +35,11 @@ if [[ -z "$factorio_bin" ]]; then
   elif [[ -x "$HOME/Games/steam/steamapps/common/Factorio/bin/x64/factorio" ]]; then
     factorio_bin="$HOME/Games/steam/steamapps/common/Factorio/bin/x64/factorio"
   else
-    cat >&2 <<MSG
-Factorio executable not found.
-
-Set FACTORIO_BIN to your Factorio executable, for example:
-  FACTORIO_BIN="/path/to/factorio/bin/x64/factorio" ./scripts/factorio-validate.sh
-MSG
-    exit 127
+    skip_or_fail 127 \
+      "Factorio executable not found." \
+      "" \
+      "Set FACTORIO_BIN to your Factorio executable, for example:" \
+      '  FACTORIO_BIN="/path/to/factorio/bin/x64/factorio" ./scripts/factorio-validate.sh'
   fi
 fi
 
@@ -36,16 +49,15 @@ if [[ ! -x "$factorio_bin" ]]; then
 fi
 
 if [[ ! -d "$mods_dir" ]]; then
-  echo "Factorio mods directory not found: $mods_dir" >&2
-  exit 1
+  skip_or_fail 1 "Factorio mods directory not found: $mods_dir"
 fi
 
 expected_link="$mods_dir/$mod_name"
 if [[ ! -e "$expected_link" ]]; then
-  echo "Expected mod entry does not exist: $expected_link" >&2
-  echo "Create it with:" >&2
-  echo "  ln -s \"$repo_root/src\" \"$expected_link\"" >&2
-  exit 1
+  skip_or_fail 1 \
+    "Expected mod entry does not exist: $expected_link" \
+    "Create it with:" \
+    "  ln -s \"$repo_root/src\" \"$expected_link\""
 fi
 
 resolved="$(readlink -f "$expected_link")"
@@ -85,7 +97,6 @@ set +e
   --config "$config_dir/config.ini" \
   --mod-directory "$mods_dir" \
   --create "$save_path" \
-  --disable-audio \
   >"$log_path" 2>&1
 status=$?
 set -e
