@@ -81,7 +81,7 @@ The Gitea main workflow runs on pushes to `main`.
 
 It always validates the mod. It compares the current `src/info.json` version to the previous `main` version, then packages and publishes the mod only when the version changed.
 
-This means a version bump is the deployment trigger. Changes merged to `main` without a version bump are validated but do not create a package, tag, Gitea release, or Factorio mod portal upload.
+This means a version bump is the deployment trigger. Changes merged to `main` without a version bump are validated but do not create a package, tag, Gitea release, GitHub release, or Factorio mod portal upload.
 
 Expected non-release promotion path:
 
@@ -109,13 +109,47 @@ permissions:
   releases: write
 ```
 
-No separate release token is required unless repository or owner Actions settings clamp the built-in token below `releases: write`.
+No separate local Gitea release token is required unless repository or owner Actions settings clamp the built-in token below `releases: write`.
 
-Release artifacts created in local Gitea may be mirrored or copied to public distribution channels, but public users should not depend on private Gitea URLs.
+Release artifacts created in local Gitea are also published to the public GitHub mirror so public users do not need access to private Gitea URLs.
+
+## GitHub Release Upload
+
+The version-bump release path creates or updates a matching GitHub release in the public mirror repository after the local Gitea release is created.
+
+The workflow requires this repository secret:
+
+```text
+GITHUB_RELEASE_TOKEN
+```
+
+Use a GitHub fine-grained personal access token scoped to the public mirror repository:
+
+```text
+Calvinxc1/advanced-fluid-infrastructure
+```
+
+The token must have repository `Contents` permission set to `Read and write`. GitHub's release API uses repository contents permission for creating releases and uploading release assets.
+
+The workflow target repository is configured as:
+
+```text
+GITHUB_RELEASE_REPOSITORY=Calvinxc1/advanced-fluid-infrastructure
+```
+
+The upload helper waits for the mirrored commit to become visible on GitHub before creating the release, then attaches the same package zip used for the local Gitea release and Factorio mod portal upload.
+
+The upload helper is:
+
+```sh
+./scripts/create-github-release.py --repo "$GITHUB_RELEASE_REPOSITORY" --tag "v$MOD_VERSION" --target "$(git rev-parse HEAD)" --title "$MOD_NAME $MOD_VERSION" --body-file src/changelog.txt --asset "$PACKAGE_PATH"
+```
+
+Do not run this helper manually unless intentionally publishing or repairing a GitHub release for the version in `src/info.json`.
 
 ## Factorio Mod Portal Upload
 
-The same version-bump release path uploads the packaged zip to the Factorio mod portal after the Gitea release asset is created.
+The same version-bump release path uploads the packaged zip to the Factorio mod portal after the Gitea and GitHub release assets are created.
 
 The workflow requires this repository secret:
 

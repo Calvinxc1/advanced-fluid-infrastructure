@@ -3,6 +3,7 @@ Version: 0.1.1
 Date: 2026.07.08
   Changes
     - Included the thumbnail icon in release packages.
+    - Added GitHub release publication for public mirror downloads.
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0

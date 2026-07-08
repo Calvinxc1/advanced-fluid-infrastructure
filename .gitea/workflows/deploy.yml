@@ -16,6 +16,7 @@ jobs:
       FACTORIO_BIN: /opt/factorio/bin/x64/factorio
       CHECKOUT_REPOSITORY: ${{ github.repository }}
       GITEA_SERVER_URL: ${{ github.server_url }}
+      GITHUB_RELEASE_REPOSITORY: Calvinxc1/advanced-fluid-infrastructure
 
     steps:
       - name: Check out repository
@@ -109,6 +110,28 @@ jobs:
           ./scripts/create-gitea-release.py \
             --server-url "$GITEA_SERVER_URL" \
             --repo "$CHECKOUT_REPOSITORY" \
+            --tag "v$MOD_VERSION" \
+            --target "$(git rev-parse HEAD)" \
+            --title "$MOD_NAME $MOD_VERSION" \
+            --body-file src/changelog.txt \
+            --asset "$PACKAGE_PATH"
+
+      - name: Create GitHub release
+        env:
+          GITHUB_RELEASE_TOKEN: ${{ secrets.GITHUB_RELEASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ "${DEPLOY_MOD:-0}" != "1" ]]; then
+            exit 0
+          fi
+
+          if [[ -z "${GITHUB_RELEASE_TOKEN:-}" ]]; then
+            echo "GITHUB_RELEASE_TOKEN secret is required for GitHub release creation." >&2
+            exit 1
+          fi
+
+          ./scripts/create-github-release.py \
+            --repo "$GITHUB_RELEASE_REPOSITORY" \
             --tag "v$MOD_VERSION" \
             --target "$(git rev-parse HEAD)" \
             --title "$MOD_NAME $MOD_VERSION" \

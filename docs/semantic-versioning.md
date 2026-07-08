@@ -4,7 +4,7 @@ Advanced Fluid Infrastructure uses Semantic Versioning in `MAJOR.MINOR.PATCH` fo
 
 The canonical version is `src/info.json` field `version`. Release notes for that exact version must be the first entry in `src/changelog.txt`.
 
-The current release automation creates release artifacts and uploads to the Factorio mod portal only when a merge to `main` changes `src/info.json` version compared to the previous `main` commit. A version bump is therefore the deployment trigger.
+The current release automation creates release artifacts, publishes the GitHub release, and uploads to the Factorio mod portal only when a merge to `main` changes `src/info.json` version compared to the previous `main` commit. A version bump is therefore the deployment trigger.
 
 ## Version Meaning
 
@@ -62,14 +62,14 @@ Before `1.0.0`, breaking changes should normally advance the minor version, not 
 
 7. Confirm the package name is `{mod-name}_{version}.zip`.
 8. Open and merge the release pull request from the release branch to `main`.
-9. The Gitea main workflow validates the mod, detects the version bump, packages the mod, creates or updates the `v{version}` Gitea release, and uploads the same zip to the Factorio mod portal.
+9. The Gitea main workflow validates the mod, detects the version bump, packages the mod, creates or updates the `v{version}` Gitea release, creates or updates the matching GitHub release, and uploads the same zip to the Factorio mod portal.
 10. Delete the release branch after merge and bring `main` ancestry back into `dev`.
 
 ## Non-Release Changes
 
 Changes that should not produce a release must not change `src/info.json` version. They may still update documentation, CI, governance, or development files.
 
-When a non-release change merges to `main`, the main workflow validates the mod but skips packaging, tagging, Gitea release creation, and mod portal upload because the version did not change. Non-release promotions to `main` still use a short-lived purpose-named `release/*` branch, such as `release/public-readiness`.
+When a non-release change merges to `main`, the main workflow validates the mod but skips packaging, tagging, Gitea release creation, GitHub release creation, and mod portal upload because the version did not change. Non-release promotions to `main` still use a short-lived purpose-named `release/*` branch, such as `release/public-readiness`.
 
 ## Version Consistency Rules
 
