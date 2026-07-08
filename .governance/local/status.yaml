@@ -3,12 +3,17 @@ schema_version: 1
 canonical_agent_name: Advanced Fluid Infrastructure Factorio Modding Agent
 agent_kind: factorio_modding_agent
 active_governance_branch: factorio-modding-agent
-current_active_canon_version: factorio-modding-agent/1.0.0
+current_active_canon_version: factorio-modding-agent/1.1.0
 current_generalized_canon_version: coding-agent/1.4.0
 source_repository_or_path: private ai-governance source repository
-governance_source_commit: 454d2d698c4e9b8d2d6804d076a5c456a5a90e77
+governance_source_commit: 4c806a6cad8c776cd59021b5abb11afc5d0f5f33
 runtime_surface: codex_cli
 code_authority: factorio_mod_workspace_changes_with_explicit_user_authorization
-last_verified_at: 2026-07-07T16:53:11-07:00
+last_verified_at: 2026-07-08T07:24:37-07:00
 agent_declared_status: current
-notes: Updated local governance from factorio-modding-agent branch tip. Factorio branch descriptor parent is coding-agent/1.4.0; that parent consumes trunk/3.15.0. Legacy workspace-local governance evidence was removed at Jason's request.
+notes: Updated local governance from factorio-modding-agent branch tip. Factorio branch descriptor parent is coding-agent/1.4.0. Legacy workspace-local governance evidence was previously removed at Jason's request; no additional legacy self-stamp or registry evidence was found in this workspace during this update.
+local_governance:
+  load:
+    - .governance/local/status.yaml
+    - .governance/local/factorio-local-overlay.yaml
+  notes: []
