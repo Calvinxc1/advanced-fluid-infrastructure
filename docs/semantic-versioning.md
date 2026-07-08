@@ -48,22 +48,23 @@ Before `1.0.0`, breaking changes should normally advance the minor version, not 
 
 ## Release Procedure
 
-1. Decide the version bump before creating the release branch.
-2. Update `src/info.json` to the new `MAJOR.MINOR.PATCH` version.
-3. Add a new top entry to `src/changelog.txt` for the same version using Factorio's changelog format.
-4. Keep the changelog entry focused on player-visible changes, compatibility changes, packaging/release changes, and migration risks.
-5. Create a short-lived versioned branch from `dev`, such as `release/0.1.1`; do not open recurring `dev -> main` pull requests.
-6. Run:
+1. Complete ordinary implementation on `feature/*` branches merged back to `dev`.
+2. Decide the version bump before creating the release branch.
+3. Update `src/info.json` to the new `MAJOR.MINOR.PATCH` version.
+4. Add a new top entry to `src/changelog.txt` for the same version using Factorio's changelog format.
+5. Keep the changelog entry focused on player-visible changes, compatibility changes, packaging/release changes, and migration risks.
+6. Create a short-lived versioned branch from `dev`, such as `release/0.1.1`; do not open recurring `dev -> main` pull requests.
+7. Run:
 
    ```sh
    ./scripts/validate.sh
    ./scripts/package.sh
    ```
 
-7. Confirm the package name is `{mod-name}_{version}.zip`.
-8. Open and merge the release pull request from the release branch to `main`.
-9. The Gitea main workflow validates the mod, detects the version bump, packages the mod, creates or updates the `v{version}` Gitea release, creates or updates the matching GitHub release, and uploads the same zip to the Factorio mod portal.
-10. Delete the release branch after merge and bring `main` ancestry back into `dev`.
+8. Confirm the package name is `{mod-name}_{version}.zip`.
+9. Open and merge the release pull request from the release branch to `main`.
+10. The Gitea main workflow validates the mod, detects the version bump, packages the mod, creates or updates the `v{version}` Gitea release, creates or updates the matching GitHub release, and uploads the same zip to the Factorio mod portal.
+11. Delete the release branch after merge and bring `main` ancestry back into `dev`.
 
 ## Non-Release Changes
 
