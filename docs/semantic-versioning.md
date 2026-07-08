@@ -4,7 +4,7 @@ Advanced Fluid Infrastructure uses Semantic Versioning in `MAJOR.MINOR.PATCH` fo
 
 The canonical version is `src/info.json` field `version`. Release notes for that exact version must be the first entry in `src/changelog.txt`.
 
-The current release automation creates release artifacts, publishes the GitHub release, and uploads to the Factorio mod portal only when a merge to `main` changes `src/info.json` version compared to the previous `main` commit. A version bump is therefore the deployment trigger.
+The current release automation creates release artifacts, publishes the GitHub release, and uploads to the Factorio mod portal when a merge to `main` changes `src/info.json` version compared to the previous `main` commit. A version bump is therefore the normal deployment trigger. The main workflow may also retry missing public publication for the current version when a local Gitea release already exists but GitHub Releases or the Factorio mod portal does not list that version.
 
 ## Version Meaning
 
@@ -69,7 +69,7 @@ Before `1.0.0`, breaking changes should normally advance the minor version, not 
 
 Changes that should not produce a release must not change `src/info.json` version. They may still update documentation, CI, governance, or development files.
 
-When a non-release change merges to `main`, the main workflow validates the mod but skips packaging, tagging, Gitea release creation, GitHub release creation, and mod portal upload because the version did not change. Non-release promotions to `main` still use a short-lived purpose-named `release/*` branch, such as `release/public-readiness`.
+When a non-release change merges to `main`, the main workflow validates the mod but skips packaging, tagging, Gitea release creation, GitHub release creation, and mod portal upload because the version did not change. The exception is release recovery: if the current version already has a local Gitea release but is missing from GitHub Releases or the Factorio mod portal, the workflow may package and retry only the missing public destinations. Non-release promotions to `main` still use a short-lived purpose-named `release/*` branch, such as `release/public-readiness`.
 
 ## Version Consistency Rules
 

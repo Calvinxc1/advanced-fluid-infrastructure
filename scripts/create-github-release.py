@@ -221,9 +221,9 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    token = os.environ.get("GITHUB_RELEASE_TOKEN")
+    token = os.environ.get("GH_RELEASE_TOKEN")
     if not token:
-        fail("GITHUB_RELEASE_TOKEN is required.")
+        fail("GH_RELEASE_TOKEN is required.")
     if not args.asset.is_file():
         fail(f"Release asset not found: {args.asset}")
     if args.body_file and not args.body_file.is_file():

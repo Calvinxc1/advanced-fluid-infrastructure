@@ -81,7 +81,7 @@ The Gitea main workflow runs on pushes to `main`.
 
 It always validates the mod. It compares the current `src/info.json` version to the previous `main` version, then packages and publishes the mod only when the version changed.
 
-This means a version bump is the deployment trigger. Changes merged to `main` without a version bump are validated but do not create a package, tag, Gitea release, GitHub release, or Factorio mod portal upload.
+This means a version bump is the normal deployment trigger. Changes merged to `main` without a version bump are validated but do not create a package, tag, Gitea release, GitHub release, or Factorio mod portal upload unless the current version already has a local Gitea release and one of the public release destinations is missing that version.
 
 Expected non-release promotion path:
 
@@ -120,7 +120,7 @@ The version-bump release path creates or updates a matching GitHub release in th
 The workflow requires this repository secret:
 
 ```text
-GITHUB_RELEASE_TOKEN
+GH_RELEASE_TOKEN
 ```
 
 Use a GitHub fine-grained personal access token scoped to the public mirror repository:
@@ -130,6 +130,8 @@ Calvinxc1/advanced-fluid-infrastructure
 ```
 
 The token must have repository `Contents` permission set to `Read and write`. GitHub's release API uses repository contents permission for creating releases and uploading release assets.
+
+Do not name the secret with a `GITHUB_` prefix. Gitea and GitHub Actions reserve that prefix for built-in runtime values, so the workflow uses `GH_RELEASE_TOKEN`.
 
 The workflow target repository is configured as:
 
@@ -142,7 +144,7 @@ The upload helper waits for the mirrored commit to become visible on GitHub befo
 The upload helper is:
 
 ```sh
-./scripts/create-github-release.py --repo "$GITHUB_RELEASE_REPOSITORY" --tag "v$MOD_VERSION" --target "$(git rev-parse HEAD)" --title "$MOD_NAME $MOD_VERSION" --body-file src/changelog.txt --asset "$PACKAGE_PATH"
+./scripts/create-github-release.py --repo "$GITHUB_RELEASE_REPOSITORY" --tag "v$MOD_VERSION" --target "$RELEASE_TARGET" --title "$MOD_NAME $MOD_VERSION" --body-file src/changelog.txt --asset "$PACKAGE_PATH"
 ```
 
 Do not run this helper manually unless intentionally publishing or repairing a GitHub release for the version in `src/info.json`.
