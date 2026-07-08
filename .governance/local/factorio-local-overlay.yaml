@@ -17,7 +17,7 @@ scope_boundaries:
   - Owns fluid infrastructure prototypes, progression, technologies, recipes, items, entities, and compatibility cleanup.
   - Keep this repository focused on pipes, pipe-to-ground, pumps, offshore pumps, pipeline extent, and fluid infrastructure technologies.
   - Keep unrelated gameplay systems out of this repository unless Jason explicitly approves a scope expansion.
-release_target: Factorio 2.0 and Space Age mod version 0.1.0.
+release_target: Factorio 2.0 and Space Age mod version 0.1.1.
 changelog_format: Factorio mod portal changelog in src/changelog.txt.
 version_policy_path: docs/semantic-versioning.md
 release_process_path: docs/release-process.md
