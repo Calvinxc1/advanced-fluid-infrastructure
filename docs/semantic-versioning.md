@@ -52,7 +52,7 @@ Before `1.0.0`, breaking changes should normally advance the minor version, not 
 2. Update `src/info.json` to the new `MAJOR.MINOR.PATCH` version.
 3. Add a new top entry to `src/changelog.txt` for the same version using Factorio's changelog format.
 4. Keep the changelog entry focused on player-visible changes, compatibility changes, packaging/release changes, and migration risks.
-5. Create a short-lived `release/<version-or-purpose>` branch from `dev`; do not open recurring `dev -> main` pull requests.
+5. Create a short-lived versioned branch from `dev`, such as `release/0.1.1`; do not open recurring `dev -> main` pull requests.
 6. Run:
 
    ```sh
@@ -62,14 +62,14 @@ Before `1.0.0`, breaking changes should normally advance the minor version, not 
 
 7. Confirm the package name is `{mod-name}_{version}.zip`.
 8. Open and merge the release pull request from the release branch to `main`.
-9. The Gitea deploy workflow validates the mod, detects the version bump, packages the mod, and creates or updates the `v{version}` Gitea release.
+9. The Gitea main workflow validates the mod, detects the version bump, packages the mod, and creates or updates the `v{version}` Gitea release.
 10. Delete the release branch after merge and bring `main` ancestry back into `dev`.
 
 ## Non-Release Changes
 
 Changes that should not produce a release must not change `src/info.json` version. They may still update documentation, CI, governance, or development files.
 
-When a non-release change merges to `main`, the deploy workflow validates the mod but skips release creation because the version did not change. Non-release promotions to `main` still use a short-lived `release/*` branch.
+When a non-release change merges to `main`, the main workflow validates the mod but skips packaging, tagging, and release creation because the version did not change. Non-release promotions to `main` still use a short-lived purpose-named `release/*` branch, such as `release/public-readiness`.
 
 ## Version Consistency Rules
 

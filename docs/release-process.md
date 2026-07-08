@@ -32,8 +32,12 @@ Example release branch names:
 ```text
 release/0.1.1
 release/0.2.0
-release/public-readiness-0.1.0
+release/public-readiness
+release/docs-refresh
+release/ci-maintenance
 ```
+
+Use version-numbered release branches only when `src/info.json` is changing for a new mod release. Use purpose-named release branches for documentation, governance, CI, or other non-release promotions.
 
 ## Local Checks
 
@@ -71,13 +75,25 @@ When `dev` is ready to promote:
 6. Delete the release branch after merge.
 7. Merge or fast-forward `main` back into `dev` so `dev` contains the release merge ancestry.
 
-## Automated Gitea Release
+## Main Validation and Release
 
-The Gitea deploy workflow runs on pushes to `main`.
+The Gitea main workflow runs on pushes to `main`.
 
-It validates the mod, compares the current `src/info.json` version to the previous `main` version, packages the mod, and creates a Gitea release only when the version changed.
+It always validates the mod. It compares the current `src/info.json` version to the previous `main` version, then packages the mod and creates a Gitea release only when the version changed.
 
-This means a version bump is the deployment trigger. Changes merged to `main` without a version bump are validated but do not create a release.
+This means a version bump is the deployment trigger. Changes merged to `main` without a version bump are validated but do not create a package, tag, or release.
+
+Expected non-release promotion path:
+
+```text
+dev -> release/public-readiness -> main
+```
+
+Expected versioned release path:
+
+```text
+dev -> release/0.1.1 -> main
+```
 
 The workflow uses the built-in Gitea Actions token:
 
