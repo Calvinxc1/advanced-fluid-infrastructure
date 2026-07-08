@@ -114,3 +114,21 @@ jobs:
             --title "$MOD_NAME $MOD_VERSION" \
             --body-file src/changelog.txt \
             --asset "$PACKAGE_PATH"
+
+      - name: Upload to Factorio Mod Portal
+        env:
+          FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ "${DEPLOY_MOD:-0}" != "1" ]]; then
+            exit 0
+          fi
+
+          if [[ -z "${FACTORIO_MOD_PORTAL_TOKEN:-}" ]]; then
+            echo "FACTORIO_MOD_PORTAL_TOKEN secret is required for Mod Portal upload." >&2
+            exit 1
+          fi
+
+          ./scripts/upload-factorio-mod-portal.py \
+            --mod-name "$MOD_NAME" \
+            --asset "$PACKAGE_PATH"

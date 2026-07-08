@@ -79,9 +79,9 @@ When `dev` is ready to promote:
 
 The Gitea main workflow runs on pushes to `main`.
 
-It always validates the mod. It compares the current `src/info.json` version to the previous `main` version, then packages the mod and creates a Gitea release only when the version changed.
+It always validates the mod. It compares the current `src/info.json` version to the previous `main` version, then packages and publishes the mod only when the version changed.
 
-This means a version bump is the deployment trigger. Changes merged to `main` without a version bump are validated but do not create a package, tag, or release.
+This means a version bump is the deployment trigger. Changes merged to `main` without a version bump are validated but do not create a package, tag, Gitea release, or Factorio mod portal upload.
 
 Expected non-release promotion path:
 
@@ -113,6 +113,24 @@ No separate release token is required unless repository or owner Actions setting
 
 Release artifacts created in local Gitea may be mirrored or copied to public distribution channels, but public users should not depend on private Gitea URLs.
 
-## Future Mod Portal Deployment
+## Factorio Mod Portal Upload
 
-The Factorio mod portal upload can be added after Gitea release packaging is stable. The official upload API requires a Factorio API key with `ModPortal: Upload Mods` usage.
+The same version-bump release path uploads the packaged zip to the Factorio mod portal after the Gitea release asset is created.
+
+The workflow requires this repository secret:
+
+```text
+FACTORIO_MOD_PORTAL_TOKEN
+```
+
+The secret value must be a Factorio API key created from the Factorio account profile with `ModPortal: Upload Mods` usage. The upload helper follows the official Factorio mod upload API documented at <https://wiki.factorio.com/Mod_upload_API>.
+
+Mod portal upload is skipped for non-release promotions because the upload step exits when `DEPLOY_MOD` is not `1`.
+
+The upload helper is:
+
+```sh
+./scripts/upload-factorio-mod-portal.py --mod-name "$MOD_NAME" --asset "$PACKAGE_PATH"
+```
+
+Do not run this helper manually unless intentionally publishing a new mod portal release for the version in `src/info.json`.
