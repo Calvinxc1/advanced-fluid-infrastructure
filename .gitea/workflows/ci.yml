@@ -17,8 +17,8 @@ jobs:
       - name: Check out repository
         env:
           CHECKOUT_REF: ${{ github.event.pull_request.head.sha || github.sha }}
-          CHECKOUT_REPOSITORY: factorio-modding/advanced-fluid-infrastructure
-          GITEA_SERVER_URL: https://gitea.infra.newedenhomestead.net
+          CHECKOUT_REPOSITORY: ${{ github.repository }}
+          GITEA_SERVER_URL: ${{ github.server_url }}
         run: |
           set -euxo pipefail
           git --version

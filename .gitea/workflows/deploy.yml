@@ -1,4 +1,4 @@
-name: Deploy
+name: Main Validation and Release
 
 on:
   push:
@@ -10,12 +10,12 @@ permissions:
 
 jobs:
   deploy:
-    name: Release Factorio mod
+    name: Validate main and release on version bump
     runs-on: factorio-headless
     env:
       FACTORIO_BIN: /opt/factorio/bin/x64/factorio
-      CHECKOUT_REPOSITORY: factorio-modding/advanced-fluid-infrastructure
-      GITEA_SERVER_URL: https://gitea.infra.newedenhomestead.net
+      CHECKOUT_REPOSITORY: ${{ github.repository }}
+      GITEA_SERVER_URL: ${{ github.server_url }}
 
     steps:
       - name: Check out repository
@@ -30,7 +30,7 @@ jobs:
           git checkout --force FETCH_HEAD
           git rev-parse HEAD
 
-      - name: Verify deployment environment
+      - name: Verify validation and release environment
         run: |
           set -eux
           git --version
@@ -56,7 +56,7 @@ jobs:
           AFI_REQUIRE_FACTORIO: "1"
         run: ./scripts/validate.sh
 
-      - name: Detect version bump
+      - name: Detect version bump release gate
         run: |
           set -euo pipefail
           current_version="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["version"])')"
@@ -70,7 +70,7 @@ jobs:
           echo "Previous version: ${previous_version:-<none>}"
 
           if [[ -n "$previous_version" && "$current_version" == "$previous_version" ]]; then
-            echo "Version did not change; skipping release."
+            echo "Version did not change; validating main without creating a release."
             echo "DEPLOY_MOD=0" >> "$GITHUB_ENV"
           else
             echo "Version changed; release enabled."

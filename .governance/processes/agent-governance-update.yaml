@@ -4,9 +4,9 @@ scope: all_agents
 summary: Canonical prompt-driven process for initializing or updating an agent's local governance copy and local status report.
 canonical_prompt:
   path: lab-governance/templates/governance-bootstrap-prompt.md
-  source_repository: gitea.infra.newedenhomestead.net:ai-projects/ai-governance.git
+  source_repository: private ai-governance source repository
 rules:
-  - Agents must use `lab-governance/templates/governance-bootstrap-prompt.md` from the ai-governance Gitea repository when the canonical bootstrap/update prompt is available.
+  - Agents must use `lab-governance/templates/governance-bootstrap-prompt.md` from the private ai-governance source repository when the canonical bootstrap/update prompt is available.
   - Agents must not improvise governance initialization or update mechanics when the canonical bootstrap/update prompt is available.
   - The prompt path is the source of truth for initialization and update instructions, including branch selection, local status updates, and reconciliation reporting.
   - The bootstrap/update process must preserve `.governance/local/status.yaml` as the portable local governance status report.
@@ -20,7 +20,7 @@ prompt_contract:
   - Require or confirm canonical agent name.
   - Require or confirm agent kind.
   - Resolve the active governance branch for that agent.
-  - Fetch or inspect the ai-governance Gitea repository.
+  - Fetch or inspect the private ai-governance source repository.
   - Copy or merge the correct governance source into the local agent workspace.
   - Preserve local-only governance files unless the prompt explicitly instructs reconciliation.
   - Create or update `.governance/local/status.yaml`.

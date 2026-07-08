@@ -2,7 +2,7 @@
 Version: 0.1.0
 Date: 2026.07.08
   Changes
-    - Prepared Advanced Fluid Infrastructure for its first automated mod portal release.
-    - Added upgraded fluid infrastructure progression split out from Advanced Electric Remade.
-    - Added pipe, pipe-to-ground, pump, offshore pump, and pipeline extent technology progression.
-    - Added Space Age fluid infrastructure branches and optional Rampant Arsenal compatibility.
+    - Prepared Advanced Fluid Infrastructure for its first public release package.
+    - Added staged pipe, pipe-to-ground, pump, offshore pump, and pipeline extent progression.
+    - Added Space Age branches for regular surfaces, space platforms, Vulcanus, and foundation infrastructure.
+    - Added production-machine fluidbox extent patches and optional Rampant Arsenal compatibility cleanup.
