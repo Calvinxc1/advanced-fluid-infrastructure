@@ -4,6 +4,12 @@ Advanced Fluid Infrastructure is a Factorio 2.0 + Space Age mod that makes pipes
 
 Vanilla pipes are powerful very early. This mod adds a staged fluid infrastructure path so early builds stay compact, larger fluid blocks require upgrades, and long-range/high-throughput networks become a deliberate investment instead of the default.
 
+## Requirements
+
+- Factorio 2.0.
+- Space Age.
+- Optional compatibility cleanup for Rampant Arsenal Fork when it is installed.
+
 ## Features
 
 - Upgraded pipes and pipe-to-ground tiers with increasing pipeline extent and underground reach.
@@ -23,6 +29,16 @@ The mod starts with constrained iron pipe networks, then expands through steel, 
 - High-pressure foundation pumps add postgame compression without adding a separate pipe tier.
 
 Current tier behavior is documented in [docs/fluid-infrastructure-benchmark.md](docs/fluid-infrastructure-benchmark.md).
+
+## Installation
+
+Install the released mod through the Factorio mod portal when available. Release packages are also attached to repository releases as `{mod-name}_{version}.zip`.
+
+For local development, keep the repository layout intact and run validation from the repository root:
+
+```sh
+./scripts/validate.sh
+```
 
 Semantic versioning policy is documented in [docs/semantic-versioning.md](docs/semantic-versioning.md).
 

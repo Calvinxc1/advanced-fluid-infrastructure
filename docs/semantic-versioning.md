@@ -1,6 +1,6 @@
 # Semantic Versioning Policy
 
-Advanced Fluid Infrastructure uses Semantic Versioning in `MAJOR.MINOR.PATCH` form.
+Advanced Fluid Infrastructure uses Semantic Versioning in `MAJOR.MINOR.PATCH` form, with the additional pre-`1.0.0` rules below for gameplay and prototype changes.
 
 The canonical version is `src/info.json` field `version`. Release notes for that exact version must be the first entry in `src/changelog.txt`.
 
@@ -10,7 +10,7 @@ The current release automation creates a Gitea release only when a merge to `mai
 
 ### Patch
 
-Use a patch bump for compatible fixes that do not change expected progression, saved-game behavior, or public prototype contracts.
+Use a patch bump for compatible fixes that do not change expected progression, saved-game behavior, dependencies, or public prototype contracts.
 
 Examples:
 
@@ -21,7 +21,7 @@ Examples:
 
 ### Minor
 
-Use a minor bump for compatible gameplay additions or balance changes that keep existing saves and public prototype names usable.
+Use a minor bump for compatible gameplay additions or balance changes that keep existing saves, dependencies, and public prototype names usable.
 
 Examples:
 
@@ -48,26 +48,28 @@ Before `1.0.0`, breaking changes should normally advance the minor version, not 
 
 ## Release Procedure
 
-1. Decide the version bump before opening the release pull request.
+1. Decide the version bump before creating the release branch.
 2. Update `src/info.json` to the new `MAJOR.MINOR.PATCH` version.
 3. Add a new top entry to `src/changelog.txt` for the same version using Factorio's changelog format.
 4. Keep the changelog entry focused on player-visible changes, compatibility changes, packaging/release changes, and migration risks.
-5. Run:
+5. Create a short-lived `release/<version-or-purpose>` branch from `dev`; do not open recurring `dev -> main` pull requests.
+6. Run:
 
    ```sh
    ./scripts/validate.sh
    ./scripts/package.sh
    ```
 
-6. Confirm the package name is `{mod-name}_{version}.zip`.
-7. Merge the release pull request to `main`.
-8. The Gitea deploy workflow validates the mod, detects the version bump, packages the mod, and creates or updates the `v{version}` Gitea release.
+7. Confirm the package name is `{mod-name}_{version}.zip`.
+8. Open and merge the release pull request from the release branch to `main`.
+9. The Gitea deploy workflow validates the mod, detects the version bump, packages the mod, and creates or updates the `v{version}` Gitea release.
+10. Delete the release branch after merge and bring `main` ancestry back into `dev`.
 
 ## Non-Release Changes
 
 Changes that should not produce a release must not change `src/info.json` version. They may still update documentation, CI, governance, or development files.
 
-When a non-release change merges to `main`, the deploy workflow validates the mod but skips release creation because the version did not change.
+When a non-release change merges to `main`, the deploy workflow validates the mod but skips release creation because the version did not change. Non-release promotions to `main` still use a short-lived `release/*` branch.
 
 ## Version Consistency Rules
 

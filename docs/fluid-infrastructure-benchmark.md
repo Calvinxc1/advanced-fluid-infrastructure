@@ -21,7 +21,7 @@ Assumptions:
 |---|---|---|---:|---:|---:|---:|---|
 | Iron | starter | regular surfaces | `24` | `4` | `1/tick`, `60/s` | `1x` | compact early steam and short local fluid runs |
 | Steel | surface | regular surfaces | `64` | `8` | `4/tick`, `240/s` | `4x` | normal factory-block plumbing and early upgraded power |
-| Rubber-lined | surface | regular surfaces | `96` | `12` | `6/tick`, `360/s` | `6x` | late novice surface blocks with lubricant/plastic complexity |
+| Rubber-lined | surface | regular surfaces | `96` | `12` | `6/tick`, `360/s` | `6x` | later surface blocks with lubricant/plastic complexity |
 | Heat-resistant | Vulcanus | Vulcanus only | `24` | `4` | `1/tick`, `60/s` | `1x` | initial lava/sulfuric-acid survival infrastructure |
 | Tungsten | Vulcanus | Vulcanus only | `64` | `8` | `4/tick`, `240/s` | `4x` | steel-equivalent Vulcanus fluid infrastructure |
 | Low-pressure steel | space | space platforms only | `64` | `8` | `4/tick`, `240/s` | `4x` | steel-equivalent platform fluid routing |
