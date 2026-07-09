@@ -2,7 +2,7 @@
 
 Contributions are welcome through pull requests against the `dev` branch.
 
-Create ordinary implementation work on short-lived `feature/*` branches from `dev`, then open pull requests back to `dev`. Do not commit ordinary feature work directly on `dev`.
+Create ordinary implementation work on short-lived `feature/*` branches from `dev`, then open pull requests back to `dev`. Do not base feature branches on other feature branches, do not target feature pull requests at other feature branches, and do not commit ordinary feature work directly on `dev`.
 
 Before opening a pull request, run:
 

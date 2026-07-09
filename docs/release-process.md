@@ -85,9 +85,16 @@ For ordinary implementation work:
 
 3. Commit the scoped change on `feature/<topic>`.
 4. Run the appropriate validation, normally `./scripts/validate.sh`.
-5. Open a pull request from `feature/<topic>` to `dev`.
-6. Merge after review and validation.
-7. Delete the feature branch after merge.
+5. Before opening the pull request, confirm the feature branch is based on `origin/dev`:
+
+   ```sh
+   git fetch origin dev
+   test "$(git merge-base HEAD origin/dev)" = "$(git rev-parse origin/dev)"
+   ```
+
+6. Open a pull request from `feature/<topic>` to `dev`. Do not target another `feature/*` branch.
+7. Merge after review and validation.
+8. Delete the feature branch after merge.
 
 ## Release Branch Procedure
 

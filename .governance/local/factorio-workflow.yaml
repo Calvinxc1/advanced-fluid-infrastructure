@@ -30,8 +30,18 @@ release_promotion_path: dev -> release/<version-or-purpose> -> main -> dev
 feature_branching_enabled: true
 release_branching_enabled: true
 main_branch_protection:
-  enabled: null
-  notes: Branch protection could not be verified through the available connector during the 2026-07-08 full GitFlow transition.
+  enabled: true
+  notes: Jason confirmed main branch protection is enabled on 2026-07-08.
+feature_branch_base_requirements:
+  required_base: dev
+  pre_pr_verification:
+    - Fetch origin before opening a feature pull request.
+    - Verify the feature branch merge-base is origin/dev, not another feature branch.
+    - Verify the pull request base branch is dev.
+  required_commands:
+    - git fetch origin dev
+    - test "$(git merge-base HEAD origin/dev)" = "$(git rev-parse origin/dev)"
+    - confirm the pull request target/base branch is dev before creating or updating it.
 hotfix_flow:
   enabled: true
   branch_pattern: hotfix/<version-or-topic>
@@ -59,9 +69,10 @@ validation_available:
   format: false
   factorio_load: true
 declared_deviations:
-  - Branch protection status is not locally attested yet; verify in Gitea before claiming protected-main enforcement.
+  - Post-release main-to-dev sync is manual until automation is implemented and validated.
 workspace_specific_rules:
   - Start ordinary implementation branches from dev as feature/<topic>.
+  - Before opening or updating a feature pull request, verify the branch descends directly from origin/dev and the pull request base is dev.
   - Merge feature branches back to dev after review and validation.
   - Cut release branches from dev as release/<version-or-purpose>.
   - Merge release branches to main, then sync main back to dev before starting new ordinary feature work.
@@ -72,6 +83,5 @@ migration_notes:
   - Previous local workflow permitted day-to-day maintainer work directly on dev.
 last_stage_reviewed_at: 2026-07-08T07:40:00-07:00
 known_gaps:
-  - Main branch protection status still needs Gitea-side verification.
   - Post-release main-to-dev sync is manual until automation is implemented and validated.
 notes: This local workflow file is the repo-specific source of truth for GitFlow stage and branch roles.
