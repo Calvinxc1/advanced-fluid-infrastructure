@@ -17,7 +17,7 @@ scope_boundaries:
   - Owns fluid infrastructure prototypes, progression, technologies, recipes, items, entities, and compatibility cleanup.
   - Keep this repository focused on pipes, pipe-to-ground, pumps, offshore pumps, pipeline extent, and fluid infrastructure technologies.
   - Keep unrelated gameplay systems out of this repository unless Jason explicitly approves a scope expansion.
-release_target: Factorio 2.0 and Space Age mod version 0.1.1.
+release_target: Factorio 2.0 and Space Age mod releases.
 changelog_format: Factorio mod portal changelog in src/changelog.txt.
 version_policy_path: docs/semantic-versioning.md
 release_process_path: docs/release-process.md
@@ -34,8 +34,9 @@ workspace_specific_rules:
   - Use src/info.json as the release version source of truth; main deployment creates Gitea and GitHub releases and uploads the packaged mod zip to the Factorio mod portal when that version changes on main, with retry behavior for missing public release destinations after a partially failed release.
   - Follow docs/semantic-versioning.md before changing src/info.json or preparing release work.
   - Use dev as the long-lived integration branch and main as the release branch.
-  - Day-to-day implementation may happen directly on dev until Jason explicitly enables feature branching.
+  - Use feature/* branches from dev for day-to-day implementation; merge feature branches back to dev.
   - Promote dev to main through short-lived release/* branches; do not open recurring dev-to-main pull requests.
+  - Use hotfix/* branches from main for urgent release-line fixes, then sync hotfix results back to dev and any active release branch that needs the fix.
   - Keep the top src/changelog.txt Version entry synchronized with src/info.json; scripts/validate.sh enforces this.
   - Keep prototype and locale names under the afi_ prefix unless Jason explicitly approves a namespace migration.
 migration_notes:

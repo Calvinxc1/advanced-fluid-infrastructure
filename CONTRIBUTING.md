@@ -2,7 +2,7 @@
 
 Contributions are welcome through pull requests against the `dev` branch.
 
-Day-to-day maintainer implementation may happen directly on `dev` for now. Feature branches are not required until the repository maintainer enables feature branching for this repository.
+Create ordinary implementation work on short-lived `feature/*` branches from `dev`, then open pull requests back to `dev`. Do not base feature branches on other feature branches, do not target feature pull requests at other feature branches, and do not commit ordinary feature work directly on `dev`.
 
 Before opening a pull request, run:
 
@@ -37,3 +37,5 @@ Do not publish, tag, upload to the Factorio mod portal, or modify release automa
 Version changes belong in `src/info.json` and should be paired with `src/changelog.txt` updates.
 
 Promotions to `main` must use a short-lived `release/*` branch created from `dev`. Do not open recurring pull requests directly from `dev` to `main`.
+
+Urgent release-line fixes use short-lived `hotfix/*` branches from `main`. After a hotfix reaches `main`, sync the fix back to `dev` and evaluate any active release branch for the same fix.
