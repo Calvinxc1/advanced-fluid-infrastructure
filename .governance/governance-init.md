@@ -10,9 +10,9 @@ This document is a setup guide, not a replacement for policy. The operative cont
 
    Start with `AGENTS.md` at the workspace root. If no workspace-local `AGENTS.md` exists, ask Jason or the orchestrating agent where governance is mounted before doing substantive work.
 
-2. Load the always-load policy.
+2. Load the always-load policy and enforcement model.
 
-   Follow the entrypoint exactly. In this governance system, the normal always-load file is `.governance/policies/universal.yaml` for an active workspace copy, or `lab-governance/policies/universal.yaml` when initializing from the generalized lab governance source.
+   Follow the entrypoint exactly. In this governance system, the normal always-load files are `.governance/policies/universal.yaml` and `.governance/policies/enforcement-model.yaml` for an active workspace copy, or the corresponding `lab-governance/policies/` files when initializing from the generalized lab governance source.
 
 3. Load task-specific policy through the task map.
 
@@ -28,7 +28,7 @@ This document is a setup guide, not a replacement for policy. The operative cont
 
 5. Check branch or kind routing.
 
-   If the active governance branch has a `.governance/kind-routes.yaml` file, load it after the task map. Trunk-general governance does not require a kind-routes file.
+   If the active governance branch has a `.governance/kind-routes.yaml` file, load it after the task map. Channel-trunk-general governance does not require a kind-routes file.
 
 6. Prompt for the canonical agent name.
 
@@ -58,7 +58,7 @@ This document is a setup guide, not a replacement for policy. The operative cont
 
    Then wait for Jason's answer before substantive work.
 
-   If Jason answers yes, use `lab-governance/templates/governance-bootstrap-prompt.md` from the ai-governance repository as the canonical bootstrap/update prompt. Follow that prompt for source branch selection, local governance update, local status update, and reconciliation reporting.
+   If Jason answers yes, use `lab-governance/templates/governance-bootstrap-prompt.md` from the ai-governance repository as the canonical bootstrap/update prompt. Follow that prompt for source branch channel, source branch selection, local governance update, local status update, and reconciliation reporting.
 
 9. Declare loaded governance if action will follow.
 
@@ -83,6 +83,8 @@ Use this sequence when an agent workspace does not yet have a local governance c
 1. Identify the intended agent kind and source branch.
 
    First ask for the workspace's canonical agent name. If local status or a legacy registry row already exists, use it only as candidate evidence and ask Jason to confirm or correct the name before choosing a governance branch or kind.
+
+   Preserve the prompt's source branch channel. If the bootstrap prompt came from an `enforcement-redesign/*` branch, choose the matching `enforcement-redesign/*` source branch for the intended agent kind unless Jason explicitly redirects the workspace to the normal branch family.
 
 2. Copy the branch-local governance picture into the workspace.
 
@@ -141,7 +143,11 @@ canon-version-log/
 
 Ordinary downstream repositories should not infer that they need to maintain those generalized governance maintenance trees locally.
 
-`agent-registry/` is retained as a legacy central seed and historical audit aid. It is not the authoritative live status mechanism for governed workspaces.
+`agent-registry/` is retained only as a non-authoritative historical artifact. It is not the live status mechanism for governed workspaces.
+
+## Task Briefs
+
+For substantial delegated work, use `lab-governance/templates/task-brief.md`. Describe the outcome and bounds; prescribe only the protocol needed to protect the work.
 
 ## Acceptance Checklist
 
