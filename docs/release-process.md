@@ -12,12 +12,19 @@ Versioning policy is documented in [semantic-versioning.md](semantic-versioning.
 
 ## Branch Model
 
-This repository uses a lightweight Gitflow model:
+This repository uses a full GitFlow model:
 
 - `dev` is the long-lived integration branch.
 - `main` is the release branch.
+- `feature/*` branches are short-lived implementation branches created from `dev` and merged back to `dev`.
 - Release promotion uses short-lived `release/*` branches created from `dev`.
-- Feature branches are not required yet; day-to-day maintainer work may happen directly on `dev` until the repository maintainer enables feature branching.
+- `hotfix/*` branches are short-lived urgent-fix branches created from `main`, then merged or cherry-picked back to `dev` and any active release branch that needs the fix.
+
+Do not commit ordinary implementation work directly on `dev`. Use this feature branch shape:
+
+```text
+dev -> feature/<topic> -> dev
+```
 
 Do not open recurring pull requests directly from `dev` to `main`. This Gitea instance keeps merged pull requests associated with their live head/base branch pair, so reusing `dev -> main` can block future pull requests after the first merge.
 
@@ -39,6 +46,14 @@ release/ci-maintenance
 
 Use version-numbered release branches only when `src/info.json` is changing for a new mod release. Use purpose-named release branches for documentation, governance, CI, or other non-release promotions.
 
+Use hotfix branches only for urgent fixes that must start from the current release line:
+
+```text
+main -> hotfix/<version-or-topic> -> main -> dev
+```
+
+When a hotfix lands on `main`, sync it back to `dev` before ordinary feature work continues. If a release branch is active, evaluate whether that branch also needs the hotfix.
+
 ## Local Checks
 
 Run the full validation entrypoint before opening a release PR:
@@ -54,6 +69,32 @@ Build the upload package locally with:
 ```
 
 The package is written to `dist/` and named `{mod-name}_{version}.zip`.
+
+## Feature Branch Procedure
+
+For ordinary implementation work:
+
+1. Ensure local `dev` is current.
+2. Create a feature branch from `dev`:
+
+   ```sh
+   git checkout dev
+   git pull --ff-only origin dev
+   git checkout -b feature/<topic>
+   ```
+
+3. Commit the scoped change on `feature/<topic>`.
+4. Run the appropriate validation, normally `./scripts/validate.sh`.
+5. Before opening the pull request, confirm the feature branch is based on `origin/dev`:
+
+   ```sh
+   git fetch origin dev
+   test "$(git merge-base HEAD origin/dev)" = "$(git rev-parse origin/dev)"
+   ```
+
+6. Open a pull request from `feature/<topic>` to `dev`. Do not target another `feature/*` branch.
+7. Merge after review and validation.
+8. Delete the feature branch after merge.
 
 ## Release Branch Procedure
 
@@ -74,6 +115,25 @@ When `dev` is ready to promote:
 5. Merge the release PR into `main`.
 6. Delete the release branch after merge.
 7. Merge or fast-forward `main` back into `dev` so `dev` contains the release merge ancestry.
+
+## Hotfix Procedure
+
+Use hotfix branches only when the fix must start from the current `main` release line:
+
+1. Ensure local `main` is current.
+2. Create a hotfix branch from `main`:
+
+   ```sh
+   git checkout main
+   git pull --ff-only origin main
+   git checkout -b hotfix/<version-or-topic>
+   ```
+
+3. Apply the fix, version, and changelog changes required for the hotfix.
+4. Run `./scripts/validate.sh` and any release-specific checks.
+5. Open a pull request from `hotfix/<version-or-topic>` to `main`.
+6. After the hotfix reaches `main`, merge or cherry-pick the same fix back to `dev`.
+7. If a `release/*` branch is active, evaluate whether it must receive the hotfix before closing the work.
 
 ## Main Validation and Release
 
@@ -170,3 +230,21 @@ The upload helper is:
 ```
 
 Do not run this helper manually unless intentionally publishing a new mod portal release for the version in `src/info.json`.
+
+## Discord Release Announcement
+
+The version-bump release path posts the matching `src/changelog.txt` section to Discord after release publication steps succeed.
+
+The workflow requires this repository secret:
+
+```text
+DISCORD_RELEASE_WEBHOOK_URL
+```
+
+The announcement helper extracts only the `Version: {version}` section matching `src/info.json` from the Factorio-format changelog, then posts it to Discord through the configured webhook. The Discord message title is the mod name followed by the previous version, `->`, and the new version. The matching changelog section is posted underneath as a `text` code block without truncation.
+
+```sh
+./scripts/post-discord-release.py --mod-name "$MOD_NAME" --mod-title "$mod_title" --previous-version "$PREVIOUS_MOD_VERSION" --version "$MOD_VERSION" --changelog-file src/changelog.txt
+```
+
+The Discord post runs only when the merge to `main` changes the mod version. Release-recovery runs for an already-existing version do not post a new Discord announcement.

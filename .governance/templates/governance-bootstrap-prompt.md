@@ -5,7 +5,7 @@ Use this single prompt for any agent that needs to initialize, verify, or update
 Canonical source:
 
 ```text
-private ai-governance source repository
+gitea.infra.newedenhomestead.net:ai-projects/ai-governance.git
 ```
 
 Canonical prompt path:
