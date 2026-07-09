@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2026.07.09
+  Changes
+    - Updated the mod thumbnail icon.
+    - Marked Advanced Fluid Handling as incompatible.
+    - Added Discord release changelog announcement automation.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 2026.07.08
   Changes
