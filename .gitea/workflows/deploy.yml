@@ -145,10 +145,12 @@ jobs:
           deploy_mod=0
           publish_github_release=0
           publish_factorio_portal=0
+          version_changed=0
 
           if [[ -z "$previous_version" || "$current_version" != "$previous_version" ]]; then
             echo "Version changed; release enabled."
             deploy_mod=1
+            version_changed=1
             if [[ "$github_release_exists" != "1" ]]; then
               publish_github_release=1
             fi
@@ -180,8 +182,10 @@ jobs:
           echo "DEPLOY_MOD=$deploy_mod" >> "$GITHUB_ENV"
           echo "PUBLISH_GITHUB_RELEASE=$publish_github_release" >> "$GITHUB_ENV"
           echo "PUBLISH_FACTORIO_PORTAL=$publish_factorio_portal" >> "$GITHUB_ENV"
+          echo "VERSION_CHANGED=$version_changed" >> "$GITHUB_ENV"
           echo "RELEASE_TARGET=$release_target" >> "$GITHUB_ENV"
           echo "MOD_NAME=$mod_name" >> "$GITHUB_ENV"
+          echo "PREVIOUS_MOD_VERSION=$previous_version" >> "$GITHUB_ENV"
           echo "MOD_VERSION=$current_version" >> "$GITHUB_ENV"
 
       - name: Package mod
@@ -258,3 +262,25 @@ jobs:
           ./scripts/upload-factorio-mod-portal.py \
             --mod-name "$MOD_NAME" \
             --asset "$PACKAGE_PATH"
+
+      - name: Post Discord release changelog
+        env:
+          DISCORD_RELEASE_WEBHOOK_URL: ${{ secrets.DISCORD_RELEASE_WEBHOOK_URL }}
+        run: |
+          set -euo pipefail
+          if [[ "${VERSION_CHANGED:-0}" != "1" ]]; then
+            exit 0
+          fi
+
+          if [[ -z "${DISCORD_RELEASE_WEBHOOK_URL:-}" ]]; then
+            echo "DISCORD_RELEASE_WEBHOOK_URL secret is required for release changelog posting." >&2
+            exit 1
+          fi
+
+          mod_title="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["title"])')"
+          ./scripts/post-discord-release.py \
+            --mod-name "$MOD_NAME" \
+            --mod-title "$mod_title" \
+            --previous-version "${PREVIOUS_MOD_VERSION:-}" \
+            --version "$MOD_VERSION" \
+            --changelog-file src/changelog.txt

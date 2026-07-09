@@ -230,3 +230,21 @@ The upload helper is:
 ```
 
 Do not run this helper manually unless intentionally publishing a new mod portal release for the version in `src/info.json`.
+
+## Discord Release Announcement
+
+The version-bump release path posts the matching `src/changelog.txt` section to Discord after release publication steps succeed.
+
+The workflow requires this repository secret:
+
+```text
+DISCORD_RELEASE_WEBHOOK_URL
+```
+
+The announcement helper extracts only the `Version: {version}` section matching `src/info.json` from the Factorio-format changelog, then posts it to Discord through the configured webhook. The Discord message title is the mod name followed by the previous version, `->`, and the new version. The matching changelog section is posted underneath as a `text` code block without truncation.
+
+```sh
+./scripts/post-discord-release.py --mod-name "$MOD_NAME" --mod-title "$mod_title" --previous-version "$PREVIOUS_MOD_VERSION" --version "$MOD_VERSION" --changelog-file src/changelog.txt
+```
+
+The Discord post runs only when the merge to `main` changes the mod version. Release-recovery runs for an already-existing version do not post a new Discord announcement.
