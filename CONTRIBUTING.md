@@ -20,7 +20,7 @@ Versioning rules are documented in [docs/semantic-versioning.md](docs/semantic-v
 
 ## Scope
 
-Advanced Fluid Infrastructure owns pipe, pipe-to-ground, pump, offshore pump, pipeline extent, and fluid infrastructure progression for Factorio 2.0 and Space Age.
+Advanced Fluid Infrastructure owns pipe, pipe-to-ground, pump, offshore pump, pipeline extent, and fluid infrastructure progression for Factorio 2.1 and Space Age.
 
 Keep changes focused on that scope. Compatibility fixes are welcome when they preserve the mod's staged fluid progression and do not move unrelated gameplay systems into this repository.
 

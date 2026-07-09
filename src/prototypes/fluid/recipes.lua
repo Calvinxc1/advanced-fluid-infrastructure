@@ -186,7 +186,7 @@ data:extend({ tungsten_offshore_pump_recipe })
 local rubber_lined_pipe_recipe = util.table.deepcopy(data.raw.recipe.pipe)
 rubber_lined_pipe_recipe.name = "afi_rubber-lined-pipe"
 rubber_lined_pipe_recipe.enabled = false
-rubber_lined_pipe_recipe.category = "crafting-with-fluid"
+rubber_lined_pipe_recipe.categories = { "crafting-with-fluid" }
 rubber_lined_pipe_recipe.ingredients = {
   { type = "item", name = "afi_steel-pipe", amount = 1 },
   { type = "item", name = "plastic-bar", amount = 1 },
@@ -200,7 +200,7 @@ data:extend({ rubber_lined_pipe_recipe })
 local rubber_lined_pipe_to_ground_recipe = util.table.deepcopy(data.raw.recipe["pipe-to-ground"])
 rubber_lined_pipe_to_ground_recipe.name = "afi_rubber-lined-pipe-to-ground"
 rubber_lined_pipe_to_ground_recipe.enabled = false
-rubber_lined_pipe_to_ground_recipe.category = "crafting-with-fluid"
+rubber_lined_pipe_to_ground_recipe.categories = { "crafting-with-fluid" }
 rubber_lined_pipe_to_ground_recipe.ingredients = {
   { type = "item", name = "afi_steel-pipe-to-ground", amount = 2 },
   { type = "item", name = "plastic-bar", amount = 4 },
@@ -214,7 +214,7 @@ data:extend({ rubber_lined_pipe_to_ground_recipe })
 local rubber_lined_offshore_pump_recipe = util.table.deepcopy(data.raw.recipe["offshore-pump"])
 rubber_lined_offshore_pump_recipe.name = "afi_rubber-lined-offshore-pump"
 rubber_lined_offshore_pump_recipe.enabled = false
-rubber_lined_offshore_pump_recipe.category = "crafting-with-fluid"
+rubber_lined_offshore_pump_recipe.categories = { "crafting-with-fluid" }
 rubber_lined_offshore_pump_recipe.ingredients = {
   { type = "item", name = "afi_steel-offshore-pump", amount = 1 },
   { type = "item", name = "plastic-bar", amount = 5 },
@@ -228,7 +228,7 @@ data:extend({ rubber_lined_offshore_pump_recipe })
 local rubber_lined_pump_recipe = util.table.deepcopy(data.raw.recipe.pump)
 rubber_lined_pump_recipe.name = "afi_rubber-lined-pump"
 rubber_lined_pump_recipe.enabled = false
-rubber_lined_pump_recipe.category = "crafting-with-fluid"
+rubber_lined_pump_recipe.categories = { "crafting-with-fluid" }
 rubber_lined_pump_recipe.ingredients = {
   { type = "item", name = "afi_steel-pump", amount = 1 },
   { type = "item", name = "plastic-bar", amount = 5 },
