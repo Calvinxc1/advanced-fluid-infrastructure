@@ -1,12 +1,12 @@
 # Advanced Fluid Infrastructure
 
-Advanced Fluid Infrastructure is a Factorio 2.0 + Space Age mod that makes pipes, pumps, and fluid routing part of factory progression.
+Advanced Fluid Infrastructure is a Factorio 2.1 + Space Age mod that makes pipes, pumps, and fluid routing part of factory progression.
 
 Vanilla pipes are powerful very early. This mod adds a staged fluid infrastructure path so early builds stay compact, larger fluid blocks require upgrades, and long-range/high-throughput networks become a deliberate investment instead of the default.
 
 ## Requirements
 
-- Factorio 2.0.
+- Factorio 2.1.
 - Space Age.
 - Optional compatibility cleanup for Rampant Arsenal Fork when it is installed.
 
