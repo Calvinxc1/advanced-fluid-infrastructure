@@ -5,20 +5,20 @@ canonical_agent_name: Advanced Fluid Infrastructure Factorio Modding Agent
 workspace_path: /home/jcherry/Documents/git/factorio-mods/advanced-fluid-infrastructure
 metadata_path: src/info.json
 ownership_model: internal_mod
-upstream_or_fork_source: Standalone staged fluid infrastructure progression for Factorio 2.0 and Space Age.
+upstream_or_fork_source: Standalone staged fluid infrastructure progression for Factorio 2.1 and Space Age.
 namespace_prefixes:
   - afi_
   - __advanced-fluid-infrastructure__/
 dependency_stack:
-  - base >= 2.0.0
-  - space-age >= 2.0.0
+  - base >= 2.1.0
+  - space-age >= 2.1.0
 optional_dependencies:
   - RampantArsenalFork
 scope_boundaries:
   - Owns fluid infrastructure prototypes, progression, technologies, recipes, items, entities, and compatibility cleanup.
   - Keep this repository focused on pipes, pipe-to-ground, pumps, offshore pumps, pipeline extent, and fluid infrastructure technologies.
   - Keep unrelated gameplay systems out of this repository unless Jason explicitly approves a scope expansion.
-release_target: Factorio 2.0 and Space Age mod releases.
+release_target: Factorio 2.1 and Space Age mod releases.
 internal_gitflow_stage: full_gitflow
 branch_roles:
   main: Release branch. Main validates on every push and publishes only when src/info.json version changes or public release recovery is needed.
