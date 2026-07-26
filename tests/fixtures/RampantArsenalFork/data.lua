@@ -71,6 +71,7 @@ data:extend({
     enabled = false,
     ingredients = {{type = "item", name = "iron-plate", amount = 1}},
     result = reinforced_pipe,
+    result_count = 1,
   },
   recycling_technology,
   reinforced_pipes_technology,
