@@ -1,0 +1,11 @@
+{
+  "name": "afi-rampant-compatibility-test",
+  "version": "0.0.1",
+  "title": "AFI Rampant compatibility assertions",
+  "author": "Advanced Fluid Infrastructure",
+  "factorio_version": "2.1",
+  "dependencies": [
+    "advanced-fluid-infrastructure >= 0.1.3",
+    "RampantArsenalFork"
+  ]
+}

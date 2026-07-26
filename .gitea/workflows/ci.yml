@@ -51,6 +51,10 @@ jobs:
           rm -f "$mods_dir/$mod_name"
           mkdir -p "$mods_dir"
           ln -s "$PWD/src" "$mods_dir/$mod_name"
+          for fixture in RampantArsenalFork afi-rampant-compatibility-test; do
+            rm -f "$mods_dir/$fixture"
+            ln -s "$PWD/tests/fixtures/$fixture" "$mods_dir/$fixture"
+          done
           echo "FACTORIO_MODS_DIR=$mods_dir" >> "$GITHUB_ENV"
 
       - name: Validate mod
