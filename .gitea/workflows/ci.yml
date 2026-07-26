@@ -62,7 +62,7 @@ jobs:
           AFI_REQUIRE_FACTORIO: "1"
         run: ./scripts/validate.sh
 
-      - name: Download and validate latest Rampant Arsenal Fork
+      - name: Download and validate declared dependency mod list
         if: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME != '' && secrets.FACTORIO_MOD_PORTAL_TOKEN != '' }}
         env:
           FACTORIO_MOD_PORTAL_USERNAME: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME }}
@@ -70,15 +70,11 @@ jobs:
         run: |
           set -euo pipefail
           temp_base="${RUNNER_TEMP:-/tmp}"
-          standalone_mods_dir="$(mktemp -d "$temp_base/factorio-rampant-standalone.XXXXXX")"
-          dependency_mods_dir="$(mktemp -d "$temp_base/factorio-rampant-dependency.XXXXXX")"
-          trap 'rm -rf -- "$standalone_mods_dir" "$dependency_mods_dir"' EXIT
+          mods_dir="$(mktemp -d "$temp_base/factorio-dependency-mods.XXXXXX")"
+          trap 'rm -rf -- "$mods_dir"' EXIT
           ./scripts/download-factorio-mods.py \
-            --mods-dir "$standalone_mods_dir" \
-            --mod RampantArsenalFork
-          ./scripts/download-factorio-mods.py \
-            --mods-dir "$dependency_mods_dir" \
-            --mod RampantArsenalFork \
-            --with-dependencies
-          ln -s "$PWD/src" "$dependency_mods_dir/advanced-fluid-infrastructure"
-          FACTORIO_MODS_DIR="$dependency_mods_dir" AFI_REQUIRE_FACTORIO=1 ./scripts/factorio-validate.sh
+            --mods-dir "$mods_dir" \
+            --from-info src/info.json
+          mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
+          ln -s "$PWD/src" "$mods_dir/$mod_name"
+          FACTORIO_MODS_DIR="$mods_dir" AFI_REQUIRE_FACTORIO=1 ./scripts/factorio-validate.sh

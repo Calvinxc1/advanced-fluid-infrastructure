@@ -50,9 +50,9 @@ def latest_compatible_release(mod_name: str, factorio_version: str) -> dict:
     return max(releases, key=lambda release: release.get("released_at", ""))
 
 
-def dependency_names(release: dict, include_optional: bool) -> list[str]:
+def dependency_names(info_json: dict, include_optional: bool) -> list[str]:
     names: list[str] = []
-    for dependency in release.get("info_json", {}).get("dependencies", []):
+    for dependency in info_json.get("dependencies", []):
         match = DEPENDENCY_PATTERN.match(dependency)
         if not match:
             raise DownloadError(f"Could not parse dependency declaration: {dependency!r}")
@@ -64,6 +64,18 @@ def dependency_names(release: dict, include_optional: bool) -> list[str]:
             continue
         names.append(name)
     return names
+
+
+def read_info_json(info_path: Path) -> dict:
+    try:
+        info = json.loads(info_path.read_text(encoding="utf-8"))
+    except OSError as error:
+        raise DownloadError(f"Could not read mod metadata: {info_path}") from error
+    except json.JSONDecodeError as error:
+        raise DownloadError(f"Could not parse mod metadata: {info_path}") from error
+    if not isinstance(info, dict) or not isinstance(info.get("name"), str) or not info["name"]:
+        raise DownloadError(f"Mod metadata has no valid name: {info_path}")
+    return info
 
 
 def authenticated_download_url(download_url: str, username: str, token: str) -> str:
@@ -138,7 +150,7 @@ def download_mod_closure(
     visited.add(mod_name)
     release = latest_compatible_release(mod_name, factorio_version)
     if include_dependencies:
-        for dependency in dependency_names(release, include_optional_dependencies):
+        for dependency in dependency_names(release.get("info_json", {}), include_optional_dependencies):
             download_mod_closure(
                 dependency,
                 factorio_version=factorio_version,
@@ -152,13 +164,44 @@ def download_mod_closure(
     download_release(mod_name, release, mods_dir, username, token)
 
 
+def download_info_dependency_closure(
+    info: dict,
+    *,
+    factorio_version: str,
+    mods_dir: Path,
+    username: str,
+    token: str,
+) -> None:
+    visited = {info["name"]}
+    for dependency in dependency_names(info, include_optional=True):
+        download_mod_closure(
+            dependency,
+            factorio_version=factorio_version,
+            include_dependencies=True,
+            include_optional_dependencies=True,
+            mods_dir=mods_dir,
+            username=username,
+            token=token,
+            visited=visited,
+        )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Download latest compatible Mod Portal releases into a Factorio mods directory."
     )
-    parser.add_argument("--mod", action="append", required=True, help="Mod Portal name to download; repeatable.")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--mod", action="append", help="Mod Portal name to download; repeatable.")
+    source.add_argument(
+        "--from-info",
+        type=Path,
+        help="Read a local info.json and recursively download its complete dependency closure.",
+    )
     parser.add_argument("--mods-dir", required=True, type=Path, help="Destination Factorio mods directory.")
-    parser.add_argument("--factorio-version", default="2.1", help="Factorio version to select (default: 2.1).")
+    parser.add_argument(
+        "--factorio-version",
+        help="Factorio version to select (defaults to local metadata or 2.1).",
+    )
     parser.add_argument(
         "--with-dependencies",
         action="store_true",
@@ -167,15 +210,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--include-optional-dependencies",
         action="store_true",
-        help="Include optional dependencies when used with --with-dependencies.",
+        help="Include optional dependencies when used with --mod --with-dependencies.",
     )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    if args.include_optional_dependencies and not args.with_dependencies:
-        raise DownloadError("--include-optional-dependencies requires --with-dependencies")
+    if args.include_optional_dependencies and not (args.with_dependencies or args.from_info):
+        raise DownloadError("--include-optional-dependencies requires --with-dependencies or --from-info")
     username = os.environ.get("FACTORIO_MOD_PORTAL_USERNAME")
     token = os.environ.get("FACTORIO_MOD_PORTAL_TOKEN")
     if not username or not token:
@@ -183,18 +226,30 @@ def main() -> int:
             "FACTORIO_MOD_PORTAL_USERNAME and FACTORIO_MOD_PORTAL_TOKEN must be set in the environment"
         )
     args.mods_dir.mkdir(parents=True, exist_ok=True)
-    visited: set[str] = set()
-    for mod_name in args.mod:
-        download_mod_closure(
-            mod_name,
-            factorio_version=args.factorio_version,
-            include_dependencies=args.with_dependencies,
-            include_optional_dependencies=args.include_optional_dependencies,
+    if args.from_info:
+        info = read_info_json(args.from_info)
+        factorio_version = args.factorio_version or info.get("factorio_version", "2.1")
+        download_info_dependency_closure(
+            info,
+            factorio_version=factorio_version,
             mods_dir=args.mods_dir,
             username=username,
             token=token,
-            visited=visited,
         )
+    else:
+        factorio_version = args.factorio_version or "2.1"
+        visited: set[str] = set()
+        for mod_name in args.mod:
+            download_mod_closure(
+                mod_name,
+                factorio_version=factorio_version,
+                include_dependencies=args.with_dependencies,
+                include_optional_dependencies=args.include_optional_dependencies,
+                mods_dir=args.mods_dir,
+                username=username,
+                token=token,
+                visited=visited,
+            )
     return 0
 
 

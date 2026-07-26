@@ -6,6 +6,7 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "download-factorio-mods.py"
@@ -17,26 +18,24 @@ SPEC.loader.exec_module(DOWNLOADER)
 
 class DependencyNamesTest(unittest.TestCase):
     def test_recommended_dependencies_are_included_by_default(self) -> None:
-        release = {
-            "info_json": {
-                "dependencies": [
-                    "base >= 2.1.0",
-                    "+ advanced-energy-grid",
-                    "? optional-integration",
-                    "(?) hidden-integration",
-                    "~ load-order-independent-required",
-                    "hard-required",
-                    "! incompatible-mod",
-                ]
-            }
+        info_json = {
+            "dependencies": [
+                "base >= 2.1.0",
+                "+ advanced-energy-grid",
+                "? optional-integration",
+                "(?) hidden-integration",
+                "~ load-order-independent-required",
+                "hard-required",
+                "! incompatible-mod",
+            ]
         }
 
         self.assertEqual(
-            DOWNLOADER.dependency_names(release, include_optional=False),
+            DOWNLOADER.dependency_names(info_json, include_optional=False),
             ["advanced-energy-grid", "load-order-independent-required", "hard-required"],
         )
         self.assertEqual(
-            DOWNLOADER.dependency_names(release, include_optional=True),
+            DOWNLOADER.dependency_names(info_json, include_optional=True),
             [
                 "advanced-energy-grid",
                 "optional-integration",
@@ -45,6 +44,25 @@ class DependencyNamesTest(unittest.TestCase):
                 "hard-required",
             ],
         )
+
+    def test_local_metadata_always_includes_optional_dependencies(self) -> None:
+        with patch.object(DOWNLOADER, "download_mod_closure") as download_mod:
+            DOWNLOADER.download_info_dependency_closure(
+                {
+                    "name": "local-mod",
+                    "dependencies": ["? optional-mod", "+ recommended-mod", "base"],
+                },
+                factorio_version="2.1",
+                mods_dir=Path("/tmp/mods"),
+                username="user",
+                token="token",
+            )
+
+        self.assertEqual([call.args[0] for call in download_mod.call_args_list], ["optional-mod", "recommended-mod"])
+        for call in download_mod.call_args_list:
+            self.assertTrue(call.kwargs["include_dependencies"])
+            self.assertTrue(call.kwargs["include_optional_dependencies"])
+            self.assertEqual(call.kwargs["visited"], {"local-mod"})
 
 
 if __name__ == "__main__":

@@ -42,18 +42,17 @@ For local development, keep the repository layout intact and run validation from
 
 ### External-mod validation
 
-CI can download the latest Factorio 2.1 release of Rampant Arsenal Fork both by itself and with its required and recommended dependency closure. Configure the repository Actions secrets `FACTORIO_MOD_PORTAL_USERNAME` and `FACTORIO_MOD_PORTAL_TOKEN` with a Factorio account username and service token; neither value is logged or stored in the repository.
+CI reads `src/info.json`, downloads every declared Mod Portal dependency (required, recommended, optional, and hidden optional), and then headlessly validates the local source against that complete mod list. Configure the repository Actions secrets `FACTORIO_MOD_PORTAL_USERNAME` and `FACTORIO_MOD_PORTAL_TOKEN` with a Factorio account username and service token; neither value is logged or stored in the repository.
 
 The same download can be run locally:
 
 ```sh
 export FACTORIO_MOD_PORTAL_USERNAME='your-factorio-username'
 export FACTORIO_MOD_PORTAL_TOKEN='your-factorio-service-token'
-./scripts/download-factorio-mods.py --mods-dir /tmp/factorio-mods --mod RampantArsenalFork
-./scripts/download-factorio-mods.py --mods-dir /tmp/factorio-mods --mod RampantArsenalFork --with-dependencies
+./scripts/download-factorio-mods.py --mods-dir /tmp/factorio-mods --from-info src/info.json
 ```
 
-`--with-dependencies` includes required and recommended (`+`) dependencies. Add `--include-optional-dependencies` when the full optional dependency closure is wanted as well.
+`--from-info` automatically follows the full dependency closure, including optional and recommended dependencies, and uses the local mod's declared Factorio version. This makes the workflow portable to another repository without hard-coded mod names. For a direct Mod Portal download, `--with-dependencies` follows required and recommended (`+`) dependencies; add `--include-optional-dependencies` for its full optional closure.
 
 Semantic versioning policy is documented in [docs/semantic-versioning.md](docs/semantic-versioning.md).
 
