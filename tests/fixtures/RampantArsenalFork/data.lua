@@ -65,14 +65,6 @@ data:extend({
     ingredients = {{type = "item", name = "iron-plate", amount = 1}},
     results = {{type = "item", name = reinforced_pipe_to_ground, amount = 1}},
   },
-  {
-    type = "recipe",
-    name = "rampant-arsenal-recycling-single-result",
-    enabled = false,
-    ingredients = {{type = "item", name = "iron-plate", amount = 1}},
-    result = reinforced_pipe,
-    result_count = 1,
-  },
   recycling_technology,
   reinforced_pipes_technology,
 })
