@@ -61,3 +61,24 @@ jobs:
         env:
           AFI_REQUIRE_FACTORIO: "1"
         run: ./scripts/validate.sh
+
+      - name: Download and validate latest Rampant Arsenal Fork
+        if: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME != '' && secrets.FACTORIO_MOD_PORTAL_TOKEN != '' }}
+        env:
+          FACTORIO_MOD_PORTAL_USERNAME: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME }}
+          FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          temp_base="${RUNNER_TEMP:-/tmp}"
+          standalone_mods_dir="$(mktemp -d "$temp_base/factorio-rampant-standalone.XXXXXX")"
+          dependency_mods_dir="$(mktemp -d "$temp_base/factorio-rampant-dependency.XXXXXX")"
+          trap 'rm -rf -- "$standalone_mods_dir" "$dependency_mods_dir"' EXIT
+          ./scripts/download-factorio-mods.py \
+            --mods-dir "$standalone_mods_dir" \
+            --mod RampantArsenalFork
+          ./scripts/download-factorio-mods.py \
+            --mods-dir "$dependency_mods_dir" \
+            --mod RampantArsenalFork \
+            --with-dependencies
+          ln -s "$PWD/src" "$dependency_mods_dir/advanced-fluid-infrastructure"
+          FACTORIO_MODS_DIR="$dependency_mods_dir" AFI_REQUIRE_FACTORIO=1 ./scripts/factorio-validate.sh

@@ -40,6 +40,21 @@ For local development, keep the repository layout intact and run validation from
 ./scripts/validate.sh
 ```
 
+### External-mod validation
+
+CI can download the latest Factorio 2.1 release of Rampant Arsenal Fork both by itself and with its required and recommended dependency closure. Configure the repository Actions secrets `FACTORIO_MOD_PORTAL_USERNAME` and `FACTORIO_MOD_PORTAL_TOKEN` with a Factorio account username and service token; neither value is logged or stored in the repository.
+
+The same download can be run locally:
+
+```sh
+export FACTORIO_MOD_PORTAL_USERNAME='your-factorio-username'
+export FACTORIO_MOD_PORTAL_TOKEN='your-factorio-service-token'
+./scripts/download-factorio-mods.py --mods-dir /tmp/factorio-mods --mod RampantArsenalFork
+./scripts/download-factorio-mods.py --mods-dir /tmp/factorio-mods --mod RampantArsenalFork --with-dependencies
+```
+
+`--with-dependencies` includes required and recommended (`+`) dependencies. Add `--include-optional-dependencies` when the full optional dependency closure is wanted as well.
+
 Semantic versioning policy is documented in [docs/semantic-versioning.md](docs/semantic-versioning.md).
 
 Release packaging and automated deployment are documented in [docs/release-process.md](docs/release-process.md).
