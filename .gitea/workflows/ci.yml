@@ -63,12 +63,15 @@ jobs:
         run: ./scripts/validate.sh
 
       - name: Download and validate declared dependency mod list
-        if: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME != '' && secrets.FACTORIO_MOD_PORTAL_TOKEN != '' }}
         env:
           FACTORIO_MOD_PORTAL_USERNAME: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME }}
           FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
         run: |
           set -euo pipefail
+          if [[ -z "${FACTORIO_MOD_PORTAL_USERNAME:-}" || -z "${FACTORIO_MOD_PORTAL_TOKEN:-}" ]]; then
+            echo "FACTORIO_MOD_PORTAL_USERNAME and FACTORIO_MOD_PORTAL_TOKEN must both be set to validate the full Factorio mod list." >&2
+            exit 1
+          fi
           temp_base="${RUNNER_TEMP:-/tmp}"
           mods_dir="$(mktemp -d "$temp_base/factorio-dependency-mods.XXXXXX")"
           trap 'rm -rf -- "$mods_dir"' EXIT
@@ -77,4 +80,60 @@ jobs:
             --from-info src/info.json
           mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
           ln -s "$PWD/src" "$mods_dir/$mod_name"
+          FACTORIO_MODS_DIR="$mods_dir" AFI_REQUIRE_FACTORIO=1 ./scripts/factorio-validate.sh
+
+      - name: Validate full mod family (AFI + AEG + API + dependencies)
+        env:
+          FACTORIO_MOD_PORTAL_USERNAME: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME }}
+          FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${FACTORIO_MOD_PORTAL_USERNAME:-}" || -z "${FACTORIO_MOD_PORTAL_TOKEN:-}" ]]; then
+            echo "FACTORIO_MOD_PORTAL_USERNAME and FACTORIO_MOD_PORTAL_TOKEN must both be set to validate the full mod family." >&2
+            exit 1
+          fi
+          mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
+
+          temp_base="${RUNNER_TEMP:-/tmp}"
+          mkdir -p "$temp_base"
+          family_info="$(mktemp "$temp_base/family-info.XXXXXX.json")"
+          mods_dir="$(mktemp -d "$temp_base/factorio-family-mods.XXXXXX")"
+          trap 'rm -f -- "$family_info"; rm -rf -- "$mods_dir"' EXIT
+
+          python3 - "$family_info" <<'PY'
+          import json
+          import sys
+
+          own_info = json.load(open("src/info.json", encoding="utf-8"))
+
+          # advanced-fluid-infrastructure does not declare a dependency on its
+          # companion mods (neither depends on it in code either), so there is
+          # no local info.json data to draw their names from. factorio_version
+          # is still drawn from the real metadata below rather than duplicated.
+          json.dump(
+              {
+                  "name": "advanced-infrastructure-family-validation",
+                  "version": "0.0.1",
+                  "factorio_version": own_info["factorio_version"],
+                  "dependencies": [
+                      "advanced-energy-grid",
+                      "advanced-power-infrastructure",
+                  ],
+              },
+              open(sys.argv[1], "w", encoding="utf-8"),
+          )
+          PY
+
+          ./scripts/download-factorio-mods.py \
+            --mods-dir "$mods_dir" \
+            --from-info "$family_info"
+
+          # advanced-power-infrastructure declares an optional dependency on this
+          # mod, so the download above pulls in a Mod Portal copy of it too.
+          # Discard that copy in favor of the local checkout under test so
+          # Factorio doesn't see two releases of the same mod.
+          rm -f "$mods_dir/${mod_name}"_*.zip
+
+          ln -s "$PWD/src" "$mods_dir/$mod_name"
+          ln -s "$PWD/tests/fixtures/afi-rampant-compatibility-test" "$mods_dir/afi-rampant-compatibility-test"
           FACTORIO_MODS_DIR="$mods_dir" AFI_REQUIRE_FACTORIO=1 ./scripts/factorio-validate.sh
