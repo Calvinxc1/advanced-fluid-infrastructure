@@ -19,6 +19,10 @@ Vanilla pipes are powerful very early. This mod adds a staged fluid infrastructu
 - Production-machine fluidbox extent patches so upgraded infrastructure behaves consistently around machines.
 - Optional cleanup for Rampant Arsenal reinforced pipes when that mod is present.
 
+## Companion Mods
+
+Advanced Fluid Infrastructure is one of three companion mods designed to be played together: this mod for pipes and pumps; Advanced Energy Grid for poles, substations, and transmission; and Advanced Power Infrastructure for boilers, turbines, reactors, and other generation and storage. Each mod loads and works fine on its own, but the staged progression is designed with all three installed together.
+
 ## Progression Shape
 
 The mod starts with constrained iron pipe networks, then expands through steel, rubber-lined, reinforced, and foundation infrastructure. Specialized environments have their own entry points:
