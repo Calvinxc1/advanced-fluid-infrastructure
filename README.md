@@ -19,6 +19,10 @@ Vanilla pipes are powerful very early. This mod adds a staged fluid infrastructu
 - Production-machine fluidbox extent patches so upgraded infrastructure behaves consistently around machines.
 - Optional cleanup for Rampant Arsenal reinforced pipes when that mod is present.
 
+## Companion Mods
+
+Advanced Fluid Infrastructure is one of three companion mods designed to be played together: this mod for pipes and pumps; Advanced Energy Grid for poles, substations, and transmission; and Advanced Power Infrastructure for boilers, turbines, reactors, and other generation and storage. Each mod loads and works fine on its own, but the staged progression is designed with all three installed together.
+
 ## Progression Shape
 
 The mod starts with constrained iron pipe networks, then expands through steel, rubber-lined, reinforced, and foundation infrastructure. Specialized environments have their own entry points:
@@ -39,6 +43,20 @@ For local development, keep the repository layout intact and run validation from
 ```sh
 ./scripts/validate.sh
 ```
+
+### External-mod validation
+
+CI reads `src/info.json`, downloads every declared Mod Portal dependency (required, recommended, optional, and hidden optional), and then headlessly validates the local source against that complete mod list. Configure the repository Actions secrets `FACTORIO_MOD_PORTAL_USERNAME` and `FACTORIO_MOD_PORTAL_TOKEN` with a Factorio account username and service token; neither value is logged or stored in the repository.
+
+The same download can be run locally:
+
+```sh
+export FACTORIO_MOD_PORTAL_USERNAME='your-factorio-username'
+export FACTORIO_MOD_PORTAL_TOKEN='your-factorio-service-token'
+./scripts/download-factorio-mods.py --mods-dir /tmp/factorio-mods --from-info src/info.json
+```
+
+`--from-info` automatically follows the full dependency closure, including optional and recommended dependencies, and uses the local mod's declared Factorio version. This makes the workflow portable to another repository without hard-coded mod names. For a direct Mod Portal download, `--with-dependencies` follows required and recommended (`+`) dependencies; add `--include-optional-dependencies` for its full optional closure.
 
 Semantic versioning policy is documented in [docs/semantic-versioning.md](docs/semantic-versioning.md).
 

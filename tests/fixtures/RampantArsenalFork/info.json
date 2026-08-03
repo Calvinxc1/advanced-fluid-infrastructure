@@ -1,0 +1,11 @@
+{
+  "name": "RampantArsenalFork",
+  "version": "0.0.1",
+  "title": "AFI Rampant Arsenal compatibility fixture",
+  "author": "Advanced Fluid Infrastructure",
+  "factorio_version": "2.1",
+  "dependencies": [
+    "base >= 2.1.0",
+    "space-age >= 2.1.0"
+  ]
+}

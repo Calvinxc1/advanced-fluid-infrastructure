@@ -1,7 +1,7 @@
 id: enforcement_model
 status: ratified
 scope: all_agents
-summary: Enforcement-first governance model for the secondary governance channel.
+summary: Enforcement-first governance model for the enforcement-redesign policy line.
 enforcement_buckets:
   A_hard_invariants:
     description: Short bright-line rules that protect high-stakes boundaries. When infrastructure can enforce them, name the enforcement point.
@@ -33,4 +33,10 @@ known_enforcement_points:
   - Branch protection on `main` enforces no direct-push substitution for PR-governed release branches where enabled.
   - Branch protection on `main` enforces no force-push or shared-history rewrite for protected release branches where enabled.
   - Pre-receive secret scanning enforces the no-secret commit and push invariant where installed.
+  - Capability removal or withholding enforces invariants when the agent cannot reach a mutation-capable tool, connector, credential, MCP server, or skill.
+  - Kernel sandboxing enforces filesystem and network containment where the runtime surface keeps the sandbox active.
+  - Managed runtime requirements enforce policy only after behavioral testing proves the target surface honors that managed layer.
   - Runtime hooks or launchers may enforce startup governance-version checks when available.
+known_guardrails:
+  - Execpolicy rules are guardrails against error and drift, not adversarial boundaries, because command matching can be bypassed.
+  - Runtime-injected forced-core instructions improve policy loading reliability but are not enforcement gates.

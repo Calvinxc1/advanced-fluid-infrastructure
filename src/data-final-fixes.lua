@@ -3,9 +3,10 @@ if mods["RampantArsenalFork"] then
     ["reinforced-pipe-rampant-arsenal"] = true,
     ["reinforced-pipe-to-ground-rampant-arsenal"] = true,
   }
+  local removed_recipes = {}
 
   local function ingredient_or_result_references_removed_pipe(entry)
-    return entry and rampant_reinforced_pipes[entry.name]
+    return entry and (rampant_reinforced_pipes[entry.name] or rampant_reinforced_pipes[entry[1]])
   end
 
   local function recipe_references_removed_pipe(recipe)
@@ -22,6 +23,13 @@ if mods["RampantArsenalFork"] then
     return recipe.result and rampant_reinforced_pipes[recipe.result]
   end
 
+  local function remove_recipe(name)
+    removed_recipes[name] = true
+    if data.raw.recipe then
+      data.raw.recipe[name] = nil
+    end
+  end
+
   for name in pairs(rampant_reinforced_pipes) do
     if data.raw.pipe then
       data.raw.pipe[name] = nil
@@ -32,15 +40,27 @@ if mods["RampantArsenalFork"] then
     if data.raw.item then
       data.raw.item[name] = nil
     end
-    if data.raw.recipe then
-      data.raw.recipe[name] = nil
-    end
+    remove_recipe(name)
+
+    -- The recycler feature auto-generates a "<name>-recycling" recipe (and a
+    -- matching unlock-recipe effect on the vanilla "recycling" technology)
+    -- for craftable items, including these removed pipes. That generation
+    -- reacts to items/recipes appearing but does not reliably retract the
+    -- technology's unlock-recipe effect once the source item disappears
+    -- again later in the data stage, so it has to be removed explicitly
+    -- here rather than relying on the generic ingredient/result scan below
+    -- to always still see it.
+    remove_recipe(name .. "-recycling")
   end
 
+  local recipes_to_remove = {}
   for name, recipe in pairs(data.raw.recipe or {}) do
     if recipe_references_removed_pipe(recipe) then
-      data.raw.recipe[name] = nil
+      recipes_to_remove[name] = true
     end
+  end
+  for name in pairs(recipes_to_remove) do
+    remove_recipe(name)
   end
 
   for _, technology in pairs(data.raw.technology or {}) do
@@ -48,7 +68,7 @@ if mods["RampantArsenalFork"] then
     if effects then
       for index = #effects, 1, -1 do
         local effect = effects[index]
-        if effect.type == "unlock-recipe" and rampant_reinforced_pipes[effect.recipe] then
+        if effect.type == "unlock-recipe" and removed_recipes[effect.recipe] then
           table.remove(effects, index)
         end
       end

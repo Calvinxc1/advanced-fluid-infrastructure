@@ -2,19 +2,27 @@ schema: local_governance_status
 schema_version: 1
 canonical_agent_name: Advanced Fluid Infrastructure Factorio Modding Agent
 agent_kind: factorio_modding_agent
-active_governance_branch: enforcement-redesign/factorio-modding-agent
-current_active_canon_version: enforcement-redesign-factorio-modding-agent/1.2.0
-current_generalized_canon_version: enforcement-redesign-coding-agent/1.2.0
+active_governance_branch: enforcement-redesign/factorio-modding-agent/main
+current_active_canon_version: enforcement-redesign/factorio-modding-agent/main
+current_generalized_canon_version: enforcement-redesign/coding-agent/main
 source_repository_or_path: gitea.infra.newedenhomestead.net:ai-projects/ai-governance.git
-governance_source_commit: 6d9ce1945facebf5204b8ddc2fc83d856ffc8d6a
+governance_source_branch: enforcement-redesign/factorio-modding-agent/main
+governance_source_commit: 52fea21c13f8953bf126284706bf4c3111d32a50
 runtime_surface: codex_cli
+runtime_surface_gate_state: workspace_write_sandbox_network_restricted_user_approval_for_escalation
+granted_capability_authority: local_workspace_write_with_explicit_user_authorization
+repository_trust_state: no_repo_codex_config_present
+managed_requirements_state: not_present
+projection_state: not_present
 code_authority: factorio_mod_workspace_changes_with_explicit_user_authorization
-last_verified_at: 2026-07-09T07:55:36-07:00
+last_verified_at: 2026-07-11T10:31:44-07:00
 agent_declared_status: current
-notes: Transitioned local governance from normal factorio-modding-agent branch commit 4c806a6cad8c776cd59021b5abb11afc5d0f5f33 to experimental enforcement-redesign/factorio-modding-agent commit 6d9ce1945facebf5204b8ddc2fc83d856ffc8d6a. Target branch descriptor parent is enforcement-redesign/coding-agent with canon enforcement-redesign-coding-agent/1.2.0. Workspace-local governance files under .governance/local/ were preserved as-is except this status update; .governance/local/index.yaml already existed and was preserved. Legacy central registry is historical and non-authoritative; no active legacy self-stamp or registry evidence was reconciled locally.
-local_governance:
-  load:
-    - .governance/local/status.yaml
-    - .governance/local/factorio-local-overlay.yaml
-    - .governance/local/factorio-workflow.yaml
-  notes: []
+notes: >
+  Updated local governance to stable mapped endpoint enforcement-redesign/factorio-modding-agent/main
+  at commit 52fea21c13f8953bf126284706bf4c3111d32a50. Target branch descriptor parent is
+  enforcement-redesign/coding-agent/main with canon enforcement-redesign/coding-agent/main.
+  Workspace-local governance files under .governance/local/ were preserved except this status
+  update; .governance/local/index.yaml already existed and was preserved. Obsolete local evidence
+  remains historical: previous normal governance branch was coding-agent with canon coding-agent/1.0.0
+  and generalized canon trunk/2.7.0. Legacy central registry is historical and non-authoritative;
+  no active legacy self-stamp or registry evidence was reconciled locally.
