@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.4
+Date: 2026.08.03
+  Bugfixes
+    - Fixed Rampant Arsenal Fork compatibility cleanup leaving a dangling recipe-unlock reference on the recycling technology after removing the reinforced pipe items, which could fail to load when Rampant Arsenal Fork and the recycler feature are both present.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.3
 Date: 2026.07.09
   Changes
