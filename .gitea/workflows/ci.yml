@@ -102,14 +102,33 @@ jobs:
 
           python3 - "$family_info" <<'PY'
           import json
+          import re
           import sys
 
           own_info = json.load(open("src/info.json", encoding="utf-8"))
 
-          # advanced-fluid-infrastructure does not declare a dependency on its
-          # companion mods (neither depends on it in code either), so there is
-          # no local info.json data to draw their names from. factorio_version
-          # is still drawn from the real metadata below rather than duplicated.
+          # download-factorio-mods.py no longer recurses past a mod's own
+          # directly-declared dependencies (recursing into hidden-optional
+          # dependencies-of-dependencies once reached an unrelated, unmaintained
+          # mod several hops away with no compatible release). So Rampant
+          # Arsenal Fork has to be listed here explicitly rather than arriving
+          # transitively. Its constraint is drawn from AFI's own info.json,
+          # which already declares it, rather than duplicated as a literal.
+          dependency_pattern = re.compile(
+              r"^\s*(?:\(\?\)|\?|\+|!|~)?\s*(?P<name>[A-Za-z0-9_-]+)(?P<constraint>\s*(?:>=|<=|=|>|<)\s*[0-9][0-9.]*)?\s*$"
+          )
+          rampant_arsenal_fork = "RampantArsenalFork"
+          for declaration in own_info["dependencies"]:
+              match = dependency_pattern.match(declaration)
+              if match and match.group("name") == "RampantArsenalFork":
+                  constraint = (match.group("constraint") or "").strip()
+                  rampant_arsenal_fork = f"RampantArsenalFork {constraint}".strip()
+                  break
+
+          # advanced-energy-grid, advanced-power-infrastructure, and
+          # PowerOverload are not declared anywhere in AFI's own info.json (AFI
+          # has no code coupling with any of them), so there is no local
+          # info.json data to draw their names from.
           json.dump(
               {
                   "name": "advanced-infrastructure-family-validation",
@@ -118,6 +137,8 @@ jobs:
                   "dependencies": [
                       "advanced-energy-grid",
                       "advanced-power-infrastructure",
+                      "PowerOverload",
+                      rampant_arsenal_fork,
                   ],
               },
               open(sys.argv[1], "w", encoding="utf-8"),

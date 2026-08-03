@@ -45,7 +45,13 @@ class DependencyNamesTest(unittest.TestCase):
             ],
         )
 
-    def test_local_metadata_always_includes_optional_dependencies(self) -> None:
+    def test_local_metadata_includes_optional_dependencies_without_recursing(self) -> None:
+        # Only what `local-mod` declares directly should be downloaded.
+        # include_dependencies must be False here: a downloaded dependency's
+        # own optional/recommended/hidden-optional dependencies must not be
+        # pulled in, since that graph can reach arbitrarily far across the
+        # Mod Portal (e.g. a hidden-optional compatibility shim several hops
+        # away with no Factorio-version-compatible release).
         with patch.object(DOWNLOADER, "download_mod_closure") as download_mod:
             DOWNLOADER.download_info_dependency_closure(
                 {
@@ -60,7 +66,7 @@ class DependencyNamesTest(unittest.TestCase):
 
         self.assertEqual([call.args[0] for call in download_mod.call_args_list], ["optional-mod", "recommended-mod"])
         for call in download_mod.call_args_list:
-            self.assertTrue(call.kwargs["include_dependencies"])
+            self.assertFalse(call.kwargs["include_dependencies"])
             self.assertTrue(call.kwargs["include_optional_dependencies"])
             self.assertEqual(call.kwargs["visited"], {"local-mod"})
 
