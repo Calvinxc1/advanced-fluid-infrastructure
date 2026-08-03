@@ -41,6 +41,16 @@ if mods["RampantArsenalFork"] then
       data.raw.item[name] = nil
     end
     remove_recipe(name)
+
+    -- The recycler feature auto-generates a "<name>-recycling" recipe (and a
+    -- matching unlock-recipe effect on the vanilla "recycling" technology)
+    -- for craftable items, including these removed pipes. That generation
+    -- reacts to items/recipes appearing but does not reliably retract the
+    -- technology's unlock-recipe effect once the source item disappears
+    -- again later in the data stage, so it has to be removed explicitly
+    -- here rather than relying on the generic ingredient/result scan below
+    -- to always still see it.
+    remove_recipe(name .. "-recycling")
   end
 
   local recipes_to_remove = {}
