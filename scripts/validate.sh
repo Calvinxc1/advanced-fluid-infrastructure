@@ -12,6 +12,9 @@ from pathlib import Path
 info = json.load(open("src/info.json", encoding="utf-8"))
 version = info["version"]
 
+for path in sorted(Path("tests/fixtures").rglob("info.json")):
+    json.loads(path.read_text(encoding="utf-8"))
+
 if not re.fullmatch(r"\d+\.\d+\.\d+", version):
     raise SystemExit(f"src/info.json version must be MAJOR.MINOR.PATCH: {version}")
 
@@ -33,8 +36,10 @@ else:
         yaml.safe_load(path.read_text(encoding="utf-8"))
 PY
 
+python3 -m unittest tests/test_download_factorio_mods.py
+
 while IFS= read -r file; do
   luac -p "$file"
-done < <(rg --files -g '*.lua' src)
+done < <(rg --files -g '*.lua' src tests/fixtures)
 
 ./scripts/factorio-validate.sh

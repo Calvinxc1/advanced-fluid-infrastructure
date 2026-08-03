@@ -247,15 +247,20 @@ jobs:
 
       - name: Upload to Factorio Mod Portal
         env:
-          FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
+          # A Mod Portal API key (factorio.com/profile, "ModPortal: Upload
+          # Mods" permission) -- NOT the same credential as
+          # FACTORIO_MOD_PORTAL_TOKEN in ci.yml, which is the download-only
+          # username+token service-token pair. The upload API (v2) only
+          # accepts a scoped API key as a bearer token.
+          FACTORIO_MOD_PORTAL_API_KEY: ${{ secrets.FACTORIO_MOD_PORTAL_API_KEY }}
         run: |
           set -euo pipefail
           if [[ "${PUBLISH_FACTORIO_PORTAL:-0}" != "1" ]]; then
             exit 0
           fi
 
-          if [[ -z "${FACTORIO_MOD_PORTAL_TOKEN:-}" ]]; then
-            echo "FACTORIO_MOD_PORTAL_TOKEN secret is required for Mod Portal upload." >&2
+          if [[ -z "${FACTORIO_MOD_PORTAL_API_KEY:-}" ]]; then
+            echo "FACTORIO_MOD_PORTAL_API_KEY secret is required for Mod Portal upload." >&2
             exit 1
           fi
 

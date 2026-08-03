@@ -11,6 +11,10 @@ Thumbs.db
 
 # Local secrets and environment
 .env
+.ai
+
+# Python bytecode cache
+__pycache__/
 
 # Factorio build/package output
 dist/

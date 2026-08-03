@@ -19,12 +19,16 @@ jobs:
           CHECKOUT_REF: ${{ github.event.pull_request.head.sha || github.sha }}
           CHECKOUT_REPOSITORY: ${{ github.repository }}
           GITEA_SERVER_URL: ${{ github.server_url }}
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           git --version
           git init .
           git remote add origin "$GITEA_SERVER_URL/$CHECKOUT_REPOSITORY.git"
-          git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
+          GIT_CONFIG_COUNT=1 \
+          GIT_CONFIG_KEY_0=http.extraHeader \
+          GIT_CONFIG_VALUE_0="Authorization: token $GITEA_TOKEN" \
+            git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
           git checkout --force FETCH_HEAD
           git rev-parse HEAD
 
@@ -47,9 +51,110 @@ jobs:
           rm -f "$mods_dir/$mod_name"
           mkdir -p "$mods_dir"
           ln -s "$PWD/src" "$mods_dir/$mod_name"
+          for fixture in RampantArsenalFork afi-rampant-compatibility-test; do
+            rm -f "$mods_dir/$fixture"
+            ln -s "$PWD/tests/fixtures/$fixture" "$mods_dir/$fixture"
+          done
           echo "FACTORIO_MODS_DIR=$mods_dir" >> "$GITHUB_ENV"
 
       - name: Validate mod
         env:
           AFI_REQUIRE_FACTORIO: "1"
         run: ./scripts/validate.sh
+
+      - name: Download and validate declared dependency mod list
+        env:
+          FACTORIO_MOD_PORTAL_USERNAME: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME }}
+          FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${FACTORIO_MOD_PORTAL_USERNAME:-}" || -z "${FACTORIO_MOD_PORTAL_TOKEN:-}" ]]; then
+            echo "FACTORIO_MOD_PORTAL_USERNAME and FACTORIO_MOD_PORTAL_TOKEN must both be set to validate the full Factorio mod list." >&2
+            exit 1
+          fi
+          temp_base="${RUNNER_TEMP:-/tmp}"
+          mods_dir="$(mktemp -d "$temp_base/factorio-dependency-mods.XXXXXX")"
+          trap 'rm -rf -- "$mods_dir"' EXIT
+          ./scripts/download-factorio-mods.py \
+            --mods-dir "$mods_dir" \
+            --from-info src/info.json
+          mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
+          ln -s "$PWD/src" "$mods_dir/$mod_name"
+          FACTORIO_MODS_DIR="$mods_dir" AFI_REQUIRE_FACTORIO=1 ./scripts/factorio-validate.sh
+
+      - name: Validate full mod family (AFI + AEG + API + dependencies)
+        env:
+          FACTORIO_MOD_PORTAL_USERNAME: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME }}
+          FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${FACTORIO_MOD_PORTAL_USERNAME:-}" || -z "${FACTORIO_MOD_PORTAL_TOKEN:-}" ]]; then
+            echo "FACTORIO_MOD_PORTAL_USERNAME and FACTORIO_MOD_PORTAL_TOKEN must both be set to validate the full mod family." >&2
+            exit 1
+          fi
+          mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
+
+          temp_base="${RUNNER_TEMP:-/tmp}"
+          mkdir -p "$temp_base"
+          family_info="$(mktemp "$temp_base/family-info.XXXXXX.json")"
+          mods_dir="$(mktemp -d "$temp_base/factorio-family-mods.XXXXXX")"
+          trap 'rm -f -- "$family_info"; rm -rf -- "$mods_dir"' EXIT
+
+          python3 - "$family_info" <<'PY'
+          import json
+          import re
+          import sys
+
+          own_info = json.load(open("src/info.json", encoding="utf-8"))
+
+          # download-factorio-mods.py no longer recurses past a mod's own
+          # directly-declared dependencies (recursing into hidden-optional
+          # dependencies-of-dependencies once reached an unrelated, unmaintained
+          # mod several hops away with no compatible release). So Rampant
+          # Arsenal Fork has to be listed here explicitly rather than arriving
+          # transitively. Its constraint is drawn from AFI's own info.json,
+          # which already declares it, rather than duplicated as a literal.
+          dependency_pattern = re.compile(
+              r"^\s*(?:\(\?\)|\?|\+|!|~)?\s*(?P<name>[A-Za-z0-9_-]+)(?P<constraint>\s*(?:>=|<=|=|>|<)\s*[0-9][0-9.]*)?\s*$"
+          )
+          rampant_arsenal_fork = "RampantArsenalFork"
+          for declaration in own_info["dependencies"]:
+              match = dependency_pattern.match(declaration)
+              if match and match.group("name") == "RampantArsenalFork":
+                  constraint = (match.group("constraint") or "").strip()
+                  rampant_arsenal_fork = f"RampantArsenalFork {constraint}".strip()
+                  break
+
+          # advanced-energy-grid, advanced-power-infrastructure, and
+          # PowerOverload are not declared anywhere in AFI's own info.json (AFI
+          # has no code coupling with any of them), so there is no local
+          # info.json data to draw their names from.
+          json.dump(
+              {
+                  "name": "advanced-infrastructure-family-validation",
+                  "version": "0.0.1",
+                  "factorio_version": own_info["factorio_version"],
+                  "dependencies": [
+                      "advanced-energy-grid",
+                      "advanced-power-infrastructure",
+                      "PowerOverload",
+                      rampant_arsenal_fork,
+                  ],
+              },
+              open(sys.argv[1], "w", encoding="utf-8"),
+          )
+          PY
+
+          ./scripts/download-factorio-mods.py \
+            --mods-dir "$mods_dir" \
+            --from-info "$family_info"
+
+          # advanced-power-infrastructure declares an optional dependency on this
+          # mod, so the download above pulls in a Mod Portal copy of it too.
+          # Discard that copy in favor of the local checkout under test so
+          # Factorio doesn't see two releases of the same mod.
+          rm -f "$mods_dir/${mod_name}"_*.zip
+
+          ln -s "$PWD/src" "$mods_dir/$mod_name"
+          ln -s "$PWD/tests/fixtures/afi-rampant-compatibility-test" "$mods_dir/afi-rampant-compatibility-test"
+          FACTORIO_MODS_DIR="$mods_dir" AFI_REQUIRE_FACTORIO=1 ./scripts/factorio-validate.sh

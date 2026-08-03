@@ -20,7 +20,7 @@ This checklist is intentionally version-agnostic. Do not hard-code today's canon
 
 ## Canon Governance
 
-- Confirm `.governance/branch-descriptor.yaml` matches the selected target branch and target `canon_version`.
+- Confirm `lab-governance/branch-descriptor.yaml` matches the selected target branch and target `canon_version`.
 - Confirm the branch descriptor records the target branch's current parent branch and parent `canon_version`, when applicable.
 - Confirm `.governance/task-map.yaml` routes to workspace-local `.governance/...` paths.
 - Confirm `.governance/kind-routes.yaml` exists when the target branch uses kind routing.
@@ -30,11 +30,15 @@ This checklist is intentionally version-agnostic. Do not hard-code today's canon
 
 ## Local Governance
 
-- Confirm `.governance/local/index.yaml` exists as the local governance pointer when the workspace has local status, workflow facts, or deviations.
-- Confirm `.governance/local/status.yaml` exists when the workspace participates in portable local governance status.
+- Confirm `.governance/local/index.yaml` exists as the local governance pointer when the workspace has local status, workflow facts, overlays, or deviations.
+- Confirm `lab-governance/status.yaml` exists when the workspace participates in portable local governance status.
 - Confirm local status records the canonical agent name, active governance branch, active `canon_version`, and parent or generalized `canon_version` using the current target values.
-- Confirm workspace-local workflow facts, deviations, and notes remain local policy or local metadata rather than being folded into generalized branch policy.
-- Confirm local workflow facts are filled from the current workspace, not copied from another repository.
+- Confirm local status records runtime surface, gate state, granted capability authority, repository trust state when applicable, managed requirements state when applicable, and projection state when applicable.
+- Confirm an ungated runtime surface has no production or protected mutation authority unless Jason explicitly accepted a named residual risk.
+- Confirm any Codex workspace that relies on repo-local `.codex/config.toml` is trusted before relying on `developer_instructions`.
+- Confirm any generated runtime projection, Codex TOML artifact, Codex `.rules` file, or managed requirements artifact is current for the recorded source branch and `canon_version`.
+- Confirm workspace-local workflow facts, overlays, deviations, and notes remain local policy or local metadata rather than being folded into generalized branch policy.
+- Confirm local workflow or overlay facts are filled from the current workspace, not copied from another repository.
 
 ## Path And Publication Boundaries
 
@@ -46,6 +50,8 @@ This checklist is intentionally version-agnostic. Do not hard-code today's canon
 ## Verification
 
 - Validate changed YAML files.
+- Validate generated TOML artifacts before distribution.
+- Validate generated `.rules` artifacts with inline assertions and any available Codex rules validation command before distribution.
 - Scan changed governance files for conflict markers.
 - Verify the repository branch, local path, or other source of truth that will be used for closeout.
 - Report the target branch, target `canon_version`, parent `canon_version` when applicable, files changed, validation performed, commit or no-commit reason, and remaining uncertainty.
