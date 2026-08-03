@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.5
+Date: 2026.08.03
+  Changes
+    - Fixed release automation failing to authenticate with the private source repository during publishing, which had prevented 0.1.4 from actually reaching any release destination.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2026.08.03
   Bugfixes
