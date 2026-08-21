@@ -2,7 +2,7 @@ local constants = require("prototypes.fluid.constants")
 local helpers = require("prototypes.fluid.helpers")
 
 local low_pressure_steel = constants.low_pressure_steel
-local heat_resistant = constants.heat_resistant
+local calcite_lined = constants.calcite_lined
 local tungsten = constants.tungsten
 local foundation = constants.foundation
 local high_pressure_foundation = constants.high_pressure_foundation
@@ -34,32 +34,32 @@ helpers.apply_low_pressure_steel_icon_tint(low_pressure_steel_pump_item)
 helpers.set_description(low_pressure_steel_pump_item, helpers.pump_description())
 data:extend({ low_pressure_steel_pump_item })
 
-local heat_resistant_pipe_item = util.table.deepcopy(data.raw.item.pipe)
-heat_resistant_pipe_item.name = "afi_heat-resistant-pipe"
-heat_resistant_pipe_item.place_result = "afi_heat-resistant-pipe"
-heat_resistant_pipe_item.order = "a[pipe]-a[heat-resistant-pipe]"
-helpers.apply_heat_resistant_icon_tint(heat_resistant_pipe_item)
-helpers.set_description(heat_resistant_pipe_item, helpers.pipe_description(heat_resistant.pipeline_extent))
-data:extend({ heat_resistant_pipe_item })
+local calcite_lined_pipe_item = util.table.deepcopy(data.raw.item.pipe)
+calcite_lined_pipe_item.name = "afi_calcite-lined-pipe"
+calcite_lined_pipe_item.place_result = "afi_calcite-lined-pipe"
+calcite_lined_pipe_item.order = "a[pipe]-a[calcite-lined-pipe]"
+helpers.apply_calcite_lined_icon_tint(calcite_lined_pipe_item)
+helpers.set_description(calcite_lined_pipe_item, helpers.pipe_description(calcite_lined.pipeline_extent))
+data:extend({ calcite_lined_pipe_item })
 
-local heat_resistant_pipe_to_ground_item = util.table.deepcopy(data.raw.item["pipe-to-ground"])
-heat_resistant_pipe_to_ground_item.name = "afi_heat-resistant-pipe-to-ground"
-heat_resistant_pipe_to_ground_item.place_result = "afi_heat-resistant-pipe-to-ground"
-heat_resistant_pipe_to_ground_item.order = "a[pipe]-b[heat-resistant-pipe-to-ground]"
-helpers.apply_heat_resistant_icon_tint(heat_resistant_pipe_to_ground_item)
+local calcite_lined_pipe_to_ground_item = util.table.deepcopy(data.raw.item["pipe-to-ground"])
+calcite_lined_pipe_to_ground_item.name = "afi_calcite-lined-pipe-to-ground"
+calcite_lined_pipe_to_ground_item.place_result = "afi_calcite-lined-pipe-to-ground"
+calcite_lined_pipe_to_ground_item.order = "a[pipe]-b[calcite-lined-pipe-to-ground]"
+helpers.apply_calcite_lined_icon_tint(calcite_lined_pipe_to_ground_item)
 helpers.set_description(
-  heat_resistant_pipe_to_ground_item,
-  helpers.underground_pipe_description(heat_resistant.pipeline_extent, heat_resistant.underground_distance)
+  calcite_lined_pipe_to_ground_item,
+  helpers.underground_pipe_description(calcite_lined.pipeline_extent, calcite_lined.underground_distance)
 )
-data:extend({ heat_resistant_pipe_to_ground_item })
+data:extend({ calcite_lined_pipe_to_ground_item })
 
-local heat_resistant_pump_item = util.table.deepcopy(data.raw.item.pump)
-heat_resistant_pump_item.name = "afi_heat-resistant-pump"
-heat_resistant_pump_item.place_result = "afi_heat-resistant-pump"
-heat_resistant_pump_item.order = "b[fluid]-b[pump-vulcanus]"
-helpers.apply_heat_resistant_icon_tint(heat_resistant_pump_item)
-helpers.set_description(heat_resistant_pump_item, helpers.pump_description())
-data:extend({ heat_resistant_pump_item })
+local calcite_lined_pump_item = util.table.deepcopy(data.raw.item.pump)
+calcite_lined_pump_item.name = "afi_calcite-lined-pump"
+calcite_lined_pump_item.place_result = "afi_calcite-lined-pump"
+calcite_lined_pump_item.order = "b[fluid]-b[pump-vulcanus]"
+helpers.apply_calcite_lined_icon_tint(calcite_lined_pump_item)
+helpers.set_description(calcite_lined_pump_item, helpers.pump_description())
+data:extend({ calcite_lined_pump_item })
 
 local tungsten_pipe_item = util.table.deepcopy(data.raw.item.pipe)
 tungsten_pipe_item.name = "afi_tungsten-pipe"

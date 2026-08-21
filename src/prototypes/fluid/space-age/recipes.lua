@@ -48,47 +48,47 @@ low_pressure_steel_pump_recipe.results = {
 }
 data:extend({ low_pressure_steel_pump_recipe })
 
-local heat_resistant_pipe_recipe = util.table.deepcopy(data.raw.recipe.pipe)
-heat_resistant_pipe_recipe.name = "afi_heat-resistant-pipe"
-heat_resistant_pipe_recipe.enabled = false
-heat_resistant_pipe_recipe.ingredients = {
+local calcite_lined_pipe_recipe = util.table.deepcopy(data.raw.recipe.pipe)
+calcite_lined_pipe_recipe.name = "afi_calcite-lined-pipe"
+calcite_lined_pipe_recipe.enabled = false
+calcite_lined_pipe_recipe.ingredients = {
   { type = "item", name = "afi_steel-pipe", amount = 1 },
   { type = "item", name = "calcite", amount = 1 },
 }
-heat_resistant_pipe_recipe.results = {
-  { type = "item", name = "afi_heat-resistant-pipe", amount = 1 },
+calcite_lined_pipe_recipe.results = {
+  { type = "item", name = "afi_calcite-lined-pipe", amount = 1 },
 }
-data:extend({ heat_resistant_pipe_recipe })
+data:extend({ calcite_lined_pipe_recipe })
 
-local heat_resistant_pipe_to_ground_recipe = util.table.deepcopy(data.raw.recipe["pipe-to-ground"])
-heat_resistant_pipe_to_ground_recipe.name = "afi_heat-resistant-pipe-to-ground"
-heat_resistant_pipe_to_ground_recipe.enabled = false
-heat_resistant_pipe_to_ground_recipe.ingredients = {
+local calcite_lined_pipe_to_ground_recipe = util.table.deepcopy(data.raw.recipe["pipe-to-ground"])
+calcite_lined_pipe_to_ground_recipe.name = "afi_calcite-lined-pipe-to-ground"
+calcite_lined_pipe_to_ground_recipe.enabled = false
+calcite_lined_pipe_to_ground_recipe.ingredients = {
   { type = "item", name = "afi_steel-pipe-to-ground", amount = 2 },
   { type = "item", name = "calcite", amount = 2 },
 }
-heat_resistant_pipe_to_ground_recipe.results = {
-  { type = "item", name = "afi_heat-resistant-pipe-to-ground", amount = 2 },
+calcite_lined_pipe_to_ground_recipe.results = {
+  { type = "item", name = "afi_calcite-lined-pipe-to-ground", amount = 2 },
 }
-data:extend({ heat_resistant_pipe_to_ground_recipe })
+data:extend({ calcite_lined_pipe_to_ground_recipe })
 
-local heat_resistant_pump_recipe = util.table.deepcopy(data.raw.recipe.pump)
-heat_resistant_pump_recipe.name = "afi_heat-resistant-pump"
-heat_resistant_pump_recipe.enabled = false
-heat_resistant_pump_recipe.ingredients = {
+local calcite_lined_pump_recipe = util.table.deepcopy(data.raw.recipe.pump)
+calcite_lined_pump_recipe.name = "afi_calcite-lined-pump"
+calcite_lined_pump_recipe.enabled = false
+calcite_lined_pump_recipe.ingredients = {
   { type = "item", name = "afi_steel-pump", amount = 1 },
   { type = "item", name = "calcite", amount = 2 },
 }
-heat_resistant_pump_recipe.results = {
-  { type = "item", name = "afi_heat-resistant-pump", amount = 1 },
+calcite_lined_pump_recipe.results = {
+  { type = "item", name = "afi_calcite-lined-pump", amount = 1 },
 }
-data:extend({ heat_resistant_pump_recipe })
+data:extend({ calcite_lined_pump_recipe })
 
 local tungsten_pipe_recipe = util.table.deepcopy(data.raw.recipe.pipe)
 tungsten_pipe_recipe.name = "afi_tungsten-pipe"
 tungsten_pipe_recipe.enabled = false
 tungsten_pipe_recipe.ingredients = {
-  { type = "item", name = "afi_heat-resistant-pipe", amount = 1 },
+  { type = "item", name = "afi_calcite-lined-pipe", amount = 1 },
   { type = "item", name = "tungsten-plate", amount = 1 },
 }
 tungsten_pipe_recipe.results = {
@@ -100,7 +100,7 @@ local tungsten_pipe_to_ground_recipe = util.table.deepcopy(data.raw.recipe["pipe
 tungsten_pipe_to_ground_recipe.name = "afi_tungsten-pipe-to-ground"
 tungsten_pipe_to_ground_recipe.enabled = false
 tungsten_pipe_to_ground_recipe.ingredients = {
-  { type = "item", name = "afi_heat-resistant-pipe-to-ground", amount = 2 },
+  { type = "item", name = "afi_calcite-lined-pipe-to-ground", amount = 2 },
   { type = "item", name = "tungsten-plate", amount = 2 },
 }
 tungsten_pipe_to_ground_recipe.results = {
@@ -112,7 +112,7 @@ local tungsten_pump_recipe = util.table.deepcopy(data.raw.recipe.pump)
 tungsten_pump_recipe.name = "afi_tungsten-pump"
 tungsten_pump_recipe.enabled = false
 tungsten_pump_recipe.ingredients = {
-  { type = "item", name = "afi_heat-resistant-pump", amount = 1 },
+  { type = "item", name = "afi_calcite-lined-pump", amount = 1 },
   { type = "item", name = "tungsten-plate", amount = 5 },
 }
 tungsten_pump_recipe.results = {
