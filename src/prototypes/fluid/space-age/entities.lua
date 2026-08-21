@@ -153,6 +153,7 @@ helpers.set_resistances(foundation_pipe, foundation.resistances)
 helpers.set_fluid_box_extent(foundation_pipe.fluid_box, foundation.pipeline_extent)
 foundation_pipe.next_upgrade = nil
 helpers.set_description(foundation_pipe, helpers.pipe_description(foundation.pipeline_extent))
+helpers.allow_all_surfaces(foundation_pipe)
 data:extend({ foundation_pipe })
 
 local foundation_pipe_to_ground = util.table.deepcopy(data.raw["pipe-to-ground"]["pipe-to-ground"])
@@ -169,6 +170,7 @@ helpers.set_description(
   foundation_pipe_to_ground,
   helpers.underground_pipe_description(foundation.pipeline_extent, foundation.underground_distance)
 )
+helpers.allow_all_surfaces(foundation_pipe_to_ground)
 data:extend({ foundation_pipe_to_ground })
 
 local foundation_offshore_pump = util.table.deepcopy(data.raw["offshore-pump"]["offshore-pump"])
@@ -185,6 +187,7 @@ helpers.set_description(
   foundation_offshore_pump,
   helpers.offshore_pump_description(foundation.pipeline_extent)
 )
+helpers.allow_all_surfaces(foundation_offshore_pump)
 data:extend({ foundation_offshore_pump })
 
 local foundation_pump = util.table.deepcopy(data.raw.pump.pump)
@@ -197,6 +200,7 @@ helpers.apply_foundation_icon_tint(foundation_pump)
 helpers.apply_foundation_entity_tint(foundation_pump)
 helpers.set_resistances(foundation_pump, foundation.resistances)
 helpers.set_description(foundation_pump, helpers.pump_description())
+helpers.allow_all_surfaces(foundation_pump)
 data:extend({ foundation_pump })
 
 local high_pressure_foundation_offshore_pump = util.table.deepcopy(foundation_offshore_pump)
@@ -213,6 +217,7 @@ helpers.set_description(
   high_pressure_foundation_offshore_pump,
   helpers.offshore_pump_description(high_pressure_foundation.pipeline_extent)
 )
+helpers.allow_all_surfaces(high_pressure_foundation_offshore_pump)
 data:extend({ high_pressure_foundation_offshore_pump })
 
 local high_pressure_foundation_pump = util.table.deepcopy(foundation_pump)
@@ -225,6 +230,7 @@ helpers.apply_high_pressure_foundation_icon_tint(high_pressure_foundation_pump)
 helpers.apply_high_pressure_foundation_entity_tint(high_pressure_foundation_pump)
 helpers.set_resistances(high_pressure_foundation_pump, foundation.resistances)
 helpers.set_description(high_pressure_foundation_pump, helpers.pump_description())
+helpers.allow_all_surfaces(high_pressure_foundation_pump)
 data:extend({ high_pressure_foundation_pump })
 
 -- Reinforced is the terminal tier in a base-game load. With Space Age present
