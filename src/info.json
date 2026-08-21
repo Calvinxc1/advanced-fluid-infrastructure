@@ -8,7 +8,7 @@
   "description": "Adds staged pipe, pipe-to-ground, pump, offshore pump, pipeline extent, and fluid infrastructure technology progression for Factorio 2.1 and Space Age.",
   "dependencies": [
     "base >= 2.1.0",
-    "space-age >= 2.1.0",
+    "? space-age >= 2.1.0",
     "! underground-pipe-pack",
     "? RampantArsenalFork"
   ]
