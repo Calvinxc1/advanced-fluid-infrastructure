@@ -1,4 +1,5 @@
 local constants = require("prototypes.fluid.constants")
+local optional_dependencies = require("prototypes.fluid.optional-dependencies")
 
 local helpers = {}
 
@@ -274,6 +275,13 @@ function helpers.append_description(prototype, description)
 end
 
 function helpers.allow_only_space_platforms(prototype)
+  -- Surface conditions only mean anything when Space Age supplies more than
+  -- one surface. In a base-game load there is only Nauvis, so leave the
+  -- prototype unrestricted rather than writing conditions nothing can fail.
+  if not optional_dependencies.has_space_age then
+    return
+  end
+
   if prototype then
     prototype.surface_conditions = {
       { property = "gravity", min = 0, max = 0 },
@@ -282,6 +290,13 @@ function helpers.allow_only_space_platforms(prototype)
 end
 
 function helpers.disallow_space_platforms(prototype)
+  -- Surface conditions only mean anything when Space Age supplies more than
+  -- one surface. In a base-game load there is only Nauvis, so leave the
+  -- prototype unrestricted rather than writing conditions nothing can fail.
+  if not optional_dependencies.has_space_age then
+    return
+  end
+
   if prototype then
     prototype.surface_conditions = {
       { property = "gravity", min = 1 },
@@ -290,6 +305,13 @@ function helpers.disallow_space_platforms(prototype)
 end
 
 function helpers.allow_only_vulcanus(prototype)
+  -- Surface conditions only mean anything when Space Age supplies more than
+  -- one surface. In a base-game load there is only Nauvis, so leave the
+  -- prototype unrestricted rather than writing conditions nothing can fail.
+  if not optional_dependencies.has_space_age then
+    return
+  end
+
   if prototype then
     prototype.surface_conditions = {
       { property = "pressure", min = 4000, max = 4000 },
@@ -298,6 +320,13 @@ function helpers.allow_only_vulcanus(prototype)
 end
 
 function helpers.disallow_space_platforms_and_vulcanus(prototype)
+  -- Surface conditions only mean anything when Space Age supplies more than
+  -- one surface. In a base-game load there is only Nauvis, so leave the
+  -- prototype unrestricted rather than writing conditions nothing can fail.
+  if not optional_dependencies.has_space_age then
+    return
+  end
+
   if prototype then
     prototype.surface_conditions = {
       { property = "gravity", min = 1 },
