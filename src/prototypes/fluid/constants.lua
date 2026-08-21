@@ -39,7 +39,6 @@ return {
     entity_tint = { r = 0.72, g = 0.86, b = 0.74, a = 1 },
     resistances = {
       { type = "fire", percent = 100 },
-      { type = "cold", percent = 100 },
       { type = "acid", percent = 80 },
       { type = "poison", percent = 80 },
       { type = "explosion", percent = 70 },
@@ -57,7 +56,6 @@ return {
     entity_tint = { r = 0.86, g = 0.92, b = 0.96, a = 1 },
     resistances = {
       { type = "fire", percent = 100 },
-      { type = "cold", percent = 100 },
       { type = "acid", percent = 85 },
       { type = "poison", percent = 85 },
       { type = "explosion", percent = 80 },
