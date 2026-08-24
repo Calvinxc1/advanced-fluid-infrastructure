@@ -87,6 +87,29 @@ helpers.apply_heat_resistant_entity_tint(heat_resistant_pump)
 helpers.set_description(heat_resistant_pump, helpers.pump_description())
 data:extend({ heat_resistant_pump })
 
+-- The Vulcanus branch needs its own offshore pump, or lava cannot be extracted
+-- until the tungsten tier. The regular branch is deliberately locked out of
+-- Vulcanus below reinforced, so without this the tungsten offshore pump has no
+-- predecessor and the lava chain has no entry point.
+local heat_resistant_offshore_pump = util.table.deepcopy(data.raw["offshore-pump"]["offshore-pump"])
+heat_resistant_offshore_pump.name = "afi_heat-resistant-offshore-pump"
+heat_resistant_offshore_pump.minable.result = "afi_heat-resistant-offshore-pump"
+heat_resistant_offshore_pump.max_health = 200
+helpers.allow_only_vulcanus(heat_resistant_offshore_pump)
+heat_resistant_offshore_pump.pumping_speed = heat_resistant.pumping_speed
+-- Lava only, matching the tungsten tier above it. This is the lava branch; the
+-- regular branch handles water and picks Vulcanus up again at reinforced.
+heat_resistant_offshore_pump.fluid_box.filter = "lava"
+helpers.apply_heat_resistant_icon_tint(heat_resistant_offshore_pump)
+helpers.apply_heat_resistant_entity_tint(heat_resistant_offshore_pump)
+helpers.set_fluid_box_extent(heat_resistant_offshore_pump.fluid_box, heat_resistant.pipeline_extent)
+heat_resistant_offshore_pump.next_upgrade = "afi_tungsten-offshore-pump"
+helpers.set_description(
+  heat_resistant_offshore_pump,
+  helpers.lava_offshore_pump_description(heat_resistant.pipeline_extent)
+)
+data:extend({ heat_resistant_offshore_pump })
+
 local tungsten_pipe = util.table.deepcopy(data.raw.pipe.pipe)
 tungsten_pipe.name = "afi_tungsten-pipe"
 tungsten_pipe.minable.result = "afi_tungsten-pipe"

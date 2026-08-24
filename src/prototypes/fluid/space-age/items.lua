@@ -61,6 +61,17 @@ helpers.apply_heat_resistant_icon_tint(heat_resistant_pump_item)
 helpers.set_description(heat_resistant_pump_item, helpers.pump_description())
 data:extend({ heat_resistant_pump_item })
 
+local heat_resistant_offshore_pump_item = util.table.deepcopy(data.raw.item["offshore-pump"])
+heat_resistant_offshore_pump_item.name = "afi_heat-resistant-offshore-pump"
+heat_resistant_offshore_pump_item.place_result = "afi_heat-resistant-offshore-pump"
+heat_resistant_offshore_pump_item.order = "b[fluid]-a[offshore-pump-vulcanus]"
+helpers.apply_heat_resistant_icon_tint(heat_resistant_offshore_pump_item)
+helpers.set_description(
+  heat_resistant_offshore_pump_item,
+  helpers.lava_offshore_pump_description(heat_resistant.pipeline_extent)
+)
+data:extend({ heat_resistant_offshore_pump_item })
+
 local tungsten_pipe_item = util.table.deepcopy(data.raw.item.pipe)
 tungsten_pipe_item.name = "afi_tungsten-pipe"
 tungsten_pipe_item.place_result = "afi_tungsten-pipe"

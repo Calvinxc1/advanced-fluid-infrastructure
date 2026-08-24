@@ -84,6 +84,18 @@ heat_resistant_pump_recipe.results = {
 }
 data:extend({ heat_resistant_pump_recipe })
 
+local heat_resistant_offshore_pump_recipe = util.table.deepcopy(data.raw.recipe["offshore-pump"])
+heat_resistant_offshore_pump_recipe.name = "afi_heat-resistant-offshore-pump"
+heat_resistant_offshore_pump_recipe.enabled = false
+heat_resistant_offshore_pump_recipe.ingredients = {
+  { type = "item", name = "afi_steel-offshore-pump", amount = 1 },
+  { type = "item", name = "calcite", amount = 2 },
+}
+heat_resistant_offshore_pump_recipe.results = {
+  { type = "item", name = "afi_heat-resistant-offshore-pump", amount = 1 },
+}
+data:extend({ heat_resistant_offshore_pump_recipe })
+
 local tungsten_pipe_recipe = util.table.deepcopy(data.raw.recipe.pipe)
 tungsten_pipe_recipe.name = "afi_tungsten-pipe"
 tungsten_pipe_recipe.enabled = false
