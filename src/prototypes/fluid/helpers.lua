@@ -26,11 +26,11 @@ function helpers.apply_low_pressure_steel_icon_tint(prototype)
   end
 end
 
-function helpers.apply_heat_resistant_icon_tint(prototype)
+function helpers.apply_calcite_lined_icon_tint(prototype)
   if prototype and prototype.icon then
     prototype.icons = {
       { icon = prototype.icon, icon_size = prototype.icon_size or 64 },
-      { icon = prototype.icon, icon_size = prototype.icon_size or 64, tint = constants.heat_resistant.icon_tint },
+      { icon = prototype.icon, icon_size = prototype.icon_size or 64, tint = constants.calcite_lined.icon_tint },
     }
     prototype.icon = nil
     prototype.icon_size = nil
@@ -150,16 +150,16 @@ function helpers.apply_low_pressure_steel_entity_tint(prototype)
   tint_sprite_table(prototype.vertical_animation, constants.low_pressure_steel.entity_tint)
 end
 
-function helpers.apply_heat_resistant_entity_tint(prototype)
+function helpers.apply_calcite_lined_entity_tint(prototype)
   if not prototype then
     return
   end
-  tint_sprite_table(prototype.pictures, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.picture, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.graphics_set, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.animations, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.horizontal_animation, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.vertical_animation, constants.heat_resistant.entity_tint)
+  tint_sprite_table(prototype.pictures, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.picture, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.graphics_set, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.animations, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.horizontal_animation, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.vertical_animation, constants.calcite_lined.entity_tint)
 end
 
 function helpers.apply_tungsten_entity_tint(prototype)

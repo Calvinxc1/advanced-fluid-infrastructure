@@ -2,7 +2,7 @@ local constants = require("prototypes.fluid.constants")
 local helpers = require("prototypes.fluid.helpers")
 
 local low_pressure_steel = constants.low_pressure_steel
-local heat_resistant = constants.heat_resistant
+local calcite_lined = constants.calcite_lined
 local tungsten = constants.tungsten
 local foundation = constants.foundation
 local high_pressure_foundation = constants.high_pressure_foundation
@@ -47,45 +47,68 @@ helpers.apply_low_pressure_steel_entity_tint(low_pressure_steel_pump)
 helpers.set_description(low_pressure_steel_pump, helpers.pump_description())
 data:extend({ low_pressure_steel_pump })
 
-local heat_resistant_pipe = util.table.deepcopy(data.raw.pipe.pipe)
-heat_resistant_pipe.name = "afi_heat-resistant-pipe"
-heat_resistant_pipe.minable.result = "afi_heat-resistant-pipe"
-heat_resistant_pipe.max_health = 150
-helpers.allow_only_vulcanus(heat_resistant_pipe)
-helpers.apply_heat_resistant_icon_tint(heat_resistant_pipe)
-helpers.apply_heat_resistant_entity_tint(heat_resistant_pipe)
-helpers.set_fluid_box_extent(heat_resistant_pipe.fluid_box, heat_resistant.pipeline_extent)
-heat_resistant_pipe.next_upgrade = "afi_tungsten-pipe"
-helpers.set_description(heat_resistant_pipe, helpers.pipe_description(heat_resistant.pipeline_extent))
-data:extend({ heat_resistant_pipe })
+local calcite_lined_pipe = util.table.deepcopy(data.raw.pipe.pipe)
+calcite_lined_pipe.name = "afi_calcite-lined-pipe"
+calcite_lined_pipe.minable.result = "afi_calcite-lined-pipe"
+calcite_lined_pipe.max_health = 150
+helpers.allow_only_vulcanus(calcite_lined_pipe)
+helpers.apply_calcite_lined_icon_tint(calcite_lined_pipe)
+helpers.apply_calcite_lined_entity_tint(calcite_lined_pipe)
+helpers.set_fluid_box_extent(calcite_lined_pipe.fluid_box, calcite_lined.pipeline_extent)
+calcite_lined_pipe.next_upgrade = "afi_tungsten-pipe"
+helpers.set_description(calcite_lined_pipe, helpers.pipe_description(calcite_lined.pipeline_extent))
+data:extend({ calcite_lined_pipe })
 
-local heat_resistant_pipe_to_ground = util.table.deepcopy(data.raw["pipe-to-ground"]["pipe-to-ground"])
-heat_resistant_pipe_to_ground.name = "afi_heat-resistant-pipe-to-ground"
-heat_resistant_pipe_to_ground.minable.result = "afi_heat-resistant-pipe-to-ground"
-heat_resistant_pipe_to_ground.max_health = 200
-helpers.allow_only_vulcanus(heat_resistant_pipe_to_ground)
-helpers.apply_heat_resistant_icon_tint(heat_resistant_pipe_to_ground)
-helpers.apply_heat_resistant_entity_tint(heat_resistant_pipe_to_ground)
-helpers.set_underground_distance(heat_resistant_pipe_to_ground, heat_resistant.underground_distance)
-helpers.set_fluid_box_extent(heat_resistant_pipe_to_ground.fluid_box, heat_resistant.pipeline_extent)
-heat_resistant_pipe_to_ground.next_upgrade = "afi_tungsten-pipe-to-ground"
+local calcite_lined_pipe_to_ground = util.table.deepcopy(data.raw["pipe-to-ground"]["pipe-to-ground"])
+calcite_lined_pipe_to_ground.name = "afi_calcite-lined-pipe-to-ground"
+calcite_lined_pipe_to_ground.minable.result = "afi_calcite-lined-pipe-to-ground"
+calcite_lined_pipe_to_ground.max_health = 200
+helpers.allow_only_vulcanus(calcite_lined_pipe_to_ground)
+helpers.apply_calcite_lined_icon_tint(calcite_lined_pipe_to_ground)
+helpers.apply_calcite_lined_entity_tint(calcite_lined_pipe_to_ground)
+helpers.set_underground_distance(calcite_lined_pipe_to_ground, calcite_lined.underground_distance)
+helpers.set_fluid_box_extent(calcite_lined_pipe_to_ground.fluid_box, calcite_lined.pipeline_extent)
+calcite_lined_pipe_to_ground.next_upgrade = "afi_tungsten-pipe-to-ground"
 helpers.set_description(
-  heat_resistant_pipe_to_ground,
-  helpers.underground_pipe_description(heat_resistant.pipeline_extent, heat_resistant.underground_distance)
+  calcite_lined_pipe_to_ground,
+  helpers.underground_pipe_description(calcite_lined.pipeline_extent, calcite_lined.underground_distance)
 )
-data:extend({ heat_resistant_pipe_to_ground })
+data:extend({ calcite_lined_pipe_to_ground })
 
-local heat_resistant_pump = util.table.deepcopy(data.raw.pump.pump)
-heat_resistant_pump.name = "afi_heat-resistant-pump"
-heat_resistant_pump.minable.result = "afi_heat-resistant-pump"
-heat_resistant_pump.max_health = 200
-helpers.allow_only_vulcanus(heat_resistant_pump)
-heat_resistant_pump.pumping_speed = heat_resistant.pumping_speed
-heat_resistant_pump.next_upgrade = "afi_tungsten-pump"
-helpers.apply_heat_resistant_icon_tint(heat_resistant_pump)
-helpers.apply_heat_resistant_entity_tint(heat_resistant_pump)
-helpers.set_description(heat_resistant_pump, helpers.pump_description())
-data:extend({ heat_resistant_pump })
+local calcite_lined_pump = util.table.deepcopy(data.raw.pump.pump)
+calcite_lined_pump.name = "afi_calcite-lined-pump"
+calcite_lined_pump.minable.result = "afi_calcite-lined-pump"
+calcite_lined_pump.max_health = 200
+helpers.allow_only_vulcanus(calcite_lined_pump)
+calcite_lined_pump.pumping_speed = calcite_lined.pumping_speed
+calcite_lined_pump.next_upgrade = "afi_tungsten-pump"
+helpers.apply_calcite_lined_icon_tint(calcite_lined_pump)
+helpers.apply_calcite_lined_entity_tint(calcite_lined_pump)
+helpers.set_description(calcite_lined_pump, helpers.pump_description())
+data:extend({ calcite_lined_pump })
+
+-- The Vulcanus branch needs its own offshore pump, or lava cannot be extracted
+-- until the tungsten tier. The regular branch is deliberately locked out of
+-- Vulcanus below reinforced, so without this the tungsten offshore pump has no
+-- predecessor and the lava chain has no entry point.
+local calcite_lined_offshore_pump = util.table.deepcopy(data.raw["offshore-pump"]["offshore-pump"])
+calcite_lined_offshore_pump.name = "afi_calcite-lined-offshore-pump"
+calcite_lined_offshore_pump.minable.result = "afi_calcite-lined-offshore-pump"
+calcite_lined_offshore_pump.max_health = 200
+helpers.allow_only_vulcanus(calcite_lined_offshore_pump)
+calcite_lined_offshore_pump.pumping_speed = calcite_lined.pumping_speed
+-- Lava only, matching the tungsten tier above it. This is the lava branch; the
+-- regular branch handles water and picks Vulcanus up again at reinforced.
+calcite_lined_offshore_pump.fluid_box.filter = "lava"
+helpers.apply_calcite_lined_icon_tint(calcite_lined_offshore_pump)
+helpers.apply_calcite_lined_entity_tint(calcite_lined_offshore_pump)
+helpers.set_fluid_box_extent(calcite_lined_offshore_pump.fluid_box, calcite_lined.pipeline_extent)
+calcite_lined_offshore_pump.next_upgrade = "afi_tungsten-offshore-pump"
+helpers.set_description(
+  calcite_lined_offshore_pump,
+  helpers.lava_offshore_pump_description(calcite_lined.pipeline_extent)
+)
+data:extend({ calcite_lined_offshore_pump })
 
 local tungsten_pipe = util.table.deepcopy(data.raw.pipe.pipe)
 tungsten_pipe.name = "afi_tungsten-pipe"
