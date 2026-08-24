@@ -5,7 +5,10 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+import json
+import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 
 
@@ -69,6 +72,42 @@ class DependencyNamesTest(unittest.TestCase):
             self.assertFalse(call.kwargs["include_dependencies"])
             self.assertTrue(call.kwargs["include_optional_dependencies"])
             self.assertEqual(call.kwargs["visited"], {"local-mod"})
+
+
+class ArchiveMetadataTest(unittest.TestCase):
+    """A mod archive may bundle another mod inside it, which is legal and does
+    happen: RampantFixed ships RampantFixedRemote alongside its own info.json.
+    Only the top-level info.json describes the mod being downloaded."""
+
+    @staticmethod
+    def _archive(directory: Path, name: str, entries: dict) -> Path:
+        archive_path = directory / f"{name}.zip"
+        with zipfile.ZipFile(archive_path, "w") as archive:
+            for entry_name, payload in entries.items():
+                archive.writestr(entry_name, json.dumps(payload))
+        return archive_path
+
+    def test_bundled_mod_metadata_is_ignored(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            archive_path = self._archive(
+                Path(directory),
+                "OuterMod_1.0.0",
+                {
+                    "OuterMod_1.0.0/info.json": {"name": "OuterMod", "version": "1.0.0"},
+                    "OuterMod_1.0.0/BundledMod/info.json": {"name": "BundledMod", "version": "0.1.0"},
+                },
+            )
+            self.assertEqual(DOWNLOADER.archive_metadata(archive_path)["name"], "OuterMod")
+
+    def test_archive_without_top_level_metadata_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            archive_path = self._archive(
+                Path(directory),
+                "NoMetadata_1.0.0",
+                {"NoMetadata_1.0.0/BundledMod/info.json": {"name": "BundledMod", "version": "0.1.0"}},
+            )
+            with self.assertRaises(DOWNLOADER.DownloadError):
+                DOWNLOADER.archive_metadata(archive_path)
 
 
 if __name__ == "__main__":
