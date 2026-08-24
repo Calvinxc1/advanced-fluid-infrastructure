@@ -16,3 +16,7 @@ if optional_dependencies.has_space_age then
   require("prototypes.fluid.space-age.recipes")
   require("prototypes.fluid.space-age.technologies")
 end
+
+-- Runs last: it places every item this mod owns into its crafting menu row,
+-- and the Space Age tiers must already exist by then.
+require("prototypes.fluid.menu-layout")
