@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2026.08.24
+  Compatibility:
+    - Made Space Age an optional dependency, so the mod now loads on base Factorio 2.1. The ladder tops out at the reinforced tier without it.
+    - Stopped clobbering RampantFixed's non-freezing fluid line. Its pipes previously inherited this mod's upgrade chain and surface restrictions, so an upgrade planner could silently convert freeze-immune pipes into freezing ones.
+  Changes:
+    - Renamed the heat-resistant tier to calcite-lined, for pipes, pipe-to-grounds, pumps, and offshore pumps. The tier never carried heat resistance; it is a steel component lined with calcite, unlocked by calcite processing, and its purpose is satisfying the Vulcanus surface condition. Existing saves migrate automatically.
+    - Added a calcite-lined offshore pump, so lava can be extracted on Vulcanus before the tungsten tier. The Vulcanus branch previously had no offshore pump below tungsten.
+    - Substituted refined concrete and low-density structure for tungsten plate and carbon fiber in the reinforced tier when Space Age is absent.
+    - Gave each fluid role its own crafting menu row: pipes and pipe-to-grounds together, pumps, and offshore pumps, with planet-restricted variants in a secondary row beneath the progression they branch from.
+  Bugfixes:
+    - Made the foundation and high-pressure foundation tiers placeable on every surface. They inherited a pressure ceiling from the vanilla prototypes they copy, so the terminal tier covered fewer surfaces than the reinforced tier below it and could not be placed on Vulcanus at all.
+    - Removed a declared cold resistance from the reinforced and foundation tiers. No cold damage type exists in Factorio, so the entry was silently discarded and the tiers never had the property their configuration claimed.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.5
 Date: 2026.08.03
   Changes:
