@@ -89,9 +89,17 @@ def archive_metadata(archive_path: Path) -> dict:
     try:
         with zipfile.ZipFile(archive_path) as archive:
             info_paths = [name for name in archive.namelist() if name == "info.json" or name.endswith("/info.json")]
-            if len(info_paths) != 1:
-                raise DownloadError(f"{archive_path.name} does not contain exactly one mod info.json")
-            return json.loads(archive.read(info_paths[0]).decode("utf-8"))
+            # A mod archive keeps its own metadata at the root of a single
+            # top-level directory. Deeper matches belong to mods bundled inside
+            # this one, which is legal and does happen: RampantFixed ships
+            # RampantFixedRemote alongside its own info.json. Selecting on depth
+            # keeps those from being mistaken for ambiguity.
+            top_level_paths = [name for name in info_paths if name.count("/") <= 1]
+            if len(top_level_paths) != 1:
+                raise DownloadError(
+                    f"{archive_path.name} does not contain exactly one top-level mod info.json"
+                )
+            return json.loads(archive.read(top_level_paths[0]).decode("utf-8"))
     except zipfile.BadZipFile as error:
         raise DownloadError(f"Downloaded archive is not a valid ZIP: {archive_path.name}") from error
 

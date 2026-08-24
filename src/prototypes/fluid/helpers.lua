@@ -274,6 +274,17 @@ function helpers.append_description(prototype, description)
   end
 end
 
+-- The foundation tier is the terminal, universal tier: it is meant to be
+-- placeable on every surface. These prototypes are deepcopies of the vanilla
+-- ones, which vanilla-patches.lua has already restricted, so "unrestricted"
+-- has to be asserted rather than left implicit. Not gated on Space Age: with
+-- no expansion there is nothing to clear, and clearing is safe either way.
+function helpers.allow_all_surfaces(prototype)
+  if prototype then
+    prototype.surface_conditions = nil
+  end
+end
+
 function helpers.allow_only_space_platforms(prototype)
   -- Surface conditions only mean anything when Space Age supplies more than
   -- one surface. In a base-game load there is only Nauvis, so leave the

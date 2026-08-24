@@ -10,6 +10,7 @@
     "base >= 2.1.0",
     "? space-age >= 2.1.0",
     "! underground-pipe-pack",
-    "? RampantArsenalFork"
+    "? RampantArsenalFork",
+    "? RampantFixed"
   ]
 }
