@@ -1,17 +1,56 @@
 {
   "entity": [
-    ["afi_heat-resistant-pipe", "afi_calcite-lined-pipe"],
-    ["afi_heat-resistant-pipe-to-ground", "afi_calcite-lined-pipe-to-ground"],
-    ["afi_heat-resistant-pump", "afi_calcite-lined-pump"]
+    [
+      "afi_heat-resistant-pipe",
+      "afi_calcite-lined-pipe"
+    ],
+    [
+      "afi_heat-resistant-pipe-to-ground",
+      "afi_calcite-lined-pipe-to-ground"
+    ],
+    [
+      "afi_heat-resistant-pump",
+      "afi_calcite-lined-pump"
+    ],
+    [
+      "afi_heat-resistant-offshore-pump",
+      "afi_calcite-lined-offshore-pump"
+    ]
   ],
   "item": [
-    ["afi_heat-resistant-pipe", "afi_calcite-lined-pipe"],
-    ["afi_heat-resistant-pipe-to-ground", "afi_calcite-lined-pipe-to-ground"],
-    ["afi_heat-resistant-pump", "afi_calcite-lined-pump"]
+    [
+      "afi_heat-resistant-pipe",
+      "afi_calcite-lined-pipe"
+    ],
+    [
+      "afi_heat-resistant-pipe-to-ground",
+      "afi_calcite-lined-pipe-to-ground"
+    ],
+    [
+      "afi_heat-resistant-pump",
+      "afi_calcite-lined-pump"
+    ],
+    [
+      "afi_heat-resistant-offshore-pump",
+      "afi_calcite-lined-offshore-pump"
+    ]
   ],
   "recipe": [
-    ["afi_heat-resistant-pipe", "afi_calcite-lined-pipe"],
-    ["afi_heat-resistant-pipe-to-ground", "afi_calcite-lined-pipe-to-ground"],
-    ["afi_heat-resistant-pump", "afi_calcite-lined-pump"]
+    [
+      "afi_heat-resistant-pipe",
+      "afi_calcite-lined-pipe"
+    ],
+    [
+      "afi_heat-resistant-pipe-to-ground",
+      "afi_calcite-lined-pipe-to-ground"
+    ],
+    [
+      "afi_heat-resistant-pump",
+      "afi_calcite-lined-pump"
+    ],
+    [
+      "afi_heat-resistant-offshore-pump",
+      "afi_calcite-lined-offshore-pump"
+    ]
   ]
 }

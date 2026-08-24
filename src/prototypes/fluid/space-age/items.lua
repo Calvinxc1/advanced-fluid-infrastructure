@@ -61,6 +61,17 @@ helpers.apply_calcite_lined_icon_tint(calcite_lined_pump_item)
 helpers.set_description(calcite_lined_pump_item, helpers.pump_description())
 data:extend({ calcite_lined_pump_item })
 
+local calcite_lined_offshore_pump_item = util.table.deepcopy(data.raw.item["offshore-pump"])
+calcite_lined_offshore_pump_item.name = "afi_calcite-lined-offshore-pump"
+calcite_lined_offshore_pump_item.place_result = "afi_calcite-lined-offshore-pump"
+calcite_lined_offshore_pump_item.order = "b[fluid]-a[offshore-pump-vulcanus]"
+helpers.apply_calcite_lined_icon_tint(calcite_lined_offshore_pump_item)
+helpers.set_description(
+  calcite_lined_offshore_pump_item,
+  helpers.lava_offshore_pump_description(calcite_lined.pipeline_extent)
+)
+data:extend({ calcite_lined_offshore_pump_item })
+
 local tungsten_pipe_item = util.table.deepcopy(data.raw.item.pipe)
 tungsten_pipe_item.name = "afi_tungsten-pipe"
 tungsten_pipe_item.place_result = "afi_tungsten-pipe"

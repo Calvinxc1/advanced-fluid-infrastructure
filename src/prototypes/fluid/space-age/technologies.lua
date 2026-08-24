@@ -223,3 +223,4 @@ data:extend({
 helpers.add_unlock("calcite-processing", "afi_calcite-lined-pipe")
 helpers.add_unlock("calcite-processing", "afi_calcite-lined-pipe-to-ground")
 helpers.add_unlock("calcite-processing", "afi_calcite-lined-pump")
+helpers.add_unlock("calcite-processing", "afi_calcite-lined-offshore-pump")

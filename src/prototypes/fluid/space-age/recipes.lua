@@ -84,6 +84,18 @@ calcite_lined_pump_recipe.results = {
 }
 data:extend({ calcite_lined_pump_recipe })
 
+local calcite_lined_offshore_pump_recipe = util.table.deepcopy(data.raw.recipe["offshore-pump"])
+calcite_lined_offshore_pump_recipe.name = "afi_calcite-lined-offshore-pump"
+calcite_lined_offshore_pump_recipe.enabled = false
+calcite_lined_offshore_pump_recipe.ingredients = {
+  { type = "item", name = "afi_steel-offshore-pump", amount = 1 },
+  { type = "item", name = "calcite", amount = 2 },
+}
+calcite_lined_offshore_pump_recipe.results = {
+  { type = "item", name = "afi_calcite-lined-offshore-pump", amount = 1 },
+}
+data:extend({ calcite_lined_offshore_pump_recipe })
+
 local tungsten_pipe_recipe = util.table.deepcopy(data.raw.recipe.pipe)
 tungsten_pipe_recipe.name = "afi_tungsten-pipe"
 tungsten_pipe_recipe.enabled = false
