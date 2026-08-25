@@ -2,8 +2,8 @@
 Version: 0.2.0
 Date: 2026.08.24
   Compatibility:
-    - Made Space Age an optional dependency, so the mod now loads on base Factorio 2.1. The ladder tops out at the reinforced tier without it.
-    - Stopped clobbering RampantFixed's non-freezing fluid line. Its pipes previously inherited this mod's upgrade chain and surface restrictions, so an upgrade planner could silently convert freeze-immune pipes into freezing ones.
+    - Made Space Age an optional dependency, so the mod now loads on base Factorio 2.1. The ladder tops out at the reinforced tier without it, gated on production and utility science instead of the Space Age packs.
+    - Stopped clobbering RampantFixed's non-freezing fluid line. Its pipes previously inherited this mod's upgrade chain, surface restrictions, and pipeline extent, so an upgrade planner could silently convert freeze-immune pipes into freezing ones. Their pipes and pipe-to-grounds now keep the iron-tier pipeline extent they have without this mod installed.
   Changes:
     - Renamed the heat-resistant tier to calcite-lined, for pipes, pipe-to-grounds, pumps, and offshore pumps. The tier never carried heat resistance; it is a steel component lined with calcite, unlocked by calcite processing, and its purpose is satisfying the Vulcanus surface condition. Existing saves migrate automatically.
     - Added a calcite-lined offshore pump, so lava can be extracted on Vulcanus before the tungsten tier. The Vulcanus branch previously had no offshore pump below tungsten.
