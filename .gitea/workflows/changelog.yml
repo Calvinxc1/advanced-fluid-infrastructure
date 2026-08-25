@@ -1,8 +1,11 @@
 name: Changelog Format
 
+# Only pull requests into main. The changelog section for a version is written
+# when the release branch is cut, not on feature work, so gating dev merges
+# checked a file that by policy nobody had touched yet.
 on:
   pull_request:
-    branches: [main, dev]
+    branches: [main]
     types: [opened, reopened, synchronize, edited]
 
 jobs:
