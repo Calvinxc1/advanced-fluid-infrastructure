@@ -12,6 +12,7 @@ Date: 2026.08.24
   Bugfixes:
     - Made the foundation and high-pressure foundation tiers placeable on every surface. They inherited a pressure ceiling from the vanilla prototypes they copy, so the terminal tier covered fewer surfaces than the reinforced tier below it and could not be placed on Vulcanus at all.
     - Removed a declared cold resistance from the reinforced and foundation tiers. No cold damage type exists in Factorio, so the entry was silently discarded and the tiers never had the property their configuration claimed.
+    - Corrected the reinforced pipe and pump technology descriptions, which described the tier as carbon-fiber reinforced. Without Space Age the recipes substitute refined concrete and low-density structure, and carbon fiber cannot be obtained at all, so the descriptions now name what the tier does rather than what it is made of.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.5
 Date: 2026.08.03
