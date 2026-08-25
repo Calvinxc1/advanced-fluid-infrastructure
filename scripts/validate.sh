@@ -36,7 +36,7 @@ else:
         yaml.safe_load(path.read_text(encoding="utf-8"))
 PY
 
-python3 -m unittest tests/test_download_factorio_mods.py
+python3 -m unittest discover --start-directory tests --pattern 'test_*.py'
 
 while IFS= read -r file; do
   luac -p "$file"
