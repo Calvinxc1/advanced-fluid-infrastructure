@@ -1,6 +1,6 @@
 {
   "name": "advanced-fluid-infrastructure",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "factorio_version": "2.1",
   "title": "Advanced Fluid Infrastructure",
   "author": "Jason M. Cherry",
@@ -8,8 +8,9 @@
   "description": "Adds staged pipe, pipe-to-ground, pump, offshore pump, pipeline extent, and fluid infrastructure technology progression for Factorio 2.1 and Space Age.",
   "dependencies": [
     "base >= 2.1.0",
-    "space-age >= 2.1.0",
+    "? space-age >= 2.1.0",
     "! underground-pipe-pack",
-    "? RampantArsenalFork"
+    "? RampantArsenalFork",
+    "? RampantFixed"
   ]
 }

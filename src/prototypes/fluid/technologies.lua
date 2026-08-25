@@ -1,4 +1,5 @@
 local helpers = require("prototypes.fluid.helpers")
+local optional_dependencies = require("prototypes.fluid.optional-dependencies")
 
 local function make_steel_fluid_technology(name, icon, effects, order)
   local technology = util.table.deepcopy(data.raw.technology["fluid-handling"])
@@ -44,29 +45,6 @@ local function make_rubber_lined_fluid_technology(name, icon, prerequisites, eff
   return technology
 end
 
-local function make_low_pressure_steel_fluid_technology(name, icon, prerequisites, effects, order)
-  local technology = util.table.deepcopy(data.raw.technology["fluid-handling"])
-  technology.name = name
-  technology.icon = icon
-  technology.icon_size = 256
-  technology.icons = nil
-  technology.prerequisites = prerequisites
-  technology.effects = effects
-  technology.unit = {
-    count = 250,
-    ingredients = {
-      { "automation-science-pack", 1 },
-      { "logistic-science-pack", 1 },
-      { "chemical-science-pack", 1 },
-      { "space-science-pack", 1 },
-    },
-    time = 30,
-  }
-  technology.upgrade = true
-  technology.order = order
-  return technology
-end
-
 data:extend({
   make_steel_fluid_technology(
     "afi_steel-pipe-infrastructure",
@@ -85,30 +63,6 @@ data:extend({
       { type = "unlock-recipe", recipe = "afi_steel-pump" },
     },
     "d-a-b"
-  ),
-  make_low_pressure_steel_fluid_technology(
-    "afi_low-pressure-steel-pipe-infrastructure",
-    "__advanced-fluid-infrastructure__/graphics/technology/low-pressure-steel-fluid-pipes.png",
-    {
-      "space-science-pack",
-    },
-    {
-      { type = "unlock-recipe", recipe = "afi_low-pressure-steel-pipe" },
-      { type = "unlock-recipe", recipe = "afi_low-pressure-steel-pipe-to-ground" },
-    },
-    "d-a-c"
-  ),
-  make_low_pressure_steel_fluid_technology(
-    "afi_low-pressure-steel-pump-infrastructure",
-    "__advanced-fluid-infrastructure__/graphics/technology/low-pressure-steel-fluid-pumps.png",
-    {
-      "afi_steel-pump-infrastructure",
-      "space-science-pack",
-    },
-    {
-      { type = "unlock-recipe", recipe = "afi_low-pressure-steel-pump" },
-    },
-    "d-a-d"
   ),
   make_rubber_lined_fluid_technology(
     "afi_rubber-lined-pipe-infrastructure",
@@ -137,105 +91,50 @@ data:extend({
   ),
   {
     type = "technology",
-    name = "afi_steel-pipe-casting",
-    icon = "__advanced-fluid-infrastructure__/graphics/technology/steel-fluid-pipes.png",
-    icon_size = 256,
-    prerequisites = {
-      "metallurgic-science-pack",
-    },
-    effects = {
-      { type = "unlock-recipe", recipe = "afi_casting-steel-pipe" },
-    },
-    unit = {
-      count = 250,
-      ingredients = {
-        { "automation-science-pack", 1 },
-        { "logistic-science-pack", 1 },
-        { "chemical-science-pack", 1 },
-        { "space-science-pack", 1 },
-        { "metallurgic-science-pack", 1 },
-      },
-      time = 45,
-    },
-    order = "d-a-f-a",
-  },
-  {
-    type = "technology",
-    name = "afi_tungsten-pipe-infrastructure",
-    icon = "__advanced-fluid-infrastructure__/graphics/technology/tungsten-fluid-pipes.png",
-    icon_size = 256,
-    prerequisites = {
-      "metallurgic-science-pack",
-    },
-    effects = {
-      { type = "unlock-recipe", recipe = "afi_tungsten-pipe" },
-      { type = "unlock-recipe", recipe = "afi_tungsten-pipe-to-ground" },
-    },
-    unit = {
-      count = 500,
-      ingredients = {
-        { "automation-science-pack", 1 },
-        { "logistic-science-pack", 1 },
-        { "chemical-science-pack", 1 },
-        { "space-science-pack", 1 },
-        { "metallurgic-science-pack", 1 },
-      },
-      time = 45,
-    },
-    upgrade = true,
-    order = "d-a-g",
-  },
-  {
-    type = "technology",
-    name = "afi_tungsten-pump-infrastructure",
-    icon = "__advanced-fluid-infrastructure__/graphics/technology/tungsten-fluid-pumps.png",
-    icon_size = 256,
-    prerequisites = {
-      "metallurgic-science-pack",
-      "afi_steel-pump-infrastructure",
-    },
-    effects = {
-      { type = "unlock-recipe", recipe = "afi_tungsten-offshore-pump" },
-      { type = "unlock-recipe", recipe = "afi_tungsten-pump" },
-    },
-    unit = {
-      count = 500,
-      ingredients = {
-        { "automation-science-pack", 1 },
-        { "logistic-science-pack", 1 },
-        { "chemical-science-pack", 1 },
-        { "space-science-pack", 1 },
-        { "metallurgic-science-pack", 1 },
-      },
-      time = 45,
-    },
-    upgrade = true,
-    order = "d-a-h",
-  },
-  {
-    type = "technology",
     name = "afi_reinforced-pipe-infrastructure",
     icon = "__advanced-fluid-infrastructure__/graphics/technology/reinforced-fluid-pipes.png",
     icon_size = 256,
-    prerequisites = {
-      "afi_rubber-lined-pipe-infrastructure",
-      "afi_tungsten-pipe-infrastructure",
-      "carbon-fiber",
-    },
+    -- Base game drops the Vulcanus tungsten tier, so reinforced hangs directly
+    -- off rubber-lined and is gated on purple and yellow science instead.
+    -- low-density-structure is implied transitively by utility-science-pack;
+    -- concrete, which unlocks refined concrete, is not implied by anything
+    -- above it and so is named explicitly.
+    prerequisites = optional_dependencies.select(
+      {
+        "afi_rubber-lined-pipe-infrastructure",
+        "afi_tungsten-pipe-infrastructure",
+        "carbon-fiber",
+      },
+      {
+        "afi_rubber-lined-pipe-infrastructure",
+        "production-science-pack",
+        "utility-science-pack",
+        "concrete",
+      }
+    ),
     effects = {
       { type = "unlock-recipe", recipe = "afi_reinforced-pipe" },
       { type = "unlock-recipe", recipe = "afi_reinforced-pipe-to-ground" },
     },
     unit = {
       count = 1000,
-      ingredients = {
-        { "automation-science-pack", 1 },
-        { "logistic-science-pack", 1 },
-        { "chemical-science-pack", 1 },
-        { "space-science-pack", 1 },
-        { "metallurgic-science-pack", 1 },
-        { "agricultural-science-pack", 1 },
-      },
+      ingredients = optional_dependencies.select(
+        {
+          { "automation-science-pack", 1 },
+          { "logistic-science-pack", 1 },
+          { "chemical-science-pack", 1 },
+          { "space-science-pack", 1 },
+          { "metallurgic-science-pack", 1 },
+          { "agricultural-science-pack", 1 },
+        },
+        {
+          { "automation-science-pack", 1 },
+          { "logistic-science-pack", 1 },
+          { "chemical-science-pack", 1 },
+          { "production-science-pack", 1 },
+          { "utility-science-pack", 1 },
+        }
+      ),
       time = 60,
     },
     upgrade = true,
@@ -246,128 +145,54 @@ data:extend({
     name = "afi_reinforced-pump-infrastructure",
     icon = "__advanced-fluid-infrastructure__/graphics/technology/reinforced-fluid-pumps.png",
     icon_size = 256,
-    prerequisites = {
-      "afi_rubber-lined-pump-infrastructure",
-      "afi_tungsten-pump-infrastructure",
-      "carbon-fiber",
-    },
+    -- Base game drops the Vulcanus tungsten tier, so reinforced hangs directly
+    -- off rubber-lined and is gated on purple and yellow science instead.
+    -- low-density-structure is implied transitively by utility-science-pack;
+    -- concrete, which unlocks refined concrete, is not implied by anything
+    -- above it and so is named explicitly.
+    prerequisites = optional_dependencies.select(
+      {
+        "afi_rubber-lined-pump-infrastructure",
+        "afi_tungsten-pump-infrastructure",
+        "carbon-fiber",
+      },
+      {
+        "afi_rubber-lined-pump-infrastructure",
+        "production-science-pack",
+        "utility-science-pack",
+        "concrete",
+      }
+    ),
     effects = {
       { type = "unlock-recipe", recipe = "afi_reinforced-offshore-pump" },
       { type = "unlock-recipe", recipe = "afi_reinforced-pump" },
     },
     unit = {
       count = 1000,
-      ingredients = {
-        { "automation-science-pack", 1 },
-        { "logistic-science-pack", 1 },
-        { "chemical-science-pack", 1 },
-        { "space-science-pack", 1 },
-        { "metallurgic-science-pack", 1 },
-        { "agricultural-science-pack", 1 },
-      },
+      ingredients = optional_dependencies.select(
+        {
+          { "automation-science-pack", 1 },
+          { "logistic-science-pack", 1 },
+          { "chemical-science-pack", 1 },
+          { "space-science-pack", 1 },
+          { "metallurgic-science-pack", 1 },
+          { "agricultural-science-pack", 1 },
+        },
+        {
+          { "automation-science-pack", 1 },
+          { "logistic-science-pack", 1 },
+          { "chemical-science-pack", 1 },
+          { "production-science-pack", 1 },
+          { "utility-science-pack", 1 },
+        }
+      ),
       time = 60,
     },
     upgrade = true,
     order = "d-a-j",
-  },
-  {
-    type = "technology",
-    name = "afi_foundation-pipe-infrastructure",
-    icon = "__advanced-fluid-infrastructure__/graphics/technology/foundation-fluid-pipes.png",
-    icon_size = 256,
-    prerequisites = {
-      "afi_reinforced-pipe-infrastructure",
-      "afi_low-pressure-steel-pipe-infrastructure",
-      "foundation",
-    },
-    effects = {
-      { type = "unlock-recipe", recipe = "afi_foundation-pipe" },
-      { type = "unlock-recipe", recipe = "afi_foundation-pipe-to-ground" },
-    },
-    unit = {
-      count = 2500,
-      ingredients = {
-        { "automation-science-pack", 1 },
-        { "logistic-science-pack", 1 },
-        { "chemical-science-pack", 1 },
-        { "space-science-pack", 1 },
-        { "metallurgic-science-pack", 1 },
-        { "agricultural-science-pack", 1 },
-        { "cryogenic-science-pack", 1 },
-      },
-      time = 60,
-    },
-    upgrade = true,
-    order = "d-a-k",
-  },
-  {
-    type = "technology",
-    name = "afi_foundation-pump-infrastructure",
-    icon = "__advanced-fluid-infrastructure__/graphics/technology/foundation-fluid-pumps.png",
-    icon_size = 256,
-    prerequisites = {
-      "afi_reinforced-pump-infrastructure",
-      "afi_low-pressure-steel-pump-infrastructure",
-      "foundation",
-    },
-    effects = {
-      { type = "unlock-recipe", recipe = "afi_foundation-offshore-pump" },
-      { type = "unlock-recipe", recipe = "afi_foundation-pump" },
-    },
-    unit = {
-      count = 2500,
-      ingredients = {
-        { "automation-science-pack", 1 },
-        { "logistic-science-pack", 1 },
-        { "chemical-science-pack", 1 },
-        { "space-science-pack", 1 },
-        { "metallurgic-science-pack", 1 },
-        { "agricultural-science-pack", 1 },
-        { "cryogenic-science-pack", 1 },
-      },
-      time = 60,
-    },
-    upgrade = true,
-    order = "d-a-l",
-  },
-  {
-    type = "technology",
-    name = "afi_high-pressure-foundation-pumping",
-    icon = "__advanced-fluid-infrastructure__/graphics/technology/high-pressure-foundation-fluid-pumps.png",
-    icon_size = 256,
-    prerequisites = {
-      "afi_foundation-pump-infrastructure",
-      "promethium-science-pack",
-    },
-    effects = {
-      { type = "unlock-recipe", recipe = "afi_high-pressure-foundation-offshore-pump" },
-      { type = "unlock-recipe", recipe = "afi_high-pressure-foundation-pump" },
-    },
-    unit = {
-      count = 5000,
-      ingredients = {
-        { "automation-science-pack", 1 },
-        { "logistic-science-pack", 1 },
-        { "chemical-science-pack", 1 },
-        { "production-science-pack", 1 },
-        { "utility-science-pack", 1 },
-        { "space-science-pack", 1 },
-        { "metallurgic-science-pack", 1 },
-        { "agricultural-science-pack", 1 },
-        { "electromagnetic-science-pack", 1 },
-        { "cryogenic-science-pack", 1 },
-        { "promethium-science-pack", 1 },
-      },
-      time = 120,
-    },
-    upgrade = true,
-    order = "d-a-m",
   },
 })
 
 helpers.add_unlock("steam-power", "pipe")
 helpers.add_unlock("steam-power", "pipe-to-ground")
 helpers.add_unlock("steam-power", "offshore-pump")
-helpers.add_unlock("calcite-processing", "afi_heat-resistant-pipe")
-helpers.add_unlock("calcite-processing", "afi_heat-resistant-pipe-to-ground")
-helpers.add_unlock("calcite-processing", "afi_heat-resistant-pump")

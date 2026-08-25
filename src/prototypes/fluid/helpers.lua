@@ -1,4 +1,5 @@
 local constants = require("prototypes.fluid.constants")
+local optional_dependencies = require("prototypes.fluid.optional-dependencies")
 
 local helpers = {}
 
@@ -25,11 +26,11 @@ function helpers.apply_low_pressure_steel_icon_tint(prototype)
   end
 end
 
-function helpers.apply_heat_resistant_icon_tint(prototype)
+function helpers.apply_calcite_lined_icon_tint(prototype)
   if prototype and prototype.icon then
     prototype.icons = {
       { icon = prototype.icon, icon_size = prototype.icon_size or 64 },
-      { icon = prototype.icon, icon_size = prototype.icon_size or 64, tint = constants.heat_resistant.icon_tint },
+      { icon = prototype.icon, icon_size = prototype.icon_size or 64, tint = constants.calcite_lined.icon_tint },
     }
     prototype.icon = nil
     prototype.icon_size = nil
@@ -149,16 +150,16 @@ function helpers.apply_low_pressure_steel_entity_tint(prototype)
   tint_sprite_table(prototype.vertical_animation, constants.low_pressure_steel.entity_tint)
 end
 
-function helpers.apply_heat_resistant_entity_tint(prototype)
+function helpers.apply_calcite_lined_entity_tint(prototype)
   if not prototype then
     return
   end
-  tint_sprite_table(prototype.pictures, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.picture, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.graphics_set, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.animations, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.horizontal_animation, constants.heat_resistant.entity_tint)
-  tint_sprite_table(prototype.vertical_animation, constants.heat_resistant.entity_tint)
+  tint_sprite_table(prototype.pictures, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.picture, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.graphics_set, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.animations, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.horizontal_animation, constants.calcite_lined.entity_tint)
+  tint_sprite_table(prototype.vertical_animation, constants.calcite_lined.entity_tint)
 end
 
 function helpers.apply_tungsten_entity_tint(prototype)
@@ -273,7 +274,25 @@ function helpers.append_description(prototype, description)
   end
 end
 
+-- The foundation tier is the terminal, universal tier: it is meant to be
+-- placeable on every surface. These prototypes are deepcopies of the vanilla
+-- ones, which vanilla-patches.lua has already restricted, so "unrestricted"
+-- has to be asserted rather than left implicit. Not gated on Space Age: with
+-- no expansion there is nothing to clear, and clearing is safe either way.
+function helpers.allow_all_surfaces(prototype)
+  if prototype then
+    prototype.surface_conditions = nil
+  end
+end
+
 function helpers.allow_only_space_platforms(prototype)
+  -- Surface conditions only mean anything when Space Age supplies more than
+  -- one surface. In a base-game load there is only Nauvis, so leave the
+  -- prototype unrestricted rather than writing conditions nothing can fail.
+  if not optional_dependencies.has_space_age then
+    return
+  end
+
   if prototype then
     prototype.surface_conditions = {
       { property = "gravity", min = 0, max = 0 },
@@ -282,6 +301,13 @@ function helpers.allow_only_space_platforms(prototype)
 end
 
 function helpers.disallow_space_platforms(prototype)
+  -- Surface conditions only mean anything when Space Age supplies more than
+  -- one surface. In a base-game load there is only Nauvis, so leave the
+  -- prototype unrestricted rather than writing conditions nothing can fail.
+  if not optional_dependencies.has_space_age then
+    return
+  end
+
   if prototype then
     prototype.surface_conditions = {
       { property = "gravity", min = 1 },
@@ -290,6 +316,13 @@ function helpers.disallow_space_platforms(prototype)
 end
 
 function helpers.allow_only_vulcanus(prototype)
+  -- Surface conditions only mean anything when Space Age supplies more than
+  -- one surface. In a base-game load there is only Nauvis, so leave the
+  -- prototype unrestricted rather than writing conditions nothing can fail.
+  if not optional_dependencies.has_space_age then
+    return
+  end
+
   if prototype then
     prototype.surface_conditions = {
       { property = "pressure", min = 4000, max = 4000 },
@@ -298,6 +331,13 @@ function helpers.allow_only_vulcanus(prototype)
 end
 
 function helpers.disallow_space_platforms_and_vulcanus(prototype)
+  -- Surface conditions only mean anything when Space Age supplies more than
+  -- one surface. In a base-game load there is only Nauvis, so leave the
+  -- prototype unrestricted rather than writing conditions nothing can fail.
+  if not optional_dependencies.has_space_age then
+    return
+  end
+
   if prototype then
     prototype.surface_conditions = {
       { property = "gravity", min = 1 },

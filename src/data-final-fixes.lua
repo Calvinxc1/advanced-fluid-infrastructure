@@ -79,3 +79,51 @@ if mods["RampantArsenalFork"] then
     data.raw.technology["rampant-arsenal-technology-reinforced-pipes"] = nil
   end
 end
+
+-- RampantFixed's demolisher scales branch adds a non-freezing fluid line by
+-- deepcopying the vanilla pipe, pipe-to-ground, and pump. This mod patches
+-- those same vanilla prototypes in vanilla-patches.lua, so depending on which
+-- mod wins the load order those copies can inherit our changes wholesale.
+--
+-- info.json declares `? RampantFixed`, which pins RampantFixed ahead of us and
+-- means the copies are normally taken from clean vanilla. This block runs after
+-- both mods regardless, so it asserts the intended result either way rather
+-- than relying on the ordering alone.
+--
+-- Their prototypes exist only when the startup setting below is enabled, so an
+-- absent prototype here means the player turned the branch off.
+if mods["RampantFixed"] then
+  local scales_content = settings.startup["rampantFixed--spaceAge-AddDemolisherScalesContent"]
+  if not scales_content or scales_content.value then
+    local iron_extent = require("prototypes.fluid.constants").iron.pipeline_extent
+
+    local function untangle(category, name, extent)
+      local prototype = data.raw[category] and data.raw[category][name]
+      if not prototype then
+        return
+      end
+
+      -- Never route a freeze-immune pipe into our tiers: every one of them
+      -- freezes, so an upgrade planner would silently downgrade an Aquilo
+      -- network's defining property.
+      prototype.next_upgrade = nil
+
+      -- Their line carries no surface restrictions of its own. Ours are a
+      -- statement about our tiers, not about theirs.
+      prototype.surface_conditions = nil
+
+      -- Without this mod their pipes are ordinary vanilla pipes, so iron-tier
+      -- throughput preserves the standing their author designed for. Set
+      -- explicitly so it does not depend on who loaded first.
+      if extent and prototype.fluid_box then
+        prototype.fluid_box.max_pipeline_extent = extent
+      end
+    end
+
+    untangle("pipe", "non-freezing-pipe-rampant", iron_extent)
+    untangle("pipe-to-ground", "non-freezing-pipe-to-ground-rampant", iron_extent)
+    -- Pumps are pipeline segment boundaries, so this mod never sets pump
+    -- extent; leave theirs alone too.
+    untangle("pump", "non-freezing-pump-rampant", nil)
+  end
+end
