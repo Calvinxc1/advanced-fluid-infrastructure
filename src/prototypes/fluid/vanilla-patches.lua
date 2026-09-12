@@ -67,28 +67,15 @@ local function add_technology_prerequisite(technology_name, prerequisite_name)
   table.insert(technology.prerequisites, prerequisite_name)
 end
 
-local pipe_substituted_recipes = {
+for _, recipe_name in pairs({
   "heat-exchanger",
   "flamethrower-turret",
   "oil-refinery",
   "pumpjack",
   "steam-turbine",
-}
-
-for _, recipe_name in pairs(pipe_substituted_recipes) do
+}) do
   replace_recipe_ingredient(data.raw.recipe[recipe_name], "pipe", "afi_steel-pipe")
 end
-
--- Recorded rather than repeated. The recycler has already generated a
--- "<recipe>-recycling" counterpart for each of these from the unsubstituted
--- ingredients, so recycling-patches.lua has to carry the same substitution
--- into those results. Keeping one list means the two passes cannot disagree.
-AdvancedFluidInfrastructure._substitutions = AdvancedFluidInfrastructure._substitutions or {}
-table.insert(AdvancedFluidInfrastructure._substitutions, {
-  recipes = pipe_substituted_recipes,
-  from = "pipe",
-  to = "afi_steel-pipe",
-})
 
 add_technology_prerequisite("oil-gathering", "afi_steel-pipe-infrastructure")
 add_technology_prerequisite("flamethrower", "afi_steel-pipe-infrastructure")

@@ -82,23 +82,29 @@ Infrastructure is not installed.
 
 ## Load order
 
-This mod publishes in `data.lua` and builds its prototypes in
-`data-updates.lua`. That leaves exactly one window where a change can still
-reach a prototype:
+This mod publishes the API and builds its prototypes in `data.lua`, then writes
+the final tier values over them in `data-updates.lua`. Your `data.lua` runs
+between the two:
 
 | Stage | Runs | State |
 | --- | --- | --- |
-| `data.lua` | Advanced Fluid Infrastructure | API published, nothing built |
+| `data.lua` | Advanced Fluid Infrastructure | API published; prototypes built with default values |
 | `data.lua` | **your mod** | **configure here** |
-| `data-updates.lua` | Advanced Fluid Infrastructure | prototypes built from the final values |
+| `data-updates.lua` | Advanced Fluid Infrastructure | configured values written over the defaults |
 | `data-updates.lua` | your mod | patch the finished prototypes directly |
 
 Declaring the dependency is what puts your `data.lua` after this mod's. Without
 it, load order is undefined and your configuration may run before the API
 exists.
 
-Configuring from `data-updates.lua` or later is too late — the prototypes
-already exist and will not be rebuilt. At that point, edit `data.raw` yourself.
+Prototypes exist from `data.lua` onward even though their values are not final
+until `data-updates`. That is deliberate: anything scanning `data.raw` in
+`data-updates` — Space Age's recycler generating a recycling recipe per recipe,
+most of all — has to find them at the ordinary time. Only numbers move late, and
+no prototype is created, renamed or removed in `data-updates`.
+
+Configuring from `data-updates.lua` or later is too late — the values have
+already been applied. At that point, edit `data.raw` yourself.
 
 ## Tiers
 
@@ -138,6 +144,10 @@ rejected rather than accepted-and-ignored.
 `steel.pipeline_extent` has a second effect worth knowing: it is also the
 fluid-box extent this mod gives every assembling machine, furnace, mining drill
 and rocket silo in the load. Raising it raises those too.
+
+If you read a prototype's values during your own `data.lua`, you are reading the
+defaults, not the configured result. Read the tier with `afi.get_tier` instead,
+or do the reading from your `data-updates.lua`.
 
 ## Defaults
 
@@ -252,6 +262,15 @@ that field — for example an `underground_distance` on
 **The log shows the change, but the entity is unchanged in game.** Startup
 changes need a full restart, not a save reload. If you changed `steel` and are
 looking at an assembling machine, that is expected — see [Fields](#fields).
+
+**I read the prototype in my `data.lua` and saw the old value.** Expected:
+prototypes are built with defaults and the configured values are written in
+`data-updates`. Read `afi.get_tier` instead, or read from `data-updates.lua`.
+
+**I added a tier through some other route and it ignores configuration.** Tier
+prototype names are derived as `afi_<tier-with-hyphens>-<role>`. A name outside
+that convention is reported in the log as `tier-apply did not recognise ...` and
+keeps its built-in defaults.
 
 ## What is not configurable
 

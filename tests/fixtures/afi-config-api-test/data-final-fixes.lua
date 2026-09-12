@@ -72,3 +72,28 @@ if mods["recycler"] then
       "pumpjack-recycling still returns vanilla pipe instead of afi_steel-pipe")
   end
 end
+
+-- Tooltips repeat the numbers, so they have to follow configuration too. The
+-- entity and the item must agree, or the crafting menu and the placed building
+-- describe different tiers.
+local pipe_description = data.raw.pipe["afi_steel-pipe"].localised_description
+assert(pipe_description[1] == "description.afi_pipeline-extent",
+  "unexpected pipe description key: " .. tostring(pipe_description[1]))
+assert(pipe_description[2] == "120",
+  "entity tooltip still shows the default extent: " .. tostring(pipe_description[2]))
+assert(data.raw.item["afi_steel-pipe"].localised_description[2] == "120",
+  "item tooltip did not follow the entity")
+
+local ptg_description = data.raw["pipe-to-ground"]["pipe-to-ground"].localised_description
+assert(ptg_description[3] == "6",
+  "vanilla pipe-to-ground tooltip did not follow the configured iron tier: "
+    .. tostring(ptg_description[3]))
+
+-- The Vulcanus offshore pumps use a different description key from the water
+-- ones. Refreshing rewrites the arguments of whatever key is already there, so
+-- the variant has to survive untouched.
+if mods["space-age"] then
+  local lava = data.raw["offshore-pump"]["afi_calcite-lined-offshore-pump"].localised_description
+  assert(lava[1] == "description.afi_lava-offshore-pump-fluid-stats",
+    "lava offshore pump lost its description variant: " .. tostring(lava[1]))
+end
