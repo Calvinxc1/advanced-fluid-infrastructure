@@ -7,6 +7,9 @@ Date: 2026.09.11
     - Moved prototype construction from the data stage to the data-updates stage, so a dependent mod's data.lua runs in between and can configure tiers before anything is built from them. Prototype names, values, and defaults are unchanged.
     - Extended the fluid-box reach this mod gives production machines to machines added by mods that load after it. The patch previously ran in the data stage and so only reached machines that already existed at that point.
     - Rejected configuration of a field a tier does not carry, such as an underground distance on the pumps-only high-pressure foundation tier, rather than accepting a change nothing would read.
+  Bugfixes:
+    - Kept every item this mod adds recyclable. Building a stage later than before moved this mod's recipes past the point where Space Age's recycler scans for them, which would have left all 29 of them without a recycling recipe.
+    - Kept recycling a pumpjack, oil refinery, heat exchanger, steam turbine, or flamethrower turret returning steel pipe rather than vanilla pipe, matching the ingredient this mod substitutes into those recipes.
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2026.08.24

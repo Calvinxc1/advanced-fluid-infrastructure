@@ -20,3 +20,6 @@ end
 -- Runs last: it places every item this mod owns into its crafting menu row,
 -- and the Space Age tiers must already exist by then.
 require("prototypes.fluid.menu-layout")
+
+-- Must follow every recipe this mod owns, including the Space Age ones.
+require("prototypes.fluid.recycling-patches")

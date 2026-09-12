@@ -44,3 +44,31 @@ assert(steel.icon_tint == recorded.steel_icon_tint,
   "configuring a tier replaced the table instead of merging into it")
 assert(steel.underground_distance == 8,
   "an unconfigured field on a configured tier was lost: " .. tostring(steel.underground_distance))
+
+-- This mod builds its prototypes a stage later than the recycler scans for
+-- recipes to generate recycling counterparts from, so those counterparts are
+-- regenerated explicitly. Without that pass every item this mod adds is
+-- silently unrecyclable, which a prototype-name diff catches but no in-game
+-- error would.
+if mods["recycler"] then
+  for _, name in ipairs({
+    "afi_steel-pipe", "afi_rubber-lined-pipe-to-ground", "afi_reinforced-pump",
+  }) do
+    assert(data.raw.recipe[name .. "-recycling"],
+      "missing recycling recipe for " .. name)
+  end
+
+  -- Vanilla recipes this mod substitutes its steel pipe into must have that
+  -- substitution reflected in what recycling them returns.
+  local pumpjack = data.raw.recipe["pumpjack-recycling"]
+  if pumpjack then
+    local returns_vanilla_pipe = false
+    for _, result in pairs(pumpjack.results or {}) do
+      if result.name == "pipe" or result[1] == "pipe" then
+        returns_vanilla_pipe = true
+      end
+    end
+    assert(not returns_vanilla_pipe,
+      "pumpjack-recycling still returns vanilla pipe instead of afi_steel-pipe")
+  end
+end
