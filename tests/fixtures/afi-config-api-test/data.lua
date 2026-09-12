@@ -28,6 +28,12 @@ assert(not afi.configure_tier("steel", { pumping_speed = "fast" }),
   "a wrongly typed value should be rejected")
 assert(not afi.configure_tier("steel", "not a table"),
   "a non-table change set should be rejected")
+-- high_pressure_foundation builds pumps only, so it carries no
+-- underground_distance and nothing would ever read one.
+assert(not afi.configure_tier("high_pressure_foundation", { underground_distance = 30 }),
+  "a field the tier does not carry should be rejected")
+assert(afi.get_tier("high_pressure_foundation").underground_distance == nil,
+  "a field the tier does not carry must not be written")
 
 assert(afi.get_tier("steel").max_health == nil,
   "a rejected field must not be written to the tier")

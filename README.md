@@ -36,7 +36,17 @@ Current tier behavior is documented in [docs/fluid-infrastructure-benchmark.md](
 
 ## For Mod Authors
 
-Tier values are published as a data-stage API, so another mod can retune pipeline extent, underground distance, and pumping speed for any tier without touching this mod's source. There are no player-facing settings for this; see [docs/modding-api.md](docs/modding-api.md).
+Tier values are published as a data-stage API, so another mod can retune pipeline extent, underground distance, and pumping speed for any tier — including the vanilla iron tier this mod patches in place — without touching this mod's source or forking it:
+
+```lua
+-- your data.lua, with "? advanced-fluid-infrastructure >= 0.3.0" declared
+if mods["advanced-fluid-infrastructure"] then
+  local afi = require("__advanced-fluid-infrastructure__.api")
+  afi.configure_tier("steel", { pipeline_extent = 120 }, "my-mod")
+end
+```
+
+This is a back-end surface only; it adds no player-facing mod settings. Tier names, defaults, the load-order contract, conflict behavior, and troubleshooting are documented in [docs/modding-api.md](docs/modding-api.md).
 
 ## Installation
 

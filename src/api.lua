@@ -78,7 +78,9 @@ function api.get_tier(name)
   return api.tiers[name]
 end
 
--- Merges `changes` into a tier. Returns true when every field was applied.
+-- Merges `changes` into a tier. Returns true when every field was applied,
+-- false when any was rejected -- an unknown tier, an unknown field, a field
+-- this particular tier does not carry, or a wrongly typed value.
 --
 -- Merging rather than replacing is required, not stylistic: entities.lua and
 -- space-age/entities.lua bind each tier sub-table to a local at require time,
@@ -108,6 +110,15 @@ function api.configure_tier(name, changes, source)
     if not expected then
       log(("AFI: configure_tier(%q) skipped unknown field %q. Configurable: %s")
         :format(name, tostring(field), tunable_names()))
+      applied = false
+    elseif tier[field] == nil then
+      -- The tier's own keys are the schema. Not every tier builds every kind
+      -- of prototype -- high_pressure_foundation is pumps only, with no
+      -- pipe-to-ground -- so a field the defaults never carried is one nothing
+      -- would ever read. Accepting it would report success for a change that
+      -- cannot take effect.
+      log(("AFI: configure_tier(%q) skipped %s -- this tier has no %s to set")
+        :format(name, field, field))
       applied = false
     elseif type(value) ~= expected then
       log(("AFI: configure_tier(%q) skipped %s -- expected %s, got %s")
