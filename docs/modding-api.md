@@ -1,19 +1,21 @@
 # Configuration API
 
 Advanced Fluid Infrastructure publishes its tier table so other mods can retune
-it. This is a back-end surface for mod authors: none of it is exposed as a
-player-facing mod setting, and nothing here appears in the Factorio settings UI.
+it: pipeline extent, underground distance and pumping speed, for any tier —
+including `iron`, which is the vanilla pipe and pump set this mod patches in
+place rather than replacing.
+
+This is a back-end surface. It adds no player-facing mod settings and nothing
+here appears in the settings UI.
 
 The mod does not try to stop you unbalancing it. If you want a 4000-tile iron
 pipe, that is yours to make. What the API guarantees is that a change either
 lands, or says in the log why it did not.
 
 - [Quick start](#quick-start)
-- [A complete example](#a-complete-example)
 - [Load order](#load-order)
 - [Tiers](#tiers)
 - [Fields](#fields)
-- [Defaults](#defaults)
 - [Functions](#functions)
 - [Rejections](#rejections)
 - [Conflicts between mods](#conflicts-between-mods)
@@ -23,63 +25,27 @@ lands, or says in the log why it did not.
 
 ## Quick start
 
-Declare the dependency in your `info.json`:
-
 ```json
 "dependencies": ["? advanced-fluid-infrastructure >= 0.3.0"]
 ```
 
-Then configure from your own `data.lua`:
-
 ```lua
+-- your data.lua
 if mods["advanced-fluid-infrastructure"] then
   local afi = require("__advanced-fluid-infrastructure__.api")
-  afi.configure_tier("steel", { pipeline_extent = 120 }, "my-mod")
+
+  -- Ease the opening: vanilla pipe reaches further, undergrounds jump more.
+  afi.configure_tier("iron", { pipeline_extent = 40, underground_distance = 6 }, "my-mod")
+
+  -- Tighten the endgame so foundation is a convenience, not an exemption.
+  afi.configure_tier("foundation", { pipeline_extent = 256 }, "my-mod")
 end
 ```
 
-It must be `data.lua`. See [Load order](#load-order).
-
-## A complete example
-
-A mod that makes the early game more forgiving and the late game less so.
-
-`info.json`:
-
-```json
-{
-  "name": "my-fluid-tweaks",
-  "version": "1.0.0",
-  "factorio_version": "2.1",
-  "title": "My Fluid Tweaks",
-  "author": "you",
-  "dependencies": [
-    "base >= 2.1.0",
-    "? advanced-fluid-infrastructure >= 0.3.0"
-  ]
-}
-```
-
-`data.lua`:
-
-```lua
-if not mods["advanced-fluid-infrastructure"] then return end
-
-local afi = require("__advanced-fluid-infrastructure__.api")
-
--- Ease the opening: vanilla pipe reaches further and undergrounds jump more.
-afi.configure_tier("iron", {
-  pipeline_extent = 40,
-  underground_distance = 6,
-}, "my-fluid-tweaks")
-
--- Tighten the endgame so foundation is a convenience, not an exemption.
-afi.configure_tier("foundation", { pipeline_extent = 256 }, "my-fluid-tweaks")
-```
-
-That is the whole integration. The `? ` prefix makes the dependency optional, and
-the `mods[...]` guard means your mod still loads when Advanced Fluid
-Infrastructure is not installed.
+That is the whole integration. It has to be `data.lua` — see
+[Load order](#load-order) — and the version bound on the dependency is what
+keeps an older Advanced Fluid Infrastructure, which has no API at all, from
+loading underneath you.
 
 ## Load order
 
@@ -109,26 +75,31 @@ already been applied. At that point, edit `data.raw` yourself.
 
 ## Tiers
 
-| Tier | Builds | Space Age only |
-| --- | --- | --- |
-| `iron` | the vanilla pipe, pipe-to-ground, pump and offshore pump, patched in place | |
-| `steel` | pipe, pipe-to-ground, pump, offshore pump | |
-| `rubber_lined` | pipe, pipe-to-ground, pump, offshore pump | |
-| `reinforced` | pipe, pipe-to-ground, pump, offshore pump | |
-| `low_pressure_steel` | pipe, pipe-to-ground, pump | yes |
-| `calcite_lined` | pipe, pipe-to-ground, pump, offshore pump | yes |
-| `tungsten` | pipe, pipe-to-ground, pump, offshore pump | yes |
-| `foundation` | pipe, pipe-to-ground, pump, offshore pump | yes |
-| `high_pressure_foundation` | pump, offshore pump | yes |
+Defaults are current as of 0.3.0; `afi.get_tier(name)` is authoritative at
+runtime. Call `afi.tier_names()` rather than hardcoding this list.
 
-`iron` is the vanilla set, which this mod patches rather than replaces.
-Configuring it retunes vanilla.
+| Tier | `pipeline_extent` | `underground_distance` | `pumping_speed` | Space Age only |
+| --- | --- | --- | --- | --- |
+| `iron` | 24 | 4 | 1 | |
+| `steel` | 64 | 8 | 4 | |
+| `rubber_lined` | 96 | 12 | 6 | |
+| `reinforced` | 192 | 12 | 10 | |
+| `low_pressure_steel` | 64 | 8 | 4 | yes |
+| `calcite_lined` | 24 | 4 | 1 | yes |
+| `tungsten` | 64 | 8 | 4 | yes |
+| `foundation` | 512 | 20 | 20 | yes |
+| `high_pressure_foundation` | 512 | — | 60 | yes |
 
-All nine tiers are present in the table in every load — only the prototypes
-built from them are conditional — so configuring a Space Age tier in a base-game
-load is harmless and needs no guard.
+Every tier builds a pipe, pipe-to-ground, pump and offshore pump, with two
+exceptions: `low_pressure_steel` has no offshore pump, and
+`high_pressure_foundation` is pumps only — no pipe-to-ground, which is why it
+carries no underground distance and rejects one.
 
-Call `afi.tier_names()` rather than hardcoding the list.
+`iron` is the vanilla set, patched in place. Configuring it retunes vanilla.
+
+All nine tiers are in the table in every load — only the prototypes built from
+them are conditional — so configuring a Space Age tier in a base-game load is
+harmless and needs no guard.
 
 ## Fields
 
@@ -138,34 +109,13 @@ Call `afi.tier_names()` rather than hardcoding the list.
 | `underground_distance` | number | pipe-to-grounds |
 | `pumping_speed` | number | pumps, offshore pumps |
 
-A tier only accepts the fields it actually uses. `high_pressure_foundation`
-builds no pipe-to-ground, so it has no `underground_distance` and setting one is
-rejected rather than accepted-and-ignored.
-
 `steel.pipeline_extent` has a second effect worth knowing: it is also the
 fluid-box extent this mod gives every assembling machine, furnace, mining drill
 and rocket silo in the load. Raising it raises those too.
 
-If you read a prototype's values during your own `data.lua`, you are reading the
-defaults, not the configured result. Read the tier with `afi.get_tier` instead,
-or do the reading from your `data-updates.lua`.
-
-## Defaults
-
-Current as of 0.3.0. `afi.get_tier(name)` is the authoritative source at
-runtime; this table is for orientation.
-
-| Tier | `pipeline_extent` | `underground_distance` | `pumping_speed` |
-| --- | --- | --- | --- |
-| `iron` | 24 | 4 | 1 |
-| `steel` | 64 | 8 | 4 |
-| `rubber_lined` | 96 | 12 | 6 |
-| `reinforced` | 192 | 12 | 10 |
-| `foundation` | 512 | 20 | 20 |
-| `low_pressure_steel` | 64 | 8 | 4 |
-| `calcite_lined` | 24 | 4 | 1 |
-| `tungsten` | 64 | 8 | 4 |
-| `high_pressure_foundation` | 512 | — | 60 |
+Reading a prototype during your own `data.lua` gives you the defaults, not the
+configured result — values are written in `data-updates`. Read the tier with
+`afi.get_tier` instead, or read from your own `data-updates.lua`.
 
 ## Functions
 
@@ -328,9 +278,7 @@ this API at all: patch `data.raw` in your own `data-final-fixes.lua`.
 
 ## Troubleshooting
 
-Everything this API refuses is written to the Factorio log, prefixed `AFI:`.
-Find it at `%APPDATA%\Factorio\factory-debug.log` on Windows or
-`~/.factorio/factorio-current.log` on Linux and macOS, and search for `AFI:`.
+Everything this API refuses goes to the Factorio log, prefixed `AFI:`.
 
 **My change did not apply, and there is no log line at all.** Your code did not
 run, or it ran before the API existed. Check that you declared
