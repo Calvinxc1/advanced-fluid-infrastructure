@@ -1,0 +1,10 @@
+{
+  "name": "afi-config-api-test",
+  "version": "0.0.1",
+  "title": "AFI configuration API assertions",
+  "author": "Advanced Fluid Infrastructure",
+  "factorio_version": "2.1",
+  "dependencies": [
+    "advanced-fluid-infrastructure >= 0.3.0"
+  ]
+}

@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 2026.09.11
+  Features:
+    - Added a configuration API so other mods can retune the pipeline extent, underground distance, and pumping speed of any tier, including the vanilla iron tier this mod patches in place. See docs/modding-api.md. There are no new player-facing mod settings; this is a back-end surface for mod authors.
+  Changes:
+    - Moved prototype construction from the data stage to the data-updates stage, so a dependent mod's data.lua runs in between and can configure tiers before anything is built from them. Prototype names, values, and defaults are unchanged.
+    - Extended the fluid-box reach this mod gives production machines to machines added by mods that load after it. The patch previously ran in the data stage and so only reached machines that already existed at that point.
+---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2026.08.24
   Compatibility:

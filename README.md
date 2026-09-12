@@ -34,6 +34,10 @@ The mod starts with constrained iron pipe networks, then expands through steel, 
 
 Current tier behavior is documented in [docs/fluid-infrastructure-benchmark.md](docs/fluid-infrastructure-benchmark.md).
 
+## For Mod Authors
+
+Tier values are published as a data-stage API, so another mod can retune pipeline extent, underground distance, and pumping speed for any tier without touching this mod's source. There are no player-facing settings for this; see [docs/modding-api.md](docs/modding-api.md).
+
 ## Installation
 
 Install the released mod through the Factorio mod portal when available. Release packages are also attached to repository releases as `{mod-name}_{version}.zip`.
