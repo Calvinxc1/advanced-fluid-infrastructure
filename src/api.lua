@@ -4,16 +4,21 @@
 -- table is the default payload; this file publishes it so other mods can retune
 -- a tier before any prototype is built from it.
 --
--- The contract is a load-order one. data.lua publishes and builds nothing;
--- prototypes/fluid is built from data-updates.lua instead. A mod that declares
--- `? advanced-fluid-infrastructure` therefore runs its own data.lua in the
--- window between the two, which is the only point where a change can still
--- reach a prototype.
+-- The contract is a load-order one. data.lua publishes this table and builds
+-- every prototype from the defaults in it; prototypes/fluid/tier-apply.lua then
+-- writes the final values over them from data-updates.lua. A mod that declares
+-- `? advanced-fluid-infrastructure` runs its own data.lua in the window between
+-- the two, which is the last point where a change still reaches a prototype.
 --
---     data.lua            (this mod)  publish, build nothing
+--     data.lua            (this mod)  publish, build with defaults
 --     data.lua            (consumer)  configure here
---     data-updates.lua    (this mod)  build prototypes
+--     data-updates.lua    (this mod)  apply configured values
 --     data-updates.lua    (consumer)  patch finished prototypes
+--
+-- Prototypes are created early on purpose. Creating them in data-updates
+-- instead put this mod's recipes past the point where Space Age's recycler
+-- scans, and every item it adds lost its recycling recipe. Only numbers move
+-- late; nothing is created, renamed or removed in data-updates.
 --
 -- No attempt is made to stop a caller unbalancing the mod. Tier values are the
 -- player's and the modder's to set; what this file guarantees is that a change
