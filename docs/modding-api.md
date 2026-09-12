@@ -15,6 +15,7 @@ lands, or says in the log why it did not.
 - [Fields](#fields)
 - [Defaults](#defaults)
 - [Functions](#functions)
+- [Rejections](#rejections)
 - [Conflicts between mods](#conflicts-between-mods)
 - [Troubleshooting](#troubleshooting)
 - [What is not configurable](#what-is-not-configurable)
@@ -171,12 +172,9 @@ runtime; this table is for orientation.
 ### `afi.configure_tier(tier, changes[, source])`
 
 Merges `changes` into a tier. Returns `true` when every field applied, `false`
-when any was rejected.
-
-A field is rejected when the tier does not exist, the field is not configurable,
-the tier does not carry that field, the value is the wrong type, or `changes` is
-not a table. Rejected fields are never written; accepted fields in the same call
-still apply.
+when any was rejected. Rejected fields are never written; accepted fields in the
+same call still apply. See [Rejections](#rejections) for every case and what it
+logs.
 
 `source` is an optional label for the log. The data stage offers no way to ask
 which mod is currently running, so pass your own name if you want it in the
@@ -221,6 +219,97 @@ end
 Currently `1`. Bumped only when an existing call's meaning changes — adding a
 tier or a field does not bump it. See [Stability](#stability).
 
+## Rejections
+
+Nothing here raises an error or aborts the load. A rejection is a log line and a
+`false` return: a third-party typo should not hard-fail somebody's game, but it
+should not disappear either. Every message names both what was wrong and what
+the valid options were.
+
+Real output, from a load that makes each mistake in turn:
+
+```
+AFI: configure_tier("no-such-tier") ignored -- no such tier. Known tiers: calcite_lined, foundation, high_pressure_foundation, iron, low_pressure_steel, reinforced, rubber_lined, steel, tungsten
+AFI: configure_tier("steel") ignored -- expected a table of changes, got string
+AFI: configure_tier("steel") skipped unknown field "max_health". Configurable: pipeline_extent, pumping_speed, underground_distance
+AFI: configure_tier("high_pressure_foundation") skipped underground_distance -- this tier has no underground_distance to set
+AFI: configure_tier("steel") skipped pumping_speed -- expected number, got string
+```
+
+### "ignored" versus "skipped"
+
+The verb tells you how much of your call died.
+
+| Verb | Scope | Cases |
+| --- | --- | --- |
+| **ignored** | the whole call is abandoned; nothing is written | unknown tier; `changes` is not a table |
+| **skipped** | that one field only; the rest of the call still applies | unknown field; tier does not carry the field; wrong type |
+
+So this applies the extent and rejects only the second field:
+
+```lua
+afi.configure_tier("steel", { pipeline_extent = 120, max_health = 500 })
+-- extent applied, max_health skipped, returns false
+```
+
+`configure_tier` returns `true` only when **every** field applied. A `false`
+return therefore does not mean nothing happened — read the log to see which
+fields landed.
+
+### The cases
+
+**Unknown tier.** Checked first, so `configure_tier("nope", "garbage")` reports
+only the tier problem and never mentions the malformed second argument. The
+message lists every valid name, which makes a typo self-diagnosing.
+
+**`changes` is not a table.** Catches `configure_tier("steel", 120)` — a bare
+value where a field table belongs.
+
+**Unknown field.** Checked against the three configurable names. Worth knowing:
+this fires for `icon_tint` **even though the tier really does have an
+`icon_tint` key**. Cosmetic fields are deliberately outside this API; they are
+read through a different path from the numbers that decide balance. "Unknown"
+here means *not configurable*, not *not present*.
+
+**The tier does not carry that field.** The subtle one. `high_pressure_foundation`
+builds pumps only — there is no pipe-to-ground to read an underground distance —
+so the tier's own keys are used as the schema. A field the defaults never
+carried is one nothing would ever read, and accepting it would report success
+for a change that cannot take effect.
+
+**Wrong type.** Checked last, so `{ max_health = "x" }` reports the unknown
+field rather than the type error. A field is rejected on the first ground that
+applies.
+
+### What is not rejected
+
+There is no range or sanity checking. Negative, zero and absurd values all apply
+silently. Balance is yours to set.
+
+Three things fail silently because the API never sees them:
+
+```lua
+afi.tiers.steel = { pipeline_extent = 120 }          -- replaces; build never sees it
+afi.get_tier("steel").pipeline_extent = 120          -- works, but no validation or log
+```
+
+and configuring from `data-updates.lua`, which logs a perfectly normal success
+line — the values have simply already been applied by then. The API has no way
+to know which stage it is being called from.
+
+### One more message, from elsewhere
+
+This shares the `AFI:` prefix but is not a `configure_tier` rejection:
+
+```
+AFI: tier-apply did not recognise <name>; it keeps its built-in defaults and ignores configuration
+```
+
+It comes from the pass that writes configured values onto prototypes, and means
+a prototype name falls outside the derived `afi_<tier-with-hyphens>-<role>`
+convention. It indicates this mod needs a code change, not your call site, and
+is silent on a correct load.
+
 ## Conflicts between mods
 
 Last writer wins, and every change is logged with its previous value:
@@ -248,16 +337,15 @@ run, or it ran before the API existed. Check that you declared
 `? advanced-fluid-infrastructure` in `info.json` — without it your mod may load
 first — and that you are calling from `data.lua`, not `data-updates.lua`.
 
-**`no such tier`.** Check spelling against `afi.tier_names()`. Tier names use
-underscores (`rubber_lined`), while prototype names use hyphens
-(`afi_rubber-lined-pipe`).
+**There is a log line and it says `ignored` or `skipped`.** The call was
+refused; [Rejections](#rejections) covers every case and what each one means.
+The most common is a misspelled tier — names use underscores (`rubber_lined`)
+while prototype names use hyphens (`afi_rubber-lined-pipe`).
 
-**`skipped unknown field`.** Only the three fields in [Fields](#fields) are
-configurable. Tints and resistances are not.
-
-**`this tier has no <field> to set`.** The tier builds no prototype that reads
-that field — for example an `underground_distance` on
-`high_pressure_foundation`, which has no pipe-to-ground.
+**`configure_tier` returned `false` but something clearly changed.** Expected.
+It returns `true` only when every field applied, so a call with one bad field
+among several good ones returns `false` after applying the good ones. The log
+says which were skipped.
 
 **The log shows the change, but the entity is unchanged in game.** Startup
 changes need a full restart, not a save reload. If you changed `steel` and are
@@ -269,8 +357,13 @@ prototypes are built with defaults and the configured values are written in
 
 **I added a tier through some other route and it ignores configuration.** Tier
 prototype names are derived as `afi_<tier-with-hyphens>-<role>`. A name outside
-that convention is reported in the log as `tier-apply did not recognise ...` and
-keeps its built-in defaults.
+that convention is reported as `tier-apply did not recognise ...` and keeps its
+built-in defaults — see [Rejections](#rejections).
+
+**My change applied, but nothing was logged and nothing was validated.** You
+probably wrote to the table directly rather than through `configure_tier`. Both
+work; only one leaves a trail. See
+[What is not rejected](#what-is-not-rejected).
 
 ## What is not configurable
 
