@@ -44,50 +44,40 @@ jobs:
           file "$FACTORIO_BIN"
           "$FACTORIO_BIN" --version
 
-      - name: Prepare temporary Factorio mods directory
-        run: |
-          mods_dir="${RUNNER_TEMP:-/tmp}/factorio-mods"
-          mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
-          rm -f "$mods_dir/$mod_name"
-          mkdir -p "$mods_dir"
-          ln -s "$PWD/src" "$mods_dir/$mod_name"
-          for fixture in RampantArsenalFork afi-rampant-compatibility-test; do
-            rm -f "$mods_dir/$fixture"
-            ln -s "$PWD/tests/fixtures/$fixture" "$mods_dir/$fixture"
-          done
-          echo "FACTORIO_MODS_DIR=$mods_dir" >> "$GITHUB_ENV"
-
-      - name: Validate mod
+      - name: Static checks (metadata, changelog, unit tests, Lua syntax)
         env:
-          AFI_REQUIRE_FACTORIO: "1"
+          AFI_SKIP_FACTORIO: "1"
         run: ./scripts/validate.sh
 
-      - name: Validate mod without Space Age
+      # Each Factorio test below runs even when an earlier one failed, so a single
+      # pull request reports every broken load shape instead of only the first.
+
+      - name: "Test 1: base game"
+        if: success() || failure()
         env:
           AFI_REQUIRE_FACTORIO: "1"
         run: ./scripts/factorio-validate-base-game.sh
 
-      - name: Download and validate declared dependency mod list
+      - name: "Test 2: Space Age"
+        if: success() || failure()
         env:
-          FACTORIO_MOD_PORTAL_USERNAME: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME }}
-          FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
+          AFI_REQUIRE_FACTORIO: "1"
         run: |
           set -euo pipefail
-          if [[ -z "${FACTORIO_MOD_PORTAL_USERNAME:-}" || -z "${FACTORIO_MOD_PORTAL_TOKEN:-}" ]]; then
-            echo "FACTORIO_MOD_PORTAL_USERNAME and FACTORIO_MOD_PORTAL_TOKEN must both be set to validate the full Factorio mod list." >&2
-            exit 1
-          fi
-          temp_base="${RUNNER_TEMP:-/tmp}"
-          mods_dir="$(mktemp -d "$temp_base/factorio-dependency-mods.XXXXXX")"
+          # The local Rampant Arsenal fixture and its assertions ride along here:
+          # they need Space Age, and exercise ingredient shapes the published mod
+          # does not have.
+          mods_dir="$(mktemp -d "${RUNNER_TEMP:-/tmp}/factorio-space-age-mods.XXXXXX")"
           trap 'rm -rf -- "$mods_dir"' EXIT
-          ./scripts/download-factorio-mods.py \
-            --mods-dir "$mods_dir" \
-            --from-info src/info.json
           mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
           ln -s "$PWD/src" "$mods_dir/$mod_name"
-          FACTORIO_MODS_DIR="$mods_dir" AFI_REQUIRE_FACTORIO=1 ./scripts/factorio-validate.sh
+          for fixture in RampantArsenalFork afi-rampant-compatibility-test; do
+            ln -s "$PWD/tests/fixtures/$fixture" "$mods_dir/$fixture"
+          done
+          FACTORIO_MODS_DIR="$mods_dir" ./scripts/factorio-validate.sh
 
-      - name: Validate full mod family (AFI + AEG + API + dependencies)
+      - name: "Test 3: mod family (AFI + AEG + API + PowerOverload)"
+        if: success() || failure()
         env:
           FACTORIO_MOD_PORTAL_USERNAME: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME }}
           FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
@@ -163,3 +153,52 @@ jobs:
           ln -s "$PWD/src" "$mods_dir/$mod_name"
           ln -s "$PWD/tests/fixtures/afi-rampant-compatibility-test" "$mods_dir/afi-rampant-compatibility-test"
           FACTORIO_MODS_DIR="$mods_dir" AFI_REQUIRE_FACTORIO=1 ./scripts/factorio-validate.sh
+
+      - name: Download declared dependencies
+        id: dependencies
+        if: success() || failure()
+        env:
+          FACTORIO_MOD_PORTAL_USERNAME: ${{ secrets.FACTORIO_MOD_PORTAL_USERNAME }}
+          FACTORIO_MOD_PORTAL_TOKEN: ${{ secrets.FACTORIO_MOD_PORTAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${FACTORIO_MOD_PORTAL_USERNAME:-}" || -z "${FACTORIO_MOD_PORTAL_TOKEN:-}" ]]; then
+            echo "FACTORIO_MOD_PORTAL_USERNAME and FACTORIO_MOD_PORTAL_TOKEN must both be set to validate the full Factorio mod list." >&2
+            exit 1
+          fi
+          # Downloaded once and shared by tests 4 and 5, which differ only in
+          # whether the configuration API fixture is loaded alongside.
+          deps_dir="$(mktemp -d "${RUNNER_TEMP:-/tmp}/factorio-dependency-mods.XXXXXX")"
+          ./scripts/download-factorio-mods.py --mods-dir "$deps_dir" --from-info src/info.json
+          echo "AFI_DEPENDENCY_MODS=$deps_dir" >> "$GITHUB_ENV"
+
+      - name: "Test 4: full dependencies"
+        if: (success() || failure()) && steps.dependencies.outcome == 'success'
+        env:
+          AFI_REQUIRE_FACTORIO: "1"
+        run: |
+          set -euo pipefail
+          mods_dir="$(mktemp -d "${RUNNER_TEMP:-/tmp}/factorio-full-mods.XXXXXX")"
+          trap 'rm -rf -- "$mods_dir"' EXIT
+          cp -a "$AFI_DEPENDENCY_MODS/." "$mods_dir/"
+          mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
+          ln -s "$PWD/src" "$mods_dir/$mod_name"
+          FACTORIO_MODS_DIR="$mods_dir" ./scripts/factorio-validate.sh
+
+      - name: "Test 5: full dependencies with configuration API parameters"
+        if: (success() || failure()) && steps.dependencies.outcome == 'success'
+        env:
+          AFI_REQUIRE_FACTORIO: "1"
+        run: |
+          set -euo pipefail
+          # The same load as test 4, plus a fixture mod that configures tiers
+          # through the API and asserts the values reach entities, items,
+          # tooltips and production machines, and that every rejection path
+          # refuses without writing.
+          mods_dir="$(mktemp -d "${RUNNER_TEMP:-/tmp}/factorio-parameter-mods.XXXXXX")"
+          trap 'rm -rf -- "$mods_dir"' EXIT
+          cp -a "$AFI_DEPENDENCY_MODS/." "$mods_dir/"
+          mod_name="$(python3 -c 'import json; print(json.load(open("src/info.json", encoding="utf-8"))["name"])')"
+          ln -s "$PWD/src" "$mods_dir/$mod_name"
+          ln -s "$PWD/tests/fixtures/afi-config-api-test" "$mods_dir/afi-config-api-test"
+          FACTORIO_MODS_DIR="$mods_dir" ./scripts/factorio-validate.sh

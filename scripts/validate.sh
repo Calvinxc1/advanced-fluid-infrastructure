@@ -42,4 +42,8 @@ while IFS= read -r file; do
   luac -p "$file"
 done < <(rg --files -g '*.lua' src tests/fixtures)
 
-./scripts/factorio-validate.sh
+# CI runs the Factorio load tests as their own named steps and sets this to
+# keep this script to the static checks. Locally it still does everything.
+if [[ "${AFI_SKIP_FACTORIO:-0}" != "1" ]]; then
+  ./scripts/factorio-validate.sh
+fi
