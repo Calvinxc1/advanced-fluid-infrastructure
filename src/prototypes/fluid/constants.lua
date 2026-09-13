@@ -1,3 +1,18 @@
+-- Every tunable this mod owns, and the default payload behind the public API
+-- in api.lua.
+--
+-- Once api.lua has published this table, every later require resolves to the
+-- published one rather than rebuilding a fresh copy from the literal below.
+-- That matters because the prototype pass runs a stage later than publication:
+-- Factorio's require cache is not guaranteed to survive from data.lua into
+-- data-updates.lua, and a rebuilt copy here would silently discard everything a
+-- dependent mod configured. Reading the global makes the single-table
+-- guarantee independent of cache behaviour, and keeps every existing
+-- `require("prototypes.fluid.constants")` call site correct unchanged.
+if AdvancedFluidInfrastructure and AdvancedFluidInfrastructure.tiers then
+  return AdvancedFluidInfrastructure.tiers
+end
+
 return {
   iron = {
     pipeline_extent = 24,
