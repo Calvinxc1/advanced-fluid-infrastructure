@@ -67,6 +67,10 @@ data:extend({
   }),
 })
 
+-- Every card a stage bills is also a prerequisite of its technologies. Krastorio
+-- 2 puts the matter card below the advanced one, but Space Exploration with K2
+-- reorders the cards and does not, and K2 without Space Age crafts space
+-- science behind its own technology rather than the rocket silo.
 local ADVANCED_STAGE = {
   { "production-science-pack", 1 },
   { "utility-science-pack", 1 },
@@ -92,6 +96,7 @@ data:extend({
     prerequisites = {
       "afi_reinforced-pipe-infrastructure",
       "kr-advanced-tech-card",
+      "kr-matter-tech-card",
     },
     effects = {
       { type = "unlock-recipe", recipe = "afi_foundation-pipe" },
@@ -109,6 +114,7 @@ data:extend({
     prerequisites = {
       "afi_reinforced-pump-infrastructure",
       "kr-advanced-tech-card",
+      "kr-matter-tech-card",
       "kr-energy-control-unit",
     },
     effects = {
@@ -129,6 +135,7 @@ data:extend({
       "afi_foundation-pump-infrastructure",
       "kr-singularity-tech-card",
       "kr-ai-core",
+      "space-science-pack",
     },
     effects = {
       { type = "unlock-recipe", recipe = "afi_high-pressure-foundation-offshore-pump" },
