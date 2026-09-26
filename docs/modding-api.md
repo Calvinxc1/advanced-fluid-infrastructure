@@ -87,8 +87,8 @@ runtime. Call `afi.tier_names()` rather than hardcoding this list.
 | `low_pressure_steel` | 64 | 8 | 4 | yes |
 | `calcite_lined` | 24 | 4 | 1 | yes |
 | `tungsten` | 64 | 8 | 4 | yes |
-| `foundation` | 512 | 20 | 20 | yes |
-| `high_pressure_foundation` | 512 | — | 60 | yes |
+| `foundation` | 512 | 20 | 20 | yes, or Krastorio 2 |
+| `high_pressure_foundation` | 512 | — | 60 | yes, or Krastorio 2 |
 
 Every tier builds a pipe, pipe-to-ground, pump and offshore pump, with two
 exceptions: `low_pressure_steel` has no offshore pump, and
@@ -102,6 +102,10 @@ With Krastorio 2 installed, `steel` is K2's steel line: `kr-steel-pipe`,
 `afi_steel-pipe`, `afi_steel-pipe-to-ground` and `afi_steel-pump` do not exist.
 `afi_steel-offshore-pump` has no K2 counterpart and is built as usual.
 Configuring `steel` reaches the K2 prototypes the same way.
+
+Krastorio 2 also builds `foundation` and `high_pressure_foundation` without
+Space Age, from K2 materials and behind K2's advanced and singularity tech
+cards.
 
 All nine tiers are in the table in every load — only the prototypes built from
 them are conditional — so configuring a Space Age tier in a base-game load is

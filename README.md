@@ -19,7 +19,7 @@ Vanilla pipes are powerful very early. This mod adds a staged fluid infrastructu
 - Space Age branches for regular surfaces, space platforms, Vulcanus, and late-game foundation infrastructure.
 - Production-machine fluidbox extent patches so upgraded infrastructure behaves consistently around machines.
 - Optional cleanup for Rampant Arsenal reinforced pipes when that mod is present.
-- Krastorio 2 integration: K2's steel pipe, steel pipe to ground and steel pump become the steel tier, carrying this mod's steel stats, and K2's Steel fluid handling technology unlocks them along with the steel offshore pump. K2's recipes and technology tree are otherwise left as K2 defines them. Every tier above iron joins K2's steel pipe family, so upgraded lines stay separate from neighbouring iron pipes, and every offshore pump tier draws power like K2's offshore pump.
+- Krastorio 2 integration: K2's steel pipe, steel pipe to ground and steel pump become the steel tier, carrying this mod's steel stats, and K2's Steel fluid handling technology unlocks them along with the steel offshore pump. K2's recipes and technology tree are otherwise left as K2 defines them. Every tier above iron joins K2's steel pipe family, so upgraded lines stay separate from neighbouring iron pipes. Offshore pumps draw power as K2's does, and pump and offshore pump power rises faster than throughput from tier to tier. Without Space Age, K2 also gets the foundation and high-pressure foundation tiers, built from K2 materials behind K2's advanced and singularity tech cards.
 
 ## Companion Mods
 
