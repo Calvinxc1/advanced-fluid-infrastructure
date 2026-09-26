@@ -385,4 +385,48 @@ function helpers.add_unlock(technology_name, recipe_name)
   table.insert(technology.effects, { type = "unlock-recipe", recipe = recipe_name })
 end
 
+-- Sets a technology's science packs to every pack its prerequisites use, so it
+-- is researched with the same set as the technologies it follows, keeping only
+-- the highest tier of each numbered pack line. Used where
+-- an overhaul (Space Exploration) decides what a stage of research costs.
+function helpers.inherit_science_packs(technology_name)
+  local technology = data.raw.technology[technology_name]
+  if not (technology and technology.unit) then
+    return
+  end
+
+  local seen, ingredients = {}, {}
+  for _, prerequisite_name in pairs(technology.prerequisites or {}) do
+    local prerequisite = data.raw.technology[prerequisite_name]
+    for _, ingredient in pairs(prerequisite and prerequisite.unit and prerequisite.unit.ingredients or {}) do
+      local name = ingredient.name or ingredient[1]
+      if not seen[name] then
+        seen[name] = true
+        table.insert(ingredients, { name, 1 })
+      end
+    end
+  end
+
+  -- Numbered pack lines (SE's material 1-4, energy 1-4, ...) list only their
+  -- highest tier, as the overhaul's own technologies do.
+  local highest = {}
+  for _, ingredient in pairs(ingredients) do
+    local line, tier = string.match(ingredient[1], "^(.-)%-(%d+)$")
+    if line then
+      highest[line] = math.max(highest[line] or 0, tonumber(tier))
+    end
+  end
+  local collapsed = {}
+  for _, ingredient in pairs(ingredients) do
+    local line, tier = string.match(ingredient[1], "^(.-)%-(%d+)$")
+    if not line or tonumber(tier) == highest[line] then
+      table.insert(collapsed, ingredient)
+    end
+  end
+
+  if #collapsed > 0 then
+    technology.unit.ingredients = collapsed
+  end
+end
+
 return helpers

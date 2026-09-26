@@ -48,10 +48,25 @@ local function require_first(technology_name, prerequisite_name)
   end
 end
 
--- The steel offshore pump needs engine units; SE places Engine beside K2's
--- steel fluid handling rather than before it.
+-- The steel pump and steel offshore pump need engine units; SE places Engine
+-- beside the steel pump technology (this mod's, or K2's steel fluid handling)
+-- rather than before it.
+require_first("afi_steel-pump-infrastructure", "engine")
 require_first("kr-steel-fluid-handling", "engine")
 -- SE moves the charged matter stabilizer to its own advanced matter processing
 -- (created in SE's data-updates), which K2's singularity card does not lead
 -- through.
 require_first("afi_high-pressure-foundation-pumping", "se-kr-advanced-matter-processing")
+
+-- Under SE without Krastorio 2 the foundation technologies are researched with
+-- the packs of the SE technologies they follow, now that SE's data-updates has
+-- settled those. (With K2 they carry K2's own costs.)
+if not mods["Krastorio2"] then
+  for _, name in pairs({
+    "afi_foundation-pipe-infrastructure",
+    "afi_foundation-pump-infrastructure",
+    "afi_high-pressure-foundation-pumping",
+  }) do
+    helpers.inherit_science_packs(name)
+  end
+end

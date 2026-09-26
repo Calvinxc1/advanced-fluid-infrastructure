@@ -3,10 +3,9 @@
 --
 -- SE's space pipes are usable everywhere, in space and on the ground, and left
 -- alone they carry the engine-default pipeline extent (320) from rocket
--- science on, which bypasses every tier of this mod up to foundation. Where
--- the foundation tier exists above them (see
--- optional_dependencies.has_space_branch) they become this mod's space branch,
--- the role Space Age's platform-only low-pressure steel tier plays:
+-- science on, which bypasses every tier of this mod up to foundation. They
+-- become this mod's space branch instead, the role Space Age's platform-only
+-- low-pressure steel tier plays:
 --
 --   * se-space-pipe and se-space-pipe-to-ground carry the low_pressure_steel
 --     tier's numbers. tier-apply.lua reaches them through
@@ -75,8 +74,10 @@ if optional_dependencies.has_space_branch then
   -- connections), flagged so SE's data-final-fixes leaves them placeable in
   -- space. tier-apply.lua keeps their numbers in step with the foundation tier.
   local variants = {
-    { category = "pipe", source = "afi_foundation-pipe", name = "afi_space-foundation-pipe" },
-    { category = "pipe-to-ground", source = "afi_foundation-pipe-to-ground", name = "afi_space-foundation-pipe-to-ground" },
+    { category = "pipe", source = "afi_foundation-pipe", name = "afi_space-foundation-pipe",
+      space_pipe = "se-space-pipe" },
+    { category = "pipe-to-ground", source = "afi_foundation-pipe-to-ground", name = "afi_space-foundation-pipe-to-ground",
+      space_pipe = "se-space-pipe-to-ground" },
   }
 
   for _, variant in pairs(variants) do
@@ -104,6 +105,15 @@ if optional_dependencies.has_space_branch then
       data:extend({ recipe })
 
       helpers.add_unlock("afi_foundation-pipe-infrastructure", variant.name)
+
+      -- SE's blueprint converter swaps ground and space entities within a menu
+      -- row, taking the first that fits. The variants sit in SE's pipe row just
+      -- after SE's own space pipes, so it keeps choosing the cheap space pipe.
+      local space_item = data.raw.item[variant.space_pipe]
+      if space_item then
+        item.subgroup = space_item.subgroup
+        item.order = space_item.order .. "[foundation]"
+      end
     end
   end
 end

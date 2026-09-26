@@ -8,7 +8,8 @@
 -- after the mods this one loads after, copies the final source instead. In a
 -- load where the vanilla pump is still unpowered this changes nothing.
 --
--- Under Krastorio 2, power then grows faster than throughput:
+-- Wherever offshore pumps are powered (Krastorio 2, or AAI Industry under Space
+-- Exploration), power then grows faster than throughput:
 --
 --   energy = base_energy * (pumping_speed / base_speed) ^ 1.5
 --
@@ -33,7 +34,8 @@ if offshore_reference and offshore_reference.energy_source and offshore_referenc
   end
 end
 
-if not optional_dependencies.has_krastorio2 then
+if not (offshore_reference and offshore_reference.energy_source
+    and offshore_reference.energy_source.type == "electric") then
   return
 end
 

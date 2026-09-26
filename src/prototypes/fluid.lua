@@ -18,13 +18,18 @@ end
 
 -- The foundation and high-pressure foundation tiers, for loads with a late
 -- game to put them in. Space Age supplies their recipes and technologies
--- above; Krastorio 2 without Space Age supplies its own.
-if optional_dependencies.has_space_age or optional_dependencies.has_krastorio2 then
+-- above; otherwise Krastorio 2 does, and failing that Space Exploration.
+if optional_dependencies.has_space_age or optional_dependencies.has_krastorio2
+    or optional_dependencies.has_space_exploration then
   require("prototypes.fluid.foundation.entities")
   require("prototypes.fluid.foundation.items")
 end
-if optional_dependencies.has_krastorio2 and not optional_dependencies.has_space_age then
-  require("prototypes.fluid.krastorio2-foundation")
+if not optional_dependencies.has_space_age then
+  if optional_dependencies.has_krastorio2 then
+    require("prototypes.fluid.krastorio2-foundation")
+  elseif optional_dependencies.has_space_exploration then
+    require("prototypes.fluid.space-exploration-foundation")
+  end
 end
 
 -- Needs every tier to exist, and has to land before the menu layout places

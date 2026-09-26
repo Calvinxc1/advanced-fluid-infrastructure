@@ -13,11 +13,10 @@ optional_dependencies.has_space_age = mods["space-age"] ~= nil
 optional_dependencies.has_krastorio2 = mods["Krastorio2"] ~= nil
 optional_dependencies.has_space_exploration = mods["space-exploration"] ~= nil
 
--- SE's space pipes become the space branch only when the foundation tier
--- exists above them to upgrade into. SE excludes Space Age, so under SE that
--- means Krastorio 2 is present; SE on its own keeps its space pipes as they are.
-optional_dependencies.has_space_branch =
-  optional_dependencies.has_space_exploration and optional_dependencies.has_krastorio2
+-- SE's space pipes become the space branch, with the foundation tier (and its
+-- space variants) above it. SE excludes Space Age; foundation's recipes come
+-- from Krastorio 2 when present, otherwise from SE's own materials.
+optional_dependencies.has_space_branch = optional_dependencies.has_space_exploration
 
 -- Krastorio 2 ships its own steel pipe, pipe to ground and pump, and its own
 -- recipes consume them. Under K2 those prototypes are this mod's steel tier:
