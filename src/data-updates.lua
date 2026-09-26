@@ -19,7 +19,9 @@ end
 require("prototypes.fluid.production-machine-patches")
 
 -- Hands this mod's technologies the K2 tech cards their prerequisites carry,
--- after Krastorio 2 Spaced Out has added its cards to Space Age technologies.
+-- after Krastorio 2 Spaced Out has added its cards to Space Age technologies,
+-- and gates oil gathering on K2's steel tier.
 if mods["Krastorio2"] then
   require("prototypes.fluid.krastorio2-tech-cards")
+  require("prototypes.fluid.krastorio2-updates")
 end

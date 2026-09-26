@@ -71,6 +71,8 @@ end
 
 -- Krastorio 2 writes its own recipes and prerequisites for these, and the
 -- K2 integration follows them rather than layering the steel tier on top.
+-- The one exception, oil gathering waiting on the steel tier, is applied to
+-- K2's steel fluid handling in prototypes/fluid/krastorio2-updates.lua.
 if not optional_dependencies.has_krastorio2 then
   for _, recipe_name in pairs({
     "heat-exchanger",
