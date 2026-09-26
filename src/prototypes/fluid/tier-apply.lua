@@ -17,7 +17,6 @@
 
 local constants = require("prototypes.fluid.constants")
 local helpers = require("prototypes.fluid.helpers")
-local optional_dependencies = require("prototypes.fluid.optional-dependencies")
 
 -- Role suffix -> the data.raw category the prototype lives in. The iron tier is
 -- the vanilla set, whose names are the bare suffixes.
@@ -28,14 +27,10 @@ local ROLES = {
   { suffix = "offshore-pump", category = "offshore-pump" },
 }
 
--- Resolved through optional_dependencies.name(), so a tier another mod
--- supplies (Krastorio 2's steel line) is configured like one this mod built.
-local function prototype_name(tier_name, suffix)
-  if tier_name == "iron" then
-    return suffix
-  end
-  return optional_dependencies.name("afi_" .. string.gsub(tier_name, "_", "-") .. "-" .. suffix)
-end
+-- The public API's resolution, so a tier another mod supplies (Krastorio 2's
+-- steel line) is configured like one this mod built, and dependent mods look
+-- prototypes up the same way this pass does.
+local prototype_name = AdvancedFluidInfrastructure.prototype_name
 
 -- Which tier fields each description key interpolates, in argument order.
 --

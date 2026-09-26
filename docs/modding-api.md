@@ -103,6 +103,18 @@ With Krastorio 2 installed, `steel` is K2's steel line: `kr-steel-pipe`,
 `afi_steel-offshore-pump` has no K2 counterpart and is built as usual.
 Configuring `steel` reaches the K2 prototypes the same way.
 
+Because a tier's prototypes can belong to another mod, look them up with
+`afi.prototype_name(tier, role)` rather than building the name, where `role` is
+`"pipe"`, `"pipe-to-ground"`, `"pump"` or `"offshore-pump"`:
+
+```lua
+local steel_pipe = data.raw.pipe[afi.prototype_name("steel", "pipe")]
+-- "afi_steel-pipe", or "kr-steel-pipe" under Krastorio 2
+```
+
+It returns the name that fills the role in this load; the prototype itself may
+still be absent, for example a Space Age tier without Space Age.
+
 Krastorio 2 also builds `foundation` and `high_pressure_foundation` without
 Space Age, from K2 materials and behind K2's advanced and singularity tech
 cards.
