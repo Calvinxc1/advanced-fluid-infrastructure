@@ -174,6 +174,20 @@ def dependency_names(info_json: dict, include_optional: bool) -> list[str]:
     return names
 
 
+def incompatible_builtin(info_json: dict) -> str | None:
+    """The built-in mod a release declares itself incompatible with, or None.
+
+    The validation load always enables the built-in mods it can see (Space Age
+    among them), so an optional dependency that declares `! space-age` --
+    Space Exploration does -- can never load in that run.
+    """
+    for dependency in info_json.get("dependencies", []):
+        match = DEPENDENCY_PATTERN.match(dependency)
+        if match and match.group("prefix") == "!" and match.group("name") in BUILTIN_MODS:
+            return match.group("name")
+    return None
+
+
 def read_info_json(info_path: Path) -> dict:
     try:
         info = json.loads(info_path.read_text(encoding="utf-8"))
@@ -300,8 +314,20 @@ def download_info_dependency_closure(
     # compatibility shim several hops away with no Factorio-version-compatible
     # release). Hard requirements are what the mod cannot load without, so
     # following those alone keeps the closure bounded.
+    #
+    # An optional dependency incompatible with a built-in mod the validation
+    # load enables is skipped: declaring it is a load-order statement about
+    # real games, not a claim that it can be exercised in this run.
     visited = {info["name"]}
+    required = set(dependency_names(info, include_optional=False))
     for dependency in dependency_names(info, include_optional=True):
+        if dependency not in required:
+            release = latest_compatible_release(dependency, factorio_version)
+            builtin = incompatible_builtin(release.get("info_json", {}))
+            if builtin is not None:
+                print(f"Skipped optional dependency {dependency}: it is incompatible with {builtin}")
+                visited.add(dependency)
+                continue
         download_mod_closure(
             dependency,
             factorio_version=factorio_version,
