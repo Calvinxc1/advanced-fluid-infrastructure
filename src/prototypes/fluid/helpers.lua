@@ -126,6 +126,20 @@ local function tint_sprite_table(sprite_table, tint)
   end
 end
 
+-- Tints every picture of an entity, for variants that need no tier constant
+-- of their own.
+function helpers.apply_entity_tint(prototype, tint)
+  if not prototype then
+    return
+  end
+  tint_sprite_table(prototype.pictures, tint)
+  tint_sprite_table(prototype.picture, tint)
+  tint_sprite_table(prototype.graphics_set, tint)
+  tint_sprite_table(prototype.animations, tint)
+  tint_sprite_table(prototype.horizontal_animation, tint)
+  tint_sprite_table(prototype.vertical_animation, tint)
+end
+
 function helpers.apply_rubber_lined_entity_tint(prototype)
   if not prototype then
     return

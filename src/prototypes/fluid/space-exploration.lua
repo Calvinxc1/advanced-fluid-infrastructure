@@ -73,6 +73,23 @@ if optional_dependencies.has_space_branch then
   -- prototypes (so they carry its stats, tint and, under K2, its steel-family
   -- connections), flagged so SE's data-final-fixes leaves them placeable in
   -- space. tier-apply.lua keeps their numbers in step with the foundation tier.
+  -- Space foundation looks like foundation with SE's space pipe in the icon's
+  -- corner, and its placed pipes carry a cooler tint than ground foundation,
+  -- so the two can be told apart in inventory and on the map.
+  local SPACE_FOUNDATION_TINT = { r = 0.72, g = 0.8, b = 0.98, a = 1 }
+
+  local function mark_as_space(prototype, space_pipe_item)
+    if not (prototype and prototype.icons and space_pipe_item and space_pipe_item.icon) then
+      return
+    end
+    table.insert(prototype.icons, {
+      icon = space_pipe_item.icon,
+      icon_size = space_pipe_item.icon_size or 64,
+      scale = 0.25,
+      shift = { 8, 8 },
+    })
+  end
+
   local variants = {
     { category = "pipe", source = "afi_foundation-pipe", name = "afi_space-foundation-pipe",
       space_pipe = "se-space-pipe" },
@@ -90,11 +107,14 @@ if optional_dependencies.has_space_branch then
       entity.minable.result = variant.name
       entity.next_upgrade = nil
       entity.se_allow_in_space = true
+      helpers.apply_entity_tint(entity, SPACE_FOUNDATION_TINT)
+      mark_as_space(entity, data.raw.item[variant.space_pipe])
       data:extend({ entity })
 
       local item = util.table.deepcopy(source_item)
       item.name = variant.name
       item.place_result = variant.name
+      mark_as_space(item, data.raw.item[variant.space_pipe])
       data:extend({ item })
 
       local recipe = util.table.deepcopy(source_recipe)
