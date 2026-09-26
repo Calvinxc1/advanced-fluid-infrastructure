@@ -77,13 +77,15 @@ function api.tier_names()
 end
 
 -- The prototype that fills a tier's role in this load. Roles are "pipe",
--- "pipe-to-ground", "pump" and "offshore-pump". Usually the name is derived
--- from the tier ("steel" + "pipe" -> "afi_steel-pipe", "iron" -> the vanilla
--- prototype), but another mod can supply a tier: under Krastorio 2 the steel
--- tier is K2's own steel line, and under Space Exploration low_pressure_steel
--- is SE's space pipes. Look prototypes up through this rather than building
--- the name. The prototype may still not exist in a given load (Space Age
--- tiers without Space Age, for example).
+-- "pipe-to-ground", "pump" and "offshore-pump", and the technology roles
+-- "pipe-infrastructure" and "pump-infrastructure" (the research that unlocks
+-- the tier's pipes or pumps; iron, being vanilla, has none). Usually the name
+-- is derived from the tier ("steel" + "pipe" -> "afi_steel-pipe", "iron" -> the
+-- vanilla prototype), but another mod can supply a tier: under Krastorio 2 the
+-- steel tier is K2's own steel line, and under Space Exploration
+-- low_pressure_steel is SE's space pipes. Look prototypes up through this
+-- rather than building the name. The prototype may still not exist in a given
+-- load (Space Age tiers without Space Age, for example).
 local optional_dependencies = require("__advanced-fluid-infrastructure__.prototypes.fluid.optional-dependencies")
 
 function api.prototype_name(tier_name, role)

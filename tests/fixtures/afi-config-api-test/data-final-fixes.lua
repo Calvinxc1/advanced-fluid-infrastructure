@@ -14,6 +14,13 @@ assert(steel_pipe.fluid_box.max_pipeline_extent == 120,
   "steel pipeline_extent did not reach the prototype: "
     .. tostring(steel_pipe.fluid_box.max_pipeline_extent))
 
+-- The technology roles resolve the same way: K2's steel fluid handling unlocks
+-- both its steel pipes and pumps.
+for _, role in ipairs({ "pipe-infrastructure", "pump-infrastructure" }) do
+  local technology_name = afi.prototype_name("steel", role)
+  assert(data.raw.technology[technology_name], technology_name .. " was never built")
+end
+
 local steel_offshore_pump = data.raw["offshore-pump"]["afi_steel-offshore-pump"]
 assert(steel_offshore_pump.pumping_speed == 7,
   "steel pumping_speed did not reach the prototype: "

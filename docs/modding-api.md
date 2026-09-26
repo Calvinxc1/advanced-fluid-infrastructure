@@ -105,12 +105,21 @@ Configuring `steel` reaches the K2 prototypes the same way.
 
 Because a tier's prototypes can belong to another mod, look them up with
 `afi.prototype_name(tier, role)` rather than building the name, where `role` is
-`"pipe"`, `"pipe-to-ground"`, `"pump"` or `"offshore-pump"`:
+`"pipe"`, `"pipe-to-ground"`, `"pump"` or `"offshore-pump"`, or one of the
+technology roles `"pipe-infrastructure"` and `"pump-infrastructure"`, the
+research that unlocks the tier's pipes or pumps:
 
 ```lua
 local steel_pipe = data.raw.pipe[afi.prototype_name("steel", "pipe")]
 -- "afi_steel-pipe", or "kr-steel-pipe" under Krastorio 2
+
+local steel_piping = afi.prototype_name("steel", "pipe-infrastructure")
+-- "afi_steel-pipe-infrastructure", or "kr-steel-fluid-handling" under Krastorio 2
 ```
+
+Under Krastorio 2 both steel technology roles are `kr-steel-fluid-handling`, so
+a prerequisite list naming both should drop the duplicate. The `iron` tier is
+vanilla and has no technology roles.
 
 It returns the name that fills the role in this load; the prototype itself may
 still be absent, for example a Space Age tier without Space Age.
