@@ -156,8 +156,17 @@ for ours in pairs(substitutions) do
   end
 end
 
--- The Space Age steel-pipe casting recipe copied its icon from this mod's
--- steel pipe item; it now casts K2's.
+-- Krastorio 2 Spaced Out casts K2's steel pipe itself, at the foundry, so this
+-- mod's Space Age casting recipe would be a second one for the same pipe. K2's
+-- is kept; ours and the technology that only unlocked it are removed. Spaced
+-- Out is an optional dependency, so its data.lua has already run.
+if data.raw.recipe["kr-casting-steel-pipe"] then
+  data.raw.recipe["afi_casting-steel-pipe"] = nil
+  data.raw.technology["afi_steel-pipe-casting"] = nil
+end
+
+-- Otherwise the Space Age steel-pipe casting recipe copied its icon from this
+-- mod's steel pipe item; it now casts K2's.
 local casting = data.raw.recipe["afi_casting-steel-pipe"]
 local kr_steel_pipe_item = data.raw.item["kr-steel-pipe"]
 if casting and kr_steel_pipe_item then

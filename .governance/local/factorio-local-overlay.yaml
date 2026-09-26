@@ -13,6 +13,7 @@ dependency_stack:
 optional_dependencies:
   - RampantArsenalFork
   - Krastorio2
+  - Krastorio2-spaced-out
 upstream_or_fork_source: Standalone staged fluid infrastructure progression for Factorio 2.1 and Space Age.
 scope_boundaries:
   - Owns fluid infrastructure prototypes, progression, technologies, recipes, items, entities, and compatibility cleanup.
@@ -32,6 +33,7 @@ validation_available:
 workspace_specific_rules:
   - Krastorio 2 is an optional dependency (? Krastorio2). Under K2 this mod's tier stats carry, while K2's recipes, ingredients and technology unlocks are followed, with one unlock per recipe. K2's steel pipe, steel pipe to ground and steel pump are the steel tier (afi_steel-pipe, -pipe-to-ground and -pump are removed and the steel techs fold into kr-steel-fluid-handling); every tier above iron joins K2's kr-steel-pipe connection category; offshore pump tiers copy the vanilla offshore pump's final power source. Jason set this direction on 2026-09-25, built on the non-Space-Age path. See src/prototypes/fluid/krastorio2.lua.
   - Under Krastorio 2 the tier values stay as balanced for the base game (60/240/360/600 pumping). Jason wants players to struggle at points and feel things ease as they progress, so do not strengthen mid tiers for K2. Late-game headroom comes from the foundation (1200/s) and high-pressure foundation (3600/s) tiers, which K2 without Space Age builds from K2 materials (src/prototypes/fluid/krastorio2-foundation.lua). Pump and offshore pump power under K2 is base * (speed / base_speed)^1.5.
+  - Krastorio 2 Spaced Out (? Krastorio2-spaced-out) on Factorio 2.1 requires Krastorio2 and Space Age and loads on top of them; its 2.0-era releases were a standalone alternative declaring ! Krastorio2, which is why it is easy to remember as mutually exclusive. Under Spaced Out this mod runs its K2 integration plus its Space Age tiers; Spaced Out's foundry casting of kr-steel-pipe replaces this mod's afi_casting-steel-pipe and afi_steel-pipe-casting. Verified 2026-09-25 against Spaced Out 2.0.17.
   - Run ./scripts/validate.sh for full local validation when luac, Python, and Factorio validation prerequisites are available.
   - Factorio load validation requires FACTORIO_BIN or a discoverable Factorio binary and a mods-directory symlink from the mod name to src.
   - Use src/info.json as the release version source of truth; main deployment creates Gitea and GitHub releases and uploads the packaged mod zip to the Factorio mod portal when that version changes on main, with retry behavior for missing public release destinations after a partially failed release.
