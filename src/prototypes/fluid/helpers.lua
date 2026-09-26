@@ -366,12 +366,23 @@ function helpers.pump_description()
   return { "description.afi_pump-fluid-stats" }
 end
 
+-- Adds an unlock only when nothing unlocks the recipe yet. Vanilla 2.1 already
+-- unlocks pipe, pipe to ground and offshore pump in steam-power, and overhauls
+-- move them elsewhere; unconditional adds showed each of them twice.
 function helpers.add_unlock(technology_name, recipe_name)
   local technology = data.raw.technology[technology_name]
-  if technology then
-    technology.effects = technology.effects or {}
-    table.insert(technology.effects, { type = "unlock-recipe", recipe = recipe_name })
+  if not technology then
+    return
   end
+  for _, other in pairs(data.raw.technology) do
+    for _, effect in pairs(other.effects or {}) do
+      if effect.type == "unlock-recipe" and effect.recipe == recipe_name then
+        return
+      end
+    end
+  end
+  technology.effects = technology.effects or {}
+  table.insert(technology.effects, { type = "unlock-recipe", recipe = recipe_name })
 end
 
 return helpers

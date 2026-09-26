@@ -16,6 +16,12 @@ if optional_dependencies.has_space_age then
   require("prototypes.fluid.space-age.technologies")
 end
 
+-- Needs every tier to exist, and has to land before the menu layout places
+-- items by name.
+if optional_dependencies.has_krastorio2 then
+  require("prototypes.fluid.krastorio2")
+end
+
 -- Runs last: it places every item this mod owns into its crafting menu row,
 -- and the Space Age tiers must already exist by then.
 require("prototypes.fluid.menu-layout")

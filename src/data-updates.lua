@@ -3,6 +3,10 @@
 -- configure them. See api.lua.
 require("prototypes.fluid.tier-apply")
 
+-- Copies the vanilla offshore pump's final power source onto every tier, now
+-- that overhauls this mod loads after (Krastorio 2) have set it.
+require("prototypes.fluid.offshore-power")
+
 -- Reads the steel tier, so it has to follow the pass above. Running here rather
 -- than in data.lua also means it reaches production machines added by mods that
 -- load after this one.

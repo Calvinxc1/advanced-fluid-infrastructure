@@ -14,6 +14,7 @@ dependency_stack:
   - space-age >= 2.1.0
 optional_dependencies:
   - RampantArsenalFork
+  - Krastorio2
 scope_boundaries:
   - Owns fluid infrastructure prototypes, progression, technologies, recipes, items, entities, and compatibility cleanup.
   - Keep this repository focused on pipes, pipe-to-ground, pumps, offshore pumps, pipeline extent, and fluid infrastructure technologies.

@@ -17,6 +17,7 @@
 
 local constants = require("prototypes.fluid.constants")
 local helpers = require("prototypes.fluid.helpers")
+local optional_dependencies = require("prototypes.fluid.optional-dependencies")
 
 -- Role suffix -> the data.raw category the prototype lives in. The iron tier is
 -- the vanilla set, whose names are the bare suffixes.
@@ -27,11 +28,13 @@ local ROLES = {
   { suffix = "offshore-pump", category = "offshore-pump" },
 }
 
+-- Resolved through optional_dependencies.name(), so a tier another mod
+-- supplies (Krastorio 2's steel line) is configured like one this mod built.
 local function prototype_name(tier_name, suffix)
   if tier_name == "iron" then
     return suffix
   end
-  return "afi_" .. string.gsub(tier_name, "_", "-") .. "-" .. suffix
+  return optional_dependencies.name("afi_" .. string.gsub(tier_name, "_", "-") .. "-" .. suffix)
 end
 
 -- Which tier fields each description key interpolates, in argument order.
@@ -48,9 +51,17 @@ local DESCRIPTION_ARGUMENTS = {
   ["description.afi_pump-fluid-stats"] = {},
 }
 
-local function refresh_description(prototype, tier)
-  local description = prototype and prototype.localised_description
+local function refresh_description_line(description, tier)
   if type(description) ~= "table" then
+    return
+  end
+
+  -- A concatenation carries this mod's stats line among other text, as the
+  -- Krastorio 2 steel line does beneath K2's own description.
+  if description[1] == "" then
+    for index = 2, #description do
+      refresh_description_line(description[index], tier)
+    end
     return
   end
 
@@ -64,6 +75,10 @@ local function refresh_description(prototype, tier)
       description[index + 1] = tostring(tier[field])
     end
   end
+end
+
+local function refresh_description(prototype, tier)
+  refresh_description_line(prototype and prototype.localised_description, tier)
 end
 
 local function set_extent(prototype, tier)

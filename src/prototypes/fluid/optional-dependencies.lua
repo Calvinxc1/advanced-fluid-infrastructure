@@ -10,6 +10,37 @@
 local optional_dependencies = {}
 
 optional_dependencies.has_space_age = mods["space-age"] ~= nil
+optional_dependencies.has_krastorio2 = mods["Krastorio2"] ~= nil
+
+-- Krastorio 2 ships its own steel pipe, pipe to ground and pump, and its own
+-- recipes consume them. Under K2 those prototypes are this mod's steel tier:
+-- they carry the steel tier's numbers, and everything that would have named
+-- this mod's steel prototype names K2's instead. The steel offshore pump has no
+-- K2 counterpart and stays. See prototypes/fluid/krastorio2.lua.
+local KRASTORIO2_STEEL_TIER = {
+  ["afi_steel-pipe"] = "kr-steel-pipe",
+  ["afi_steel-pipe-to-ground"] = "kr-steel-pipe-to-ground",
+  ["afi_steel-pump"] = "kr-steel-pump",
+  ["afi_steel-pipe-infrastructure"] = "kr-steel-fluid-handling",
+  ["afi_steel-pump-infrastructure"] = "kr-steel-fluid-handling",
+}
+
+-- The prototype that fills a role in this load. Names without a substitute
+-- come back unchanged.
+function optional_dependencies.name(name)
+  if optional_dependencies.has_krastorio2 then
+    return KRASTORIO2_STEEL_TIER[name] or name
+  end
+  return name
+end
+
+-- Every substitution active in this load, as { ours = theirs }.
+function optional_dependencies.substitutions()
+  if optional_dependencies.has_krastorio2 then
+    return KRASTORIO2_STEEL_TIER
+  end
+  return {}
+end
 
 local function ingredient(type, name, amount)
   return { type = type, name = name, amount = amount }

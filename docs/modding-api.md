@@ -97,6 +97,12 @@ carries no underground distance and rejects one.
 
 `iron` is the vanilla set, patched in place. Configuring it retunes vanilla.
 
+With Krastorio 2 installed, `steel` is K2's steel line: `kr-steel-pipe`,
+`kr-steel-pipe-to-ground` and `kr-steel-pump` carry the tier's values, and
+`afi_steel-pipe`, `afi_steel-pipe-to-ground` and `afi_steel-pump` do not exist.
+`afi_steel-offshore-pump` has no K2 counterpart and is built as usual.
+Configuring `steel` reaches the K2 prototypes the same way.
+
 All nine tiers are in the table in every load — only the prototypes built from
 them are conditional — so configuring a Space Age tier in a base-game load is
 harmless and needs no guard.
