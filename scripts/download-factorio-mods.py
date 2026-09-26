@@ -288,19 +288,25 @@ def download_info_dependency_closure(
     username: str,
     token: str,
 ) -> None:
-    # Only the dependencies declared directly on `info` are downloaded.
-    # Deliberately not recursive: a downloaded dependency's own
-    # optional/recommended/hidden-optional dependencies are not pulled in,
-    # since that graph can reach arbitrarily far across the Mod Portal (e.g.
-    # a hidden-optional compatibility shim several hops away with no
-    # Factorio-version-compatible release).
+    # Every dependency declared directly on `info` is downloaded, together
+    # with the hard requirements of each: an optional dependency installed
+    # without its own required mods aborts the whole load (Krastorio2 without
+    # flib and Krastorio2Assets, for example), which would stop the load test
+    # before this mod's compatibility code runs at all.
+    #
+    # A downloaded dependency's own optional/recommended/hidden-optional
+    # dependencies are still not pulled in, since that graph can reach
+    # arbitrarily far across the Mod Portal (e.g. a hidden-optional
+    # compatibility shim several hops away with no Factorio-version-compatible
+    # release). Hard requirements are what the mod cannot load without, so
+    # following those alone keeps the closure bounded.
     visited = {info["name"]}
     for dependency in dependency_names(info, include_optional=True):
         download_mod_closure(
             dependency,
             factorio_version=factorio_version,
-            include_dependencies=False,
-            include_optional_dependencies=True,
+            include_dependencies=True,
+            include_optional_dependencies=False,
             mods_dir=mods_dir,
             username=username,
             token=token,
