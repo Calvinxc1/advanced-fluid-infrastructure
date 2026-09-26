@@ -27,12 +27,10 @@ local ROLES = {
   { suffix = "offshore-pump", category = "offshore-pump" },
 }
 
-local function prototype_name(tier_name, suffix)
-  if tier_name == "iron" then
-    return suffix
-  end
-  return "afi_" .. string.gsub(tier_name, "_", "-") .. "-" .. suffix
-end
+-- The public API's resolution, so a tier another mod supplies (Krastorio 2's
+-- steel line) is configured like one this mod built, and dependent mods look
+-- prototypes up the same way this pass does.
+local prototype_name = AdvancedFluidInfrastructure.prototype_name
 
 -- Which tier fields each description key interpolates, in argument order.
 --
@@ -48,9 +46,17 @@ local DESCRIPTION_ARGUMENTS = {
   ["description.afi_pump-fluid-stats"] = {},
 }
 
-local function refresh_description(prototype, tier)
-  local description = prototype and prototype.localised_description
+local function refresh_description_line(description, tier)
   if type(description) ~= "table" then
+    return
+  end
+
+  -- A concatenation carries this mod's stats line among other text, as the
+  -- Krastorio 2 steel line does beneath K2's own description.
+  if description[1] == "" then
+    for index = 2, #description do
+      refresh_description_line(description[index], tier)
+    end
     return
   end
 
@@ -64,6 +70,10 @@ local function refresh_description(prototype, tier)
       description[index + 1] = tostring(tier[field])
     end
   end
+end
+
+local function refresh_description(prototype, tier)
+  refresh_description_line(prototype and prototype.localised_description, tier)
 end
 
 local function set_extent(prototype, tier)
@@ -111,6 +121,24 @@ for tier_name, tier in pairs(constants) do
         refresh_description(data.raw.item[name], tier)
       end
     end
+  end
+end
+
+-- Standalone variants of a tier that sit outside the name convention: Space
+-- Exploration's space foundation pipes carry the foundation tier's numbers.
+local VARIANTS = {
+  { name = "afi_space-foundation-pipe", tier = "foundation", suffix = "pipe", category = "pipe" },
+  { name = "afi_space-foundation-pipe-to-ground", tier = "foundation", suffix = "pipe-to-ground", category = "pipe-to-ground" },
+}
+
+for _, variant in ipairs(VARIANTS) do
+  local prototype = data.raw[variant.category] and data.raw[variant.category][variant.name]
+  local tier = constants[variant.tier]
+  if prototype and tier then
+    covered[variant.name] = true
+    APPLY[variant.suffix](prototype, tier)
+    refresh_description(prototype, tier)
+    refresh_description(data.raw.item[variant.name], tier)
   end
 end
 

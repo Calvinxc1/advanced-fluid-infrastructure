@@ -97,8 +97,17 @@ local family_name = {
   ["afi_offshore-pump"] = { a = "offshore-pump", b = "offshore-pump-tungsten" },
 }
 
+-- Space Exploration keeps pipe, pipe to ground and pump in its own pipe row
+-- with its space pipes: its blueprint converter swaps ground and space
+-- entities within a row. Those are left where SE puts them.
+if optional_dependencies.has_space_exploration then
+  placement["pipe"] = nil
+  placement["pipe-to-ground"] = nil
+  placement["pump"] = nil
+end
+
 for name, place in pairs(placement) do
-  local item = data.raw.item[name]
+  local item = data.raw.item[optional_dependencies.name(name)]
   local subgroup, letter, tier = place[1], place[2], place[3]
   -- Tiers absent from this load simply have no item to place. Subgroups whose
   -- whole row is Space Age only are not defined in a base-game load either.

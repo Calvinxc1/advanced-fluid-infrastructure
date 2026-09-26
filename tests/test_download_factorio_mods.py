@@ -48,14 +48,14 @@ class DependencyNamesTest(unittest.TestCase):
             ],
         )
 
-    def test_local_metadata_includes_optional_dependencies_without_recursing(self) -> None:
-        # Only what `local-mod` declares directly should be downloaded.
-        # include_dependencies must be False here: a downloaded dependency's
-        # own optional/recommended/hidden-optional dependencies must not be
-        # pulled in, since that graph can reach arbitrarily far across the
-        # Mod Portal (e.g. a hidden-optional compatibility shim several hops
-        # away with no Factorio-version-compatible release).
-        with patch.object(DOWNLOADER, "download_mod_closure") as download_mod:
+    def test_local_metadata_follows_only_hard_requirements_of_its_dependencies(self) -> None:
+        # Everything `local-mod` declares directly is downloaded, each with its
+        # own hard requirements (an optional mod missing those aborts the load)
+        # but never its optional/recommended/hidden-optional dependencies, since
+        # that graph can reach arbitrarily far across the Mod Portal.
+        compatible = {"version": "1.0.0", "info_json": {"dependencies": ["base >= 2.1.0"]}}
+        with patch.object(DOWNLOADER, "latest_compatible_release", return_value=compatible), \
+                patch.object(DOWNLOADER, "download_mod_closure") as download_mod:
             DOWNLOADER.download_info_dependency_closure(
                 {
                     "name": "local-mod",
@@ -69,9 +69,58 @@ class DependencyNamesTest(unittest.TestCase):
 
         self.assertEqual([call.args[0] for call in download_mod.call_args_list], ["optional-mod", "recommended-mod"])
         for call in download_mod.call_args_list:
-            self.assertFalse(call.kwargs["include_dependencies"])
-            self.assertTrue(call.kwargs["include_optional_dependencies"])
+            self.assertTrue(call.kwargs["include_dependencies"])
+            self.assertFalse(call.kwargs["include_optional_dependencies"])
             self.assertEqual(call.kwargs["visited"], {"local-mod"})
+
+    def test_optional_dependency_brings_its_required_mods_but_not_its_optional_ones(self) -> None:
+        releases = {
+            "overhaul": {"version": "1.0.0", "info_json": {"dependencies": ["library", "? far-away-shim"]}},
+            "library": {"version": "1.0.0", "info_json": {"dependencies": ["base >= 2.1.0"]}},
+        }
+        with patch.object(DOWNLOADER, "latest_compatible_release", side_effect=lambda name, _: releases[name]), \
+                patch.object(DOWNLOADER, "download_release") as download_release:
+            DOWNLOADER.download_info_dependency_closure(
+                {"name": "local-mod", "dependencies": ["? overhaul"]},
+                factorio_version="2.1",
+                mods_dir=Path("/tmp/mods"),
+                username="user",
+                token="token",
+            )
+
+        self.assertEqual([call.args[0] for call in download_release.call_args_list], ["library", "overhaul"])
+
+
+    def test_optional_dependency_incompatible_with_a_builtin_is_skipped(self) -> None:
+        releases = {
+            "space-exploration": {"version": "1.0.0", "info_json": {"dependencies": ["! space-age", "library"]}},
+            "compatible-mod": {"version": "1.0.0", "info_json": {"dependencies": ["base >= 2.1.0"]}},
+        }
+        with patch.object(DOWNLOADER, "latest_compatible_release", side_effect=lambda name, _: releases[name]), \
+                patch.object(DOWNLOADER, "download_release") as download_release:
+            DOWNLOADER.download_info_dependency_closure(
+                {"name": "local-mod", "dependencies": ["? space-exploration", "? compatible-mod"]},
+                factorio_version="2.1",
+                mods_dir=Path("/tmp/mods"),
+                username="user",
+                token="token",
+            )
+
+        self.assertEqual([call.args[0] for call in download_release.call_args_list], ["compatible-mod"])
+
+    def test_a_required_dependency_is_never_skipped(self) -> None:
+        with patch.object(DOWNLOADER, "latest_compatible_release") as release_lookup, \
+                patch.object(DOWNLOADER, "download_mod_closure") as download_mod:
+            DOWNLOADER.download_info_dependency_closure(
+                {"name": "local-mod", "dependencies": ["required-mod"]},
+                factorio_version="2.1",
+                mods_dir=Path("/tmp/mods"),
+                username="user",
+                token="token",
+            )
+
+        release_lookup.assert_not_called()
+        self.assertEqual([call.args[0] for call in download_mod.call_args_list], ["required-mod"])
 
 
 class ArchiveMetadataTest(unittest.TestCase):

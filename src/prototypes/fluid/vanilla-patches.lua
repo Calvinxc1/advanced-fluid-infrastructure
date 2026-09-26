@@ -1,19 +1,21 @@
 local constants = require("prototypes.fluid.constants")
 local helpers = require("prototypes.fluid.helpers")
+local optional_dependencies = require("prototypes.fluid.optional-dependencies")
+local name = optional_dependencies.name
 
 local iron = constants.iron
 
 data.raw.pipe.pipe.fast_replaceable_group = "pipe"
 helpers.disallow_space_platforms_and_vulcanus(data.raw.pipe.pipe)
 helpers.set_fluid_box_extent(data.raw.pipe.pipe.fluid_box, iron.pipeline_extent)
-data.raw.pipe.pipe.next_upgrade = "afi_steel-pipe"
+data.raw.pipe.pipe.next_upgrade = name("afi_steel-pipe")
 helpers.set_description(data.raw.pipe.pipe, helpers.pipe_description(iron.pipeline_extent))
 
 data.raw["pipe-to-ground"]["pipe-to-ground"].fast_replaceable_group = "pipe"
 helpers.disallow_space_platforms_and_vulcanus(data.raw["pipe-to-ground"]["pipe-to-ground"])
 helpers.set_underground_distance(data.raw["pipe-to-ground"]["pipe-to-ground"], iron.underground_distance)
 helpers.set_fluid_box_extent(data.raw["pipe-to-ground"]["pipe-to-ground"].fluid_box, iron.pipeline_extent)
-data.raw["pipe-to-ground"]["pipe-to-ground"].next_upgrade = "afi_steel-pipe-to-ground"
+data.raw["pipe-to-ground"]["pipe-to-ground"].next_upgrade = name("afi_steel-pipe-to-ground")
 helpers.set_description(
   data.raw["pipe-to-ground"]["pipe-to-ground"],
   helpers.underground_pipe_description(iron.pipeline_extent, iron.underground_distance)
@@ -32,7 +34,7 @@ helpers.set_description(
 data.raw.pump.pump.fast_replaceable_group = "pump"
 helpers.disallow_space_platforms_and_vulcanus(data.raw.pump.pump)
 data.raw.pump.pump.pumping_speed = iron.pumping_speed
-data.raw.pump.pump.next_upgrade = "afi_steel-pump"
+data.raw.pump.pump.next_upgrade = name("afi_steel-pump")
 helpers.set_description(data.raw.pump.pump, helpers.pump_description())
 
 local function replace_recipe_ingredient(recipe, old_name, new_name)
@@ -67,15 +69,25 @@ local function add_technology_prerequisite(technology_name, prerequisite_name)
   table.insert(technology.prerequisites, prerequisite_name)
 end
 
-for _, recipe_name in pairs({
-  "heat-exchanger",
-  "flamethrower-turret",
-  "oil-refinery",
-  "pumpjack",
-  "steam-turbine",
-}) do
-  replace_recipe_ingredient(data.raw.recipe[recipe_name], "pipe", "afi_steel-pipe")
-end
+-- Krastorio 2 writes its own recipes and prerequisites for these, and the
+-- K2 integration follows them rather than layering the steel tier on top.
+-- The one exception, oil gathering waiting on the steel tier, is applied to
+-- K2's steel fluid handling in prototypes/fluid/krastorio2-updates.lua.
+if not optional_dependencies.has_krastorio2 then
+  for _, recipe_name in pairs({
+    "heat-exchanger",
+    "flamethrower-turret",
+    "oil-refinery",
+    "pumpjack",
+    "steam-turbine",
+  }) do
+    replace_recipe_ingredient(data.raw.recipe[recipe_name], "pipe", "afi_steel-pipe")
+  end
 
-add_technology_prerequisite("oil-gathering", "afi_steel-pipe-infrastructure")
-add_technology_prerequisite("flamethrower", "afi_steel-pipe-infrastructure")
+  -- Oil gathering waits on the whole steel tier, pipes and pumps. Everything
+  -- that follows it (Space Age's route to Vulcanus above all, where the
+  -- calcite-lined pumps are built from steel pumps) can then rely on both.
+  add_technology_prerequisite("oil-gathering", "afi_steel-pipe-infrastructure")
+  add_technology_prerequisite("oil-gathering", "afi_steel-pump-infrastructure")
+  add_technology_prerequisite("flamethrower", "afi_steel-pipe-infrastructure")
+end

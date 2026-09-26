@@ -126,6 +126,20 @@ local function tint_sprite_table(sprite_table, tint)
   end
 end
 
+-- Tints every picture of an entity, for variants that need no tier constant
+-- of their own.
+function helpers.apply_entity_tint(prototype, tint)
+  if not prototype then
+    return
+  end
+  tint_sprite_table(prototype.pictures, tint)
+  tint_sprite_table(prototype.picture, tint)
+  tint_sprite_table(prototype.graphics_set, tint)
+  tint_sprite_table(prototype.animations, tint)
+  tint_sprite_table(prototype.horizontal_animation, tint)
+  tint_sprite_table(prototype.vertical_animation, tint)
+end
+
 function helpers.apply_rubber_lined_entity_tint(prototype)
   if not prototype then
     return
@@ -366,11 +380,66 @@ function helpers.pump_description()
   return { "description.afi_pump-fluid-stats" }
 end
 
+-- Adds an unlock only when nothing unlocks the recipe yet. Vanilla 2.1 already
+-- unlocks pipe, pipe to ground and offshore pump in steam-power, and overhauls
+-- move them elsewhere; unconditional adds showed each of them twice.
 function helpers.add_unlock(technology_name, recipe_name)
   local technology = data.raw.technology[technology_name]
-  if technology then
-    technology.effects = technology.effects or {}
-    table.insert(technology.effects, { type = "unlock-recipe", recipe = recipe_name })
+  if not technology then
+    return
+  end
+  for _, other in pairs(data.raw.technology) do
+    for _, effect in pairs(other.effects or {}) do
+      if effect.type == "unlock-recipe" and effect.recipe == recipe_name then
+        return
+      end
+    end
+  end
+  technology.effects = technology.effects or {}
+  table.insert(technology.effects, { type = "unlock-recipe", recipe = recipe_name })
+end
+
+-- Sets a technology's science packs to every pack its prerequisites use, so it
+-- is researched with the same set as the technologies it follows, keeping only
+-- the highest tier of each numbered pack line. Used where
+-- an overhaul (Space Exploration) decides what a stage of research costs.
+function helpers.inherit_science_packs(technology_name)
+  local technology = data.raw.technology[technology_name]
+  if not (technology and technology.unit) then
+    return
+  end
+
+  local seen, ingredients = {}, {}
+  for _, prerequisite_name in pairs(technology.prerequisites or {}) do
+    local prerequisite = data.raw.technology[prerequisite_name]
+    for _, ingredient in pairs(prerequisite and prerequisite.unit and prerequisite.unit.ingredients or {}) do
+      local name = ingredient.name or ingredient[1]
+      if not seen[name] then
+        seen[name] = true
+        table.insert(ingredients, { name, 1 })
+      end
+    end
+  end
+
+  -- Numbered pack lines (SE's material 1-4, energy 1-4, ...) list only their
+  -- highest tier, as the overhaul's own technologies do.
+  local highest = {}
+  for _, ingredient in pairs(ingredients) do
+    local line, tier = string.match(ingredient[1], "^(.-)%-(%d+)$")
+    if line then
+      highest[line] = math.max(highest[line] or 0, tonumber(tier))
+    end
+  end
+  local collapsed = {}
+  for _, ingredient in pairs(ingredients) do
+    local line, tier = string.match(ingredient[1], "^(.-)%-(%d+)$")
+    if not line or tonumber(tier) == highest[line] then
+      table.insert(collapsed, ingredient)
+    end
+  end
+
+  if #collapsed > 0 then
+    technology.unit.ingredients = collapsed
   end
 end
 

@@ -10,6 +10,57 @@
 local optional_dependencies = {}
 
 optional_dependencies.has_space_age = mods["space-age"] ~= nil
+optional_dependencies.has_krastorio2 = mods["Krastorio2"] ~= nil
+optional_dependencies.has_space_exploration = mods["space-exploration"] ~= nil
+
+-- SE's space pipes become the space branch, with the foundation tier (and its
+-- space variants) above it. SE excludes Space Age; foundation's recipes come
+-- from Krastorio 2 when present, otherwise from SE's own materials.
+optional_dependencies.has_space_branch = optional_dependencies.has_space_exploration
+
+-- Krastorio 2 ships its own steel pipe, pipe to ground and pump, and its own
+-- recipes consume them. Under K2 those prototypes are this mod's steel tier:
+-- they carry the steel tier's numbers, and everything that would have named
+-- this mod's steel prototype names K2's instead. The steel offshore pump has no
+-- K2 counterpart and stays. See prototypes/fluid/krastorio2.lua.
+local KRASTORIO2_STEEL_TIER = {
+  ["afi_steel-pipe"] = "kr-steel-pipe",
+  ["afi_steel-pipe-to-ground"] = "kr-steel-pipe-to-ground",
+  ["afi_steel-pump"] = "kr-steel-pump",
+  ["afi_steel-pipe-infrastructure"] = "kr-steel-fluid-handling",
+  ["afi_steel-pump-infrastructure"] = "kr-steel-fluid-handling",
+}
+
+-- Space Exploration's space pipes are this mod's space branch: the role Space
+-- Age's platform-only low-pressure steel tier plays, which SE (being
+-- incompatible with Space Age) never builds. They carry that tier's numbers.
+-- Unlike the K2 steel line these are not duplicates of anything this mod
+-- builds, so they are not substitutions() and nothing is removed.
+-- See prototypes/fluid/space-exploration.lua.
+local SPACE_EXPLORATION_SPACE_BRANCH = {
+  ["afi_low-pressure-steel-pipe"] = "se-space-pipe",
+  ["afi_low-pressure-steel-pipe-to-ground"] = "se-space-pipe-to-ground",
+}
+
+-- The prototype that fills a role in this load. Names without a substitute
+-- come back unchanged.
+function optional_dependencies.name(name)
+  if optional_dependencies.has_krastorio2 and KRASTORIO2_STEEL_TIER[name] then
+    return KRASTORIO2_STEEL_TIER[name]
+  end
+  if optional_dependencies.has_space_branch and SPACE_EXPLORATION_SPACE_BRANCH[name] then
+    return SPACE_EXPLORATION_SPACE_BRANCH[name]
+  end
+  return name
+end
+
+-- Every substitution active in this load, as { ours = theirs }.
+function optional_dependencies.substitutions()
+  if optional_dependencies.has_krastorio2 then
+    return KRASTORIO2_STEEL_TIER
+  end
+  return {}
+end
 
 local function ingredient(type, name, amount)
   return { type = type, name = name, amount = amount }

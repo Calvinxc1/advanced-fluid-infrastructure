@@ -87,8 +87,8 @@ runtime. Call `afi.tier_names()` rather than hardcoding this list.
 | `low_pressure_steel` | 64 | 8 | 4 | yes |
 | `calcite_lined` | 24 | 4 | 1 | yes |
 | `tungsten` | 64 | 8 | 4 | yes |
-| `foundation` | 512 | 20 | 20 | yes |
-| `high_pressure_foundation` | 512 | — | 60 | yes |
+| `foundation` | 512 | 20 | 20 | yes, or Krastorio 2 / Space Exploration |
+| `high_pressure_foundation` | 512 | — | 60 | yes, or Krastorio 2 / Space Exploration |
 
 Every tier builds a pipe, pipe-to-ground, pump and offshore pump, with two
 exceptions: `low_pressure_steel` has no offshore pump, and
@@ -96,6 +96,35 @@ exceptions: `low_pressure_steel` has no offshore pump, and
 carries no underground distance and rejects one.
 
 `iron` is the vanilla set, patched in place. Configuring it retunes vanilla.
+
+With Krastorio 2 installed, `steel` is K2's steel line: `kr-steel-pipe`,
+`kr-steel-pipe-to-ground` and `kr-steel-pump` carry the tier's values, and
+`afi_steel-pipe`, `afi_steel-pipe-to-ground` and `afi_steel-pump` do not exist.
+`afi_steel-offshore-pump` has no K2 counterpart and is built as usual.
+Configuring `steel` reaches the K2 prototypes the same way.
+
+Because a tier's prototypes can belong to another mod, look them up with
+`afi.prototype_name(tier, role)` rather than building the name, where `role` is
+`"pipe"`, `"pipe-to-ground"`, `"pump"` or `"offshore-pump"`:
+
+```lua
+local steel_pipe = data.raw.pipe[afi.prototype_name("steel", "pipe")]
+-- "afi_steel-pipe", or "kr-steel-pipe" under Krastorio 2
+```
+
+It returns the name that fills the role in this load; the prototype itself may
+still be absent, for example a Space Age tier without Space Age.
+
+Krastorio 2 also builds `foundation` and `high_pressure_foundation` without
+Space Age, from K2 materials and behind K2's advanced and singularity tech
+cards.
+
+Space Exploration also builds `foundation` and `high_pressure_foundation`,
+from K2 materials when Krastorio 2 is installed and from SE's own otherwise.
+Under SE, `low_pressure_steel` configures SE's `se-space-pipe` and
+`se-space-pipe-to-ground` (and the pipeline extent of SE's long space pipes),
+and `foundation` also configures the standalone `afi_space-foundation-pipe`
+and `afi_space-foundation-pipe-to-ground`.
 
 All nine tiers are in the table in every load — only the prototypes built from
 them are conditional — so configuring a Space Age tier in a base-game load is
