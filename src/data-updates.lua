@@ -12,3 +12,9 @@ require("prototypes.fluid.offshore-power")
 -- than in data.lua also means it reaches production machines added by mods that
 -- load after this one.
 require("prototypes.fluid.production-machine-patches")
+
+-- Hands this mod's technologies the K2 tech cards their prerequisites carry,
+-- after Krastorio 2 Spaced Out has added its cards to Space Age technologies.
+if mods["Krastorio2"] then
+  require("prototypes.fluid.krastorio2-tech-cards")
+end
