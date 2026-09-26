@@ -4,7 +4,8 @@
 require("prototypes.fluid.tier-apply")
 
 -- Copies the vanilla offshore pump's final power source onto every tier, now
--- that overhauls this mod loads after (Krastorio 2) have set it.
+-- that overhauls this mod loads after (Krastorio 2) have set it, and under K2
+-- prices pump power by tier. Reads final speeds, so it follows tier-apply.
 require("prototypes.fluid.offshore-power")
 
 -- Reads the steel tier, so it has to follow the pass above. Running here rather
