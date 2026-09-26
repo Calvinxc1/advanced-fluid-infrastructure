@@ -8,6 +8,11 @@ require("prototypes.fluid.tier-apply")
 -- prices pump power by tier. Reads final speeds, so it follows tier-apply.
 require("prototypes.fluid.offshore-power")
 
+-- SE's long space pipes take the space branch's final extent.
+if require("prototypes.fluid.optional-dependencies").has_space_branch then
+  require("prototypes.fluid.space-exploration-updates")
+end
+
 -- Reads the steel tier, so it has to follow the pass above. Running here rather
 -- than in data.lua also means it reaches production machines added by mods that
 -- load after this one.

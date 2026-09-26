@@ -107,6 +107,12 @@ Krastorio 2 also builds `foundation` and `high_pressure_foundation` without
 Space Age, from K2 materials and behind K2's advanced and singularity tech
 cards.
 
+With Space Exploration and Krastorio 2 both installed, `low_pressure_steel`
+configures SE's `se-space-pipe` and `se-space-pipe-to-ground` (and the
+pipeline extent of SE's long space pipes), and `foundation` also configures
+the standalone `afi_space-foundation-pipe` and
+`afi_space-foundation-pipe-to-ground`.
+
 All nine tiers are in the table in every load — only the prototypes built from
 them are conditional — so configuring a Space Age tier in a base-game load is
 harmless and needs no guard.

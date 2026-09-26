@@ -9,7 +9,7 @@ Vanilla pipes are powerful very early. This mod adds a staged fluid infrastructu
 - Factorio 2.1.
 - Space Age.
 - Optional compatibility cleanup for Rampant Arsenal Fork when it is installed.
-- Optional Krastorio 2 integration when it is installed, including Krastorio 2 Spaced Out.
+- Optional Krastorio 2 integration when it is installed, including Krastorio 2 Spaced Out and Space Exploration with Krastorio 2.
 
 ## Features
 
@@ -20,6 +20,7 @@ Vanilla pipes are powerful very early. This mod adds a staged fluid infrastructu
 - Production-machine fluidbox extent patches so upgraded infrastructure behaves consistently around machines.
 - Optional cleanup for Rampant Arsenal reinforced pipes when that mod is present.
 - Krastorio 2 integration: K2's steel pipe, steel pipe to ground and steel pump become the steel tier, carrying this mod's steel stats, and K2's Steel fluid handling technology unlocks them along with the steel offshore pump. K2's recipes and technology tree are otherwise left as K2 defines them. Every tier above iron joins K2's steel pipe family, so upgraded lines stay separate from neighbouring iron pipes. Offshore pumps draw power as K2's does, and pump and offshore pump power rises faster than throughput from tier to tier. Without Space Age, K2 also gets the foundation and high-pressure foundation tiers, built from K2 materials behind K2's advanced and singularity tech cards. On Factorio 2.1, Krastorio 2 Spaced Out runs on top of Krastorio 2 and Space Age, so it gets the same integration with Space Age's tiers and recipes; where Spaced Out casts K2's steel pipe at the foundry, this mod's own steel pipe casting recipe steps aside.
+- Space Exploration with Krastorio 2: SE's space pipes, pipe to ground and long space pipes become the space branch with low-pressure-steel stats (extent 64, underground 8) instead of an any-surface 320-extent shortcut, and join K2's steel pipe family. Foundation stays on the main ground upgrade path from reinforced; space gets standalone space foundation pipes with foundation's stats, crafted from foundation pipes and outside every upgrade chain, because Factorio will not let one pipe be both reinforced's upgrade and space-capable under SE.
 
 ## Companion Mods
 

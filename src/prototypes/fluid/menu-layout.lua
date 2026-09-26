@@ -51,11 +51,13 @@ local placement = {
   ["afi_rubber-lined-pipe"]            = { "afi_pipe", "a", 3 },
   ["afi_reinforced-pipe"]              = { "afi_pipe", "a", 4 },
   ["afi_foundation-pipe"]              = { "afi_pipe", "a", 5 },
+  ["afi_space-foundation-pipe"]        = { "afi_pipe", "a", 6 },
   ["pipe-to-ground"]                   = { "afi_pipe", "b", 1 },
   ["afi_steel-pipe-to-ground"]         = { "afi_pipe", "b", 2 },
   ["afi_rubber-lined-pipe-to-ground"]  = { "afi_pipe", "b", 3 },
   ["afi_reinforced-pipe-to-ground"]    = { "afi_pipe", "b", 4 },
   ["afi_foundation-pipe-to-ground"]    = { "afi_pipe", "b", 5 },
+  ["afi_space-foundation-pipe-to-ground"] = { "afi_pipe", "b", 6 },
 
   -- planet-restricted pipe branches
   ["afi_low-pressure-steel-pipe"]              = { "afi_pipe-planet", "a", 1 },

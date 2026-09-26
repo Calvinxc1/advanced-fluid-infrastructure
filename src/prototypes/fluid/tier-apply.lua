@@ -129,6 +129,24 @@ for tier_name, tier in pairs(constants) do
   end
 end
 
+-- Standalone variants of a tier that sit outside the name convention: Space
+-- Exploration's space foundation pipes carry the foundation tier's numbers.
+local VARIANTS = {
+  { name = "afi_space-foundation-pipe", tier = "foundation", suffix = "pipe", category = "pipe" },
+  { name = "afi_space-foundation-pipe-to-ground", tier = "foundation", suffix = "pipe-to-ground", category = "pipe-to-ground" },
+}
+
+for _, variant in ipairs(VARIANTS) do
+  local prototype = data.raw[variant.category] and data.raw[variant.category][variant.name]
+  local tier = constants[variant.tier]
+  if prototype and tier then
+    covered[variant.name] = true
+    APPLY[variant.suffix](prototype, tier)
+    refresh_description(prototype, tier)
+    refresh_description(data.raw.item[variant.name], tier)
+  end
+end
+
 -- Names are derived, so a tier or role that stops matching the convention would
 -- silently keep its defaults rather than fail. Nothing is logged on a correct
 -- load; a line here means this module needs a new case.
