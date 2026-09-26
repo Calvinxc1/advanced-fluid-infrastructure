@@ -82,6 +82,10 @@ if not optional_dependencies.has_krastorio2 then
     replace_recipe_ingredient(data.raw.recipe[recipe_name], "pipe", "afi_steel-pipe")
   end
 
+  -- Oil gathering waits on the whole steel tier, pipes and pumps. Everything
+  -- that follows it (Space Age's route to Vulcanus above all, where the
+  -- calcite-lined pumps are built from steel pumps) can then rely on both.
   add_technology_prerequisite("oil-gathering", "afi_steel-pipe-infrastructure")
+  add_technology_prerequisite("oil-gathering", "afi_steel-pump-infrastructure")
   add_technology_prerequisite("flamethrower", "afi_steel-pipe-infrastructure")
 end
